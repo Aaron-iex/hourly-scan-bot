@@ -19,7 +19,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
     leaderName: "",
     email: "",
     institution: "",
-    track: initialTrack || TRACKS[0].title,
+    track: initialTrack || TRACKS[0]!.title,
     teamSize: "4",
     brief: "",
   });
