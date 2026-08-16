@@ -4,6 +4,59 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --font-display: "Orbitron", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Rajdhani", ui-sans-serif, system-ui, sans-serif;
+  --font-mono-tech: "Share Tech Mono", ui-monospace, monospace;
+  --animate-ticker: ticker 32s linear infinite;
+  --animate-radar-sweep: radar-sweep 4s linear infinite;
+  --animate-flicker: flicker 3.5s ease-in-out infinite;
+  --animate-rise: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes ticker {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes radar-sweep {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes flicker {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    45% {
+      opacity: 0.82;
+    }
+    50% {
+      opacity: 0.55;
+    }
+    55% {
+      opacity: 0.9;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+
 /*
  * Design system definition.
  *
