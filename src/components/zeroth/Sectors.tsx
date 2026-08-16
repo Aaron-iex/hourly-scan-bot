@@ -2,13 +2,14 @@ import { Anchor, Flame, Rocket, Waves, Zap, type LucideIcon } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { TRACKS } from "@/data/zeroth";
 
-const ICONS: Record<string, LucideIcon> = {
+const ICONS = {
   waves: Waves,
   flame: Flame,
   rocket: Rocket,
   anchor: Anchor,
   zap: Zap,
-};
+} satisfies Record<string, LucideIcon>;
+
 
 export function Sectors({ onRegister }: { onRegister: (track: string) => void }) {
   return (
