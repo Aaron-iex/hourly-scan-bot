@@ -1,5 +1,150 @@
 import { useState } from "react";
-import { Calendar, ChevronRight, Clock, MapPin, Trophy } from "lucide-react";
+import { ChevronRight, Clock, Flame, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PRIZES, TIMELINE, type Stage } from "@/data/zeroth";
-export function Roadmap({ onRegister, preview, onExpand }: { onRegister: () => void; preview?: boolean; onExpand?: () => void }) { const [active, setActive] = useState<Stage | "all">("all"); const events = active === "all" ? TIMELINE : TIMELINE.filter((e) => e.stage === active); const shown = preview ? events.slice(0, 2) : events; return <section id="roadmap" className="border-y border-border bg-card/30"><div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8"><div className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><div><p className="font-mono-tech text-xs tracking-[0.28em] text-primary">// EVENT CONTROL</p><h2 className="mt-3 font-display text-3xl font-black uppercase sm:text-5xl">Five-hour <span className="text-accent">sprint</span></h2><p className="mt-4 max-w-xl text-muted-foreground">September 9 · ₹200 per team · Registration opening soon</p></div><div className="panel-tactical flex items-center gap-3 p-4"><Trophy className="text-accent" /><div><p className="font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground">OVERALL PRIZE POOL</p><p className="font-display text-2xl font-black text-accent">₹15,000</p></div></div></div>{!preview && <div className="mt-10 flex flex-wrap gap-2">{([['all','All phases'],['prep','Briefing'],['hacking','Build sprint'],['pitch','Finale']] as const).map(([id,label]) => <button key={id} onClick={() => setActive(id)} className={`clip-tactical px-4 py-2 font-mono-tech text-xs uppercase tracking-[0.16em] ${active === id ? 'bg-accent text-accent-foreground' : 'border border-border text-muted-foreground hover:text-accent'}`}>{label}</button>)}</div>}<ol className="relative mt-12 ml-4 flex flex-col gap-6 border-l border-primary/40 pl-8 sm:ml-8 sm:pl-10">{shown.map((evt) => <li key={evt.title} className="relative"><span className="absolute -left-[41px] top-5 size-4 rounded-full border-2 border-primary bg-background" /><article className="panel-tactical p-5 sm:p-6"><div className="flex flex-wrap items-center gap-3 font-mono-tech text-xs"><span className="text-primary">{evt.phase}</span><span className="flex items-center gap-1 text-accent"><Clock />{evt.time}</span><span className="flex items-center gap-1 text-muted-foreground"><MapPin />{evt.location}</span></div><h3 className="mt-4 font-display text-lg font-bold uppercase">{evt.title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{evt.description}</p><p className="mt-4 border-t border-border pt-3 font-mono-tech text-[10px] tracking-[0.18em] text-accent">{evt.status}</p></article></li>)}</ol>{preview && <div className="mt-8 text-center"><Button variant="tactical" size="xl" onClick={onExpand}>View full event schedule <ChevronRight /></Button></div>}<div className="mt-12 grid gap-3 sm:grid-cols-3">{PRIZES.map((prize) => <div key={prize.place} className="border border-border bg-background/50 p-4"><span className="font-mono-tech text-xs text-primary">{prize.place}</span><p className="mt-2 font-display font-bold uppercase">{prize.label}</p><p className="mt-1 text-2xl font-black text-accent">{prize.amount}</p></div>)}</div><div className="mt-12 text-center"><Button variant="alert" size="xl" onClick={onRegister}><Calendar /> Register your team</Button></div></div></section>; }
+import { TIMELINE, type Stage } from "@/data/zeroth";
+
+const FILTERS: { id: Stage | "all"; label: string }[] = [
+  { id: "all", label: "All phases" },
+  { id: "prep", label: "Stage 1 · Briefing" },
+  { id: "hacking", label: "Stage 2 · Lockdown" },
+  { id: "pitch", label: "Stage 3 · Evacuation" },
+];
+
+export function Roadmap({
+  onRegister,
+  preview,
+  onExpand,
+}: {
+  onRegister: () => void;
+  preview?: boolean;
+  onExpand?: () => void;
+}) {
+  const [active, setActive] = useState<Stage | "all">("all");
+  const events = active === "all" ? TIMELINE : TIMELINE.filter((e) => e.stage === active);
+  const previewEvents = TIMELINE.slice(0, 2);
+
+  return (
+    <section id="roadmap" className="border-y border-border bg-card/40">
+      <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
+            // TACTICAL TIMELINE
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-black uppercase sm:text-5xl">
+            Evacuation <span className="text-accent">roadmap</span>
+          </h2>
+          <div className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 border border-accent/40 bg-accent/10 px-4 py-2 clip-tactical font-mono-tech text-[11px] tracking-[0.18em] text-accent">
+            <span aria-hidden>⚠️</span>
+            EVENT DATE: SEPT 11 | 5-HOUR HACKATHON — DETAILED TIMELINE TBA
+          </div>
+        </div>
+
+        {preview ? (
+          <div className="mt-12">
+            <ol className="relative ml-4 space-y-6 border-l border-primary/40 pl-8 sm:ml-8 sm:pl-10">
+              {previewEvents.map((evt) => (
+                <li key={evt.title} className="group relative">
+                  <span className="absolute -left-[41px] top-4 grid size-4 place-items-center rounded-full border-2 border-primary bg-background transition-all group-hover:scale-125 group-hover:bg-primary sm:-left-[49px]" />
+                  <div className="panel-tactical p-5 transition-all hover:shadow-[var(--shadow-panel)] sm:p-6">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="border border-primary/50 bg-primary/12 px-2 py-0.5 font-mono-tech text-[10px] tracking-[0.18em] text-primary">
+                        {evt.phase}
+                      </span>
+                      <span className="flex items-center gap-1 font-mono-tech text-[11px] text-accent">
+                        <Clock className="size-3.5" aria-hidden />
+                        {evt.time}
+                      </span>
+                      <span className="ml-auto flex items-center gap-1 font-mono-tech text-[10px] text-muted-foreground">
+                        <MapPin className="size-3" aria-hidden />
+                        {evt.location}
+                      </span>
+                    </div>
+                    <h3 className="mt-3 font-display text-lg font-bold group-hover:text-accent sm:text-xl">
+                      {evt.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {evt.description}
+                    </p>
+                    <div className="mt-4 border-t border-border pt-3 font-mono-tech text-[10px] tracking-[0.2em] text-accent">
+                      STATUS: {evt.status}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-10 text-center">
+              <Button variant="tactical" size="xl" onClick={onExpand}>
+                <ChevronRight className="size-4" aria-hidden />
+                View full evacuation schedule
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="mt-10 flex flex-wrap justify-center gap-2">
+              {FILTERS.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => setActive(f.id)}
+                  className={`px-4 py-2 clip-tactical font-mono-tech text-[11px] uppercase tracking-[0.18em] transition-all ${
+                    active === f.id
+                      ? "bg-accent text-accent-foreground shadow-[var(--glow-warn)]"
+                      : "border border-border bg-card text-muted-foreground hover:text-accent"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            <ol className="relative mt-14 ml-4 space-y-6 border-l border-primary/40 pl-8 sm:ml-8 sm:pl-10">
+              {events.map((evt) => (
+                <li key={evt.title} className="group relative">
+                  <span className="absolute -left-[41px] top-4 grid size-4 place-items-center rounded-full border-2 border-primary bg-background transition-all group-hover:scale-125 group-hover:bg-primary sm:-left-[49px]" />
+                  <div className="panel-tactical p-5 transition-all hover:shadow-[var(--shadow-panel)] sm:p-6">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="border border-primary/50 bg-primary/12 px-2 py-0.5 font-mono-tech text-[10px] tracking-[0.18em] text-primary">
+                        {evt.phase}
+                      </span>
+                      <span className="flex items-center gap-1 font-mono-tech text-[11px] text-accent">
+                        <Clock className="size-3.5" aria-hidden />
+                        {evt.time}
+                      </span>
+                      <span className="ml-auto flex items-center gap-1 font-mono-tech text-[10px] text-muted-foreground">
+                        <MapPin className="size-3" aria-hidden />
+                        {evt.location}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-3 font-display text-lg font-bold group-hover:text-accent sm:text-xl">
+                      {evt.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {evt.description}
+                    </p>
+
+                    <div className="mt-4 border-t border-border pt-3 font-mono-tech text-[10px] tracking-[0.2em] text-accent">
+                      STATUS: {evt.status}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+
+        <div className="panel-tactical mt-16 space-y-4 p-8 text-center">
+          <h3 className="font-display text-2xl font-black uppercase">Ready to deploy your team?</h3>
+          <p className="mx-auto max-w-xl text-sm text-muted-foreground">
+            200 INR per team. Open to students, crisis researchers, and apocalyptic builders. Secure
+            your clearance badge before squad lockdown.
+          </p>
+          <Button variant="alert" size="xl" onClick={onRegister}>
+            <Flame className="size-4" aria-hidden />
+            Secure squad clearance
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}

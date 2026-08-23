@@ -3,58 +3,182 @@ export type Track = {
   code: string;
   title: string;
   icon: "waves" | "flame" | "rocket" | "anchor" | "zap";
+  threat: string;
   brief: string;
   stack: string[];
 };
 
 export const TRACKS: Track[] = [
-  { id: "embedded", code: "DOMAIN 01", title: "Embedded Systems", icon: "zap", brief: "Design intelligent, reliable hardware that senses, computes, and responds in the real world.", stack: ["Microcontrollers", "RTOS", "PCB Design", "Edge AI"] },
-  { id: "vlsi", code: "DOMAIN 02", title: "VLSI & Digital Design", icon: "zap", brief: "Explore digital logic, chip architecture, verification, and efficient hardware acceleration.", stack: ["Verilog", "FPGA", "ASIC", "Verification"] },
-  { id: "communication", code: "DOMAIN 03", title: "Communication Networks", icon: "waves", brief: "Build the connected future through RF systems, wireless networks, antennas, and signal integrity.", stack: ["5G / 6G", "RF Systems", "Optical Fiber", "Antennas"] },
-  { id: "iot", code: "DOMAIN 04", title: "IoT & Robotics", icon: "rocket", brief: "Connect sensors, cloud platforms, and autonomous machines to solve practical campus and community needs.", stack: ["IoT", "Robotics", "Cloud", "Automation"] },
-  { id: "signals", code: "DOMAIN 05", title: "Signal Processing", icon: "anchor", brief: "Turn complex signals into meaningful insight with audio, image, biomedical, and machine-learning systems.", stack: ["DSP", "Computer Vision", "MATLAB", "ML"] },
+  {
+    id: "seismic",
+    code: "SECTOR 01",
+    title: "Tsunami & Earthquake Mitigation",
+    icon: "waves",
+    threat: "RICHTER 8.9",
+    brief:
+      "The Pacific Ring of Fire has reached critical instability. Build real-time AI seismic telemetry, automated coastal siren grids, ocean-bed hydrophone mesh networks, or anti-collapse dampening algorithms.",
+    stack: ["Sensor Fusion", "Edge AI", "GIS", "Early Warning"],
+  },
+  {
+    id: "wildfire",
+    code: "SECTOR 02",
+    title: "Wildfire Suppression Tech",
+    icon: "flame",
+    threat: "HEAT INDEX 61°C",
+    brief:
+      "Unprecedented heatwaves ignite mega-blazes worldwide. Ship autonomous drone-swarm retardant coordination, satellite infrared trajectory models, or live evacuation routing for trapped citizens.",
+    stack: ["Drone Swarms", "Computer Vision", "Routing", "Satellite IR"],
+  },
+  {
+    id: "offworld",
+    code: "SECTOR 03",
+    title: "Off-World Habitat (Mars / Moon)",
+    icon: "rocket",
+    threat: "ATMOS COLLAPSE",
+    brief:
+      "When Earth's atmosphere fails, humanity looks outward. Create habitat life-support telemetry, solar-flare radiation monitors, regolith 3D-printing controllers, or Martian oxygen generation networks.",
+    stack: ["Life Support", "Telemetry", "Robotics", "ISRU"],
+  },
+  {
+    id: "oceanic",
+    code: "SECTOR 04",
+    title: "Oceanic Civilizations",
+    icon: "anchor",
+    threat: "SEA LEVEL +4.2M",
+    brief:
+      "Rising seas swallow coastal megacities. Design submerged modular habitats, deep-current energy harvesting arrays, acoustic underwater data protocols, or marine food-security systems.",
+    stack: ["Hydro Power", "Acoustics", "Structures", "Aquaculture"],
+  },
+  {
+    id: "open",
+    code: "SECTOR 05",
+    title: "Open Innovation (Doomsday Tech)",
+    icon: "zap",
+    threat: "UNCLASSIFIED",
+    brief:
+      "No rules, pure survival ingenuity. Off-grid P2P radio messaging, EMP surge defence, automated triage medkits, or post-collapse resource distribution algorithms.",
+    stack: ["Mesh Radio", "Hardware", "Crypto", "Logistics"],
+  },
 ];
 
 export type Stage = "prep" | "hacking" | "pitch";
-export type TimelineEvent = { phase: string; time: string; title: string; location: string; stage: Stage; description: string; status: string };
-export const TIMELINE: TimelineEvent[] = [
-  { phase: "T-0 // BRIEFING", time: "09:00", title: "Team briefing & challenge reveal", location: "ECE Innovation Lab", stage: "prep", description: "Understand the problem statement, form teams, and receive the technical challenge brief.", status: "REGISTRATION OPEN" },
-  { phase: "T+0.5 // LOCKDOWN", time: "09:30", title: "Five-hour hackathon begins", location: "ECE Innovation Lab", stage: "hacking", description: "The build sprint starts. Teams prototype, test, and iterate with support from faculty coordinators.", status: "SPRINT START" },
-  { phase: "T+2.5 // MIDPOINT", time: "11:30", title: "Midpoint review & mentor check-in", location: "Project Review Zone", stage: "hacking", description: "Share your progress, validate your approach, and sharpen the working prototype with guided feedback.", status: "REVIEW WINDOW" },
-  { phase: "T+4.5 // CODE FREEZE", time: "13:30", title: "Final submission & demo preparation", location: "Submission Desk", stage: "pitch", description: "Lock your code, submit documentation, and prepare a clear demonstration for the judging panel.", status: "SUBMISSION LOCK" },
-  { phase: "T+5 // AWARDS", time: "14:00", title: "Project demos & award ceremony", location: "ECE Seminar Hall", stage: "pitch", description: "Teams present their solutions. The top three overall projects receive the prize pool and certificates.", status: "GRAND FINALE" },
-];
 
-export const LEADERSHIP = {
-  hod: { name: "Dr. A. Saravanan", role: "Head of the Department", org: "Department of Electronics and Communication Engineering" },
-  faculty: [
-    { name: "Faculty Coordinator 01", role: "Faculty Coordinator", org: "Name to be updated" },
-    { name: "Faculty Coordinator 02", role: "Faculty Coordinator", org: "Name to be updated" },
-  ],
-  students: [
-    { name: "Student Event Head", role: "Student Event Head", org: "Name to be updated" },
-    { name: "Student Event Coordinator", role: "Student Event Coordinator", org: "Name to be updated" },
-    { name: "Documentation Head", role: "Documentation Head", org: "Name to be updated" },
-    { name: "Documentation Staff", role: "Documentation Staff", org: "Name to be updated" },
-  ],
+export type TimelineEvent = {
+  phase: string;
+  time: string;
+  title: string;
+  location: string;
+  stage: Stage;
+  description: string;
+  status: string;
 };
-export const SPONSORS = [{ name: "Cooper Elevators", image: "/images/sponsors/image.png" }];
-export const FAQS = [
-  { q: "When is the ECE hackathon?", a: "The five-hour hackathon is scheduled for September 9. Detailed challenge information will be shared with registered teams." },
-  { q: "What is the registration fee?", a: "Registration is opening soon. The participation fee is ₹200 per team." },
-  { q: "Who can participate?", a: "ECE students and interdisciplinary student teams interested in electronics, communication, embedded systems, and innovation are welcome." },
-  { q: "What are the prizes?", a: "The overall prize pool is ₹15,000: ₹10,000 for first place, ₹3,000 for second place, and ₹2,000 for third place." },
-];
-export const STATS = [
-  { label: "PRIZE POOL", value: "₹15,000", desc: "Top three projects overall" },
-  { label: "EVENT DATE", value: "SEPT 09", desc: "Registration opening soon" },
-  { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Build, review, present" },
-  { label: "DOMAINS", value: "05", desc: "ECE innovation areas" },
-];
-export const PRIZES = [
-  { place: "01", label: "First Prize", amount: "₹10,000" },
-  { place: "02", label: "Second Prize", amount: "₹3,000" },
-  { place: "03", label: "Third Prize", amount: "₹2,000" },
+
+export const TIMELINE: TimelineEvent[] = [
+  {
+    phase: "T-0 HRS // BRIEFING",
+    time: "09:00",
+    title: "Operative Onboarding & Track Selection",
+    location: "Virtual Command Center",
+    stage: "prep",
+    description:
+      "Squad registration closes. Access classified crisis API keys, disaster datasets, and team formation channels.",
+    status: "REGISTRATION OPEN",
+  },
+  {
+    phase: "T+0.5 HRS // LOCKDOWN",
+    time: "09:30",
+    title: "DEFCON 1 Sprint Start — 5-Hour Hackathon Begins",
+    location: "Command Labs / Online Platform",
+    stage: "hacking",
+    description:
+      "The 5-hour continuous build begins. Mentors deployed across drone robotics, sub-sea sensors, and off-grid radio.",
+    status: "CRITICAL SPRINT",
+  },
+  {
+    phase: "T+2.5 HRS // MID-POINT",
+    time: "11:30",
+    title: "Mid-Point Crisis Injection & Status Check",
+    location: "War Room Mentor Sessions",
+    stage: "hacking",
+    description:
+      "Live disaster injection test. Teams adapt prediction models to unexpected secondary shockwaves.",
+    status: "SIMULATION EVENT",
+  },
+  {
+    phase: "T+4.5 HRS // CODE FREEZE",
+    time: "13:30",
+    title: "Final Code Freeze & Repository Lock",
+    location: "Platform Repo Lock",
+    stage: "pitch",
+    description:
+      "Submissions locked. Demo videos, working prototypes, and architecture docs go to the judging panel.",
+    status: "CODE FREEZE",
+  },
+  {
+    phase: "T+5 HRS // EVACUATION",
+    time: "14:00",
+    title: "Lightning Pitches & 15k INR Award Ceremony",
+    location: "DEFCON Main Stage & Global Stream",
+    stage: "pitch",
+    description:
+      "Top finalists present live. 15,000 INR in cash prizes, certificates, and deployment funds awarded.",
+    status: "GRAND FINALE",
+  },
 ];
 
-export const EVENT_DETAILS = { date: "September 9", fee: "₹200 per team", status: "Registration opening soon", duration: "Five-hour hackathon" };
+export const MENTORS = [
+  {
+    name: "Dr. Evelyn Vance",
+    role: "Chief Seismic Telemetry Lead",
+    org: "Pacific Fault Monitoring Institute",
+    specialty: "Seismic AI & Hydrophones",
+  },
+  {
+    name: "Cmdr. Marcus Vance",
+    role: "Autonomous Drone Robotics Director",
+    org: "AeroShield Wildfire Containment",
+    specialty: "Swarm Robotics & GIS",
+  },
+  {
+    name: "Dr. Astra Lin",
+    role: "Exoplanet Life Support Architect",
+    org: "Mars Habitat Foundation",
+    specialty: "Lunar & Martian Life Support",
+  },
+  {
+    name: "Kaelen Thorne",
+    role: "Post-Collapse Mesh Communications",
+    org: "Open EMP Grid Alliance",
+    specialty: "Off-grid LoRa Protocols",
+  },
+];
+
+export const FAQS = [
+  {
+    q: "When exactly does Zeroth Hour run?",
+    a: "Confirmed for Sept 11 — a 5-hour hackathon. The detailed timeline will be released to registered squads before lockdown.",
+  },
+  {
+    q: "Who is allowed to enlist?",
+    a: "University students, independent engineers, designers, and crisis researchers worldwide. Participation is 200 INR per team.",
+  },
+  {
+    q: "How large can a squad be?",
+    a: "Between 2 and 5 operatives. Solo applicants are matched into squads during the briefing stage.",
+  },
+  {
+    q: "Do I need hardware to compete?",
+    a: "No. Software-only submissions compete on equal footing. Hardware teams get a dedicated lab bench and component budget.",
+  },
+  {
+    q: "What is actually judged?",
+    a: "Real-world disaster impact, technical depth, resilience under the mid-point crisis simulation, and clarity of the evacuation pitch.",
+  },
+];
+
+export const STATS = [
+  { label: "PRIZE CACHE", value: "22,000 INR", desc: "1st 10k · 2nd 7k · 3rd 5k overall" },
+  { label: "OPERATIVES", value: "500+", desc: "Engineers, designers, researchers" },
+  { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous crisis build" },
+  { label: "THREAT SECTORS", value: "05", desc: "Planetary defence tracks" },
+];
