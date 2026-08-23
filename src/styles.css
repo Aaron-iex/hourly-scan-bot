@@ -29,7 +29,12 @@
       transform: rotate(360deg);
     }
   }
-  @keyframes flicker {
+  @keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes flicker {
     0%,
     100% {
       opacity: 1;

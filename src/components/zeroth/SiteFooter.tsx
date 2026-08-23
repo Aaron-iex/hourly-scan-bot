@@ -54,7 +54,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 font-mono-tech text-xs text-muted-foreground">
             <li>ops@zerothhour.earth</li>
             <li>PRESS: broadcast@zerothhour.earth</li>
-            <li>STATUS: DEFCON 1 — SEPT 11 · 5-HOUR SPRINT</li>
+            <li>STATUS: DEFCON 1 — SEPT 9 · 5-HOUR SPRINT</li>
           </ul>
         </div>
       </div>

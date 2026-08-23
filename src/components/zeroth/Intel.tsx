@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Radio, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FAQS, MENTORS, STATS } from "@/data/zeroth";
+import { FAQS, LEADERSHIP, MENTORS, STATS } from "@/data/zeroth";
 
 export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () => void }) {
   const [open, setOpen] = useState(0);
@@ -60,6 +60,25 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
         </div>
       ) : (
         <>
+          <div className="mt-24">
+            <h3 className="font-display text-2xl font-black uppercase">
+              ECE <span className="text-accent">leadership</span>
+            </h3>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {LEADERSHIP.map((leader) => (
+                <article key={leader.name} className="panel-tactical p-5">
+                  <span className="grid size-12 place-items-center border border-primary/50 bg-primary/12 font-display text-sm font-black text-primary">
+                    {leader.name.split(" ").map((word) => word[0]).join("").slice(0, 3)}
+                  </span>
+                  <h4 className="mt-4 font-display text-base font-bold">{leader.name}</h4>
+                  <p className="mt-1 font-mono-tech text-[10px] tracking-[0.15em] text-primary">{leader.role}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">{leader.org}</p>
+                  <p className="mt-3 border-t border-border pt-3 font-mono-tech text-[10px] tracking-[0.15em] text-accent">{leader.specialty}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
           <div className="mt-24">
             <h3 className="font-display text-2xl font-black uppercase">
               Command <span className="text-accent">mentors</span>

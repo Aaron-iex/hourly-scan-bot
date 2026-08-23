@@ -35,7 +35,7 @@ export function Roadmap({
           </h2>
           <div className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 border border-accent/40 bg-accent/10 px-4 py-2 clip-tactical font-mono-tech text-[11px] tracking-[0.18em] text-accent">
             <span aria-hidden>⚠️</span>
-            EVENT DATE: SEPT 11 | 5-HOUR HACKATHON — DETAILED TIMELINE TBA
+            EVENT DATE: SEPT 9 | 5-HOUR HACKATHON — DETAILS TBA
           </div>
         </div>
 

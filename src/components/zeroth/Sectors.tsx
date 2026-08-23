@@ -28,7 +28,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
 
       <div className="mt-8 border border-accent/40 bg-accent/10 px-5 py-4 clip-tactical">
         <p className="text-center font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
-          OVERALL PRIZE CACHE: 1ST 10,000 · 2ND 7,000 · 3RD 5,000 INR — TOP 3 OVERALL, IRRESPECTIVE
+          OVERALL PRIZE CACHE: 1ST 10,000 · 2ND 3,000 · 3RD 2,000 INR — TOP 3 OVERALL, IRRESPECTIVE
           OF TRACK
         </p>
       </div>

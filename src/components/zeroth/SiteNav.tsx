@@ -50,10 +50,10 @@ export function SiteNav({
           </span>
           <span className="leading-none">
             <span className="block font-display text-sm font-black tracking-[0.2em] text-foreground">
-              ZEROTH HOUR
+              ECE // ZEROTH HOUR
             </span>
             <span className="font-mono-tech text-[10px] tracking-[0.25em] text-muted-foreground">
-              GLOBAL CRISIS HACKATHON
+              ELECTRONICS & COMMUNICATIONS
             </span>
           </span>
         </button>

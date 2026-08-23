@@ -16,7 +16,7 @@ export const TRACKS: Track[] = [
     icon: "waves",
     threat: "RICHTER 8.9",
     brief:
-      "The Pacific Ring of Fire has reached critical instability. Build real-time AI seismic telemetry, automated coastal siren grids, ocean-bed hydrophone mesh networks, or anti-collapse dampening algorithms.",
+      "The campus communication grid is entering a critical signal window. Build real-time AI telemetry, intelligent embedded systems, next-generation wireless networks, or resilient electronics that keep people connected when every second matters.",
     stack: ["Sensor Fusion", "Edge AI", "GIS", "Early Warning"],
   },
   {
@@ -126,6 +126,16 @@ export const TIMELINE: TimelineEvent[] = [
   },
 ];
 
+export const LEADERSHIP = [
+  { name: "Dr. A. Saravanan", role: "HOD OF ECE", org: "Department of Electronics & Communication Engineering", specialty: "Department Leadership" },
+  { name: "Faculty Coordinator 01", role: "FACULTY COORDINATOR", org: "ECE Department", specialty: "Event Operations" },
+  { name: "Faculty Coordinator 02", role: "FACULTY COORDINATOR", org: "ECE Department", specialty: "Technical Review" },
+  { name: "Student Event Head", role: "STUDENT EVENT HEAD", org: "ECE Student Community", specialty: "Event Command" },
+  { name: "Student Coordinator", role: "STUDENT COORDINATOR", org: "ECE Student Community", specialty: "Team Coordination" },
+  { name: "Documentation Head", role: "DOCUMENTATION HEAD", org: "ECE Student Community", specialty: "Media & Records" },
+  { name: "Documentation Staff", role: "DOCUMENTATION STAFF", org: "ECE Student Community", specialty: "Content Support" },
+];
+
 export const MENTORS = [
   {
     name: "Dr. Evelyn Vance",
@@ -156,7 +166,7 @@ export const MENTORS = [
 export const FAQS = [
   {
     q: "When exactly does Zeroth Hour run?",
-    a: "Confirmed for Sept 11 — a 5-hour hackathon. The detailed timeline will be released to registered squads before lockdown.",
+    a: "Confirmed for Sept 9 — a 5-hour hackathon. The detailed timeline will be released to registered squads before lockdown.",
   },
   {
     q: "Who is allowed to enlist?",
@@ -177,7 +187,7 @@ export const FAQS = [
 ];
 
 export const STATS = [
-  { label: "PRIZE CACHE", value: "22,000 INR", desc: "1st 10k · 2nd 7k · 3rd 5k overall" },
+  { label: "PRIZE CACHE", value: "15,000 INR", desc: "1st 10k · 2nd 3k · 3rd 2k overall" },
   { label: "OPERATIVES", value: "500+", desc: "Engineers, designers, researchers" },
   { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous crisis build" },
   { label: "THREAT SECTORS", value: "05", desc: "Planetary defence tracks" },

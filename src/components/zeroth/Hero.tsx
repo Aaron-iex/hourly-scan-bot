@@ -5,7 +5,7 @@ import heroImage from "@/assets/hero-cataclysm.jpg";
 
 const TELEMETRY = [
   { label: "THREAT LEVEL", icon: Activity, dynamic: true },
-  { label: "PRIZE CACHE", icon: Award, value: "$50,000+" },
+  { label: "PRIZE CACHE", icon: Award, value: "15,000 INR" },
   { label: "THREAT SECTORS", icon: Cpu, value: "05" },
   { label: "OPERATIVES", icon: Users, value: "500+" },
 ];
@@ -53,16 +53,16 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
         </h1>
 
         <p className="animate-rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Catastrophic seismic shifts, unchecked wildfire infernos, and oceanic surges are
-          overwhelming global infrastructure. Join 500+ crisis engineers in a 5-hour emergency
-          sprint to prototype life-saving disaster technology.
+          When the signal drops, the engineers take over. Join 500+ ECE innovators in a 5-hour emergency
+          sprint to prototype intelligent communication systems, embedded technologies, and resilient
+          electronics for a world on the edge.
         </p>
 
         <div className="animate-rise mt-8 flex w-full max-w-lg items-center gap-3 border border-accent/60 bg-accent/10 px-5 py-4 clip-tactical text-left">
           <Calendar className="size-5 shrink-0 text-accent" aria-hidden />
           <div>
             <p className="font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
-              SEPT 11 // 5-HOUR HACKATHON
+              SEPT 9 // 5-HOUR HACKATHON
             </p>
             <p className="font-mono-tech text-[11px] text-muted-foreground">
               Registration queue open — lock clearance before lockdown.
