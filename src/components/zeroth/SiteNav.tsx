@@ -76,13 +76,18 @@ export function SiteNav({
           </Button>
         </div>
 
-        <button
-          className="grid size-10 place-items-center border border-border text-foreground md:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <Button variant="alert" size="sm" onClick={onRegister} className="font-mono-tech text-[10px] tracking-wider px-2.5 py-1">
+            REGISTER
+          </Button>
+          <button
+            className="grid size-9 place-items-center border border-border text-foreground clip-tactical"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Close menu" : "Open menu"}
+          >
+            {open ? <X className="size-4" /> : <Menu className="size-4" />}
+          </button>
+        </div>
       </nav>
 
       {open && (

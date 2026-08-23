@@ -72,19 +72,19 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-background/85 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-50 overflow-y-auto bg-background/85 p-2 sm:p-4 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       aria-label="Squad enrollment protocol"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="panel-tactical mx-auto my-8 w-full max-w-2xl shadow-[var(--shadow-panel)]">
-        <div className="flex items-center justify-between border-b border-primary/40 bg-primary/12 px-6 py-4">
+      <div className="panel-tactical mx-auto my-3 sm:my-8 w-full max-w-2xl shadow-[var(--shadow-panel)]">
+        <div className="flex items-center justify-between border-b border-primary/40 bg-primary/12 px-4 py-3 sm:px-6 sm:py-4">
           <div>
             <span className="font-mono-tech text-[10px] tracking-[0.22em] text-primary">
               DEFCON 1 // CLEARANCE REQUEST
             </span>
-            <h2 className="font-display text-lg font-black uppercase">Squad enrollment protocol</h2>
+            <h2 className="font-display text-base sm:text-lg font-black uppercase">Squad enrollment protocol</h2>
           </div>
           <button
             onClick={onClose}
