@@ -63,12 +63,17 @@ export function SiteNav({
             <button
               key={l.id}
               onClick={() => handleTab(l.id)}
-              className={`px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] transition-colors ${
+              className={`relative px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] transition-colors group ${
                 activeTab === l.id ? "text-accent" : "text-muted-foreground hover:text-accent"
               }`}
               aria-current={activeTab === l.id ? "page" : undefined}
             >
               {l.label}
+              <span
+                className={`absolute bottom-0 left-0 h-px bg-accent transition-all duration-300 ${
+                  activeTab === l.id ? "w-full" : "w-0 group-hover:w-full"
+                }`}
+              />
             </button>
           ))}
           <Button variant="alert" size="default" className="ml-3" onClick={onRegister}>
@@ -91,21 +96,23 @@ export function SiteNav({
       </nav>
 
       {open && (
-        <div className="border-t border-border bg-background/95 px-4 pb-4 backdrop-blur-xl md:hidden">
-          {TABS.map((l) => (
+        <div className="border-t border-border bg-background/98 px-4 pb-5 pt-2 backdrop-blur-xl md:hidden animate-rise">
+          {TABS.map((l, i) => (
             <button
               key={l.id}
               onClick={() => handleTab(l.id)}
-              className={`block w-full border-b border-border/60 py-3 text-left font-mono-tech text-xs uppercase tracking-[0.2em] ${
-                activeTab === l.id ? "text-accent" : "text-muted-foreground"
+              style={{ animationDelay: `${i * 0.05}s` }}
+              className={`animate-slide-x flex w-full items-center justify-between border-b border-border/60 py-3.5 text-left font-mono-tech text-xs uppercase tracking-[0.2em] transition-colors ${
+                activeTab === l.id ? "text-accent" : "text-muted-foreground hover:text-accent"
               }`}
             >
-              {l.label}
+              <span>{l.label}</span>
+              {activeTab === l.id && <span className="size-1.5 rounded-full bg-accent" />}
             </button>
           ))}
           <Button
             variant="alert"
-            className="mt-4 w-full"
+            className="mt-4 w-full group hover:shadow-[0_0_20px_rgba(224,76,17,0.4)] transition-shadow"
             onClick={() => {
               setOpen(false);
               onRegister();

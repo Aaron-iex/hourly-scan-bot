@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { ChevronRight, Clock, Flame, MapPin } from "lucide-react";
+import { ChevronRight, Clock, Flame, MapPin, Radio, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TIMELINE, type Stage } from "@/data/zeroth";
 
-const FILTERS: { id: Stage | "all"; label: string }[] = [
-  { id: "all", label: "All phases" },
-  { id: "prep", label: "Stage 1 · Reporting (08:00 AM)" },
-  { id: "hacking", label: "Stage 2 · Sprint (11:00 AM)" },
-  { id: "pitch", label: "Stage 3 · Freeze & Awards (04:00 PM)" },
+const FILTERS: { id: Stage | "all"; label: string; icon: typeof Clock }[] = [
+  { id: "all", label: "All phases", icon: Radio },
+  { id: "prep", label: "Reporting · 08:00", icon: Clock },
+  { id: "hacking", label: "Sprint · 11:00", icon: Zap },
+  { id: "pitch", label: "Awards · 04:00", icon: Flame },
 ];
+
+const STAGE_COLORS: Record<string, { dot: string; glow: string; border: string }> = {
+  prep:    { dot: "bg-blue-400",   glow: "shadow-[0_0_12px_rgba(96,165,250,0.5)]", border: "border-blue-400/40" },
+  hacking: { dot: "bg-primary",    glow: "shadow-[0_0_12px_rgba(224,76,17,0.5)]",  border: "border-primary/40" },
+  pitch:   { dot: "bg-accent",     glow: "shadow-[0_0_12px_rgba(234,179,8,0.5)]",  border: "border-accent/40" },
+};
 
 export function Roadmap({
   onRegister,
@@ -22,127 +28,151 @@ export function Roadmap({
   const [active, setActive] = useState<Stage | "all">("all");
   const events = active === "all" ? TIMELINE : TIMELINE.filter((e) => e.stage === active);
   const previewEvents = TIMELINE.slice(0, 3);
+  const displayEvents = preview ? previewEvents : events;
 
   return (
-    <section id="roadmap" className="border-y border-border bg-card/40">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:py-16 sm:px-6 lg:px-8">
+    <section id="roadmap" className="border-y border-border bg-card/40 relative overflow-hidden">
+      {/* Subtle grid bg */}
+      <div className="absolute inset-0 grid-tactical opacity-20 pointer-events-none" />
+
+      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center">
-          <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
-            // MAKEATHON SCHEDULE
-          </span>
-          <h2 className="mt-2 font-display text-2xl font-black uppercase sm:text-4xl">
-            Event <span className="text-accent">Schedule & Roadmap</span>
+          <div className="inline-flex items-center gap-2 mb-3">
+            <span className="h-px w-6 bg-primary" />
+            <span className="font-mono-tech text-[11px] tracking-[0.28em] text-primary uppercase font-bold">
+              // MAKEATHON SCHEDULE
+            </span>
+            <span className="h-px w-6 bg-primary" />
+          </div>
+          <h2 className="font-display text-2xl font-black uppercase sm:text-4xl md:text-5xl">
+            Event{" "}
+            <span className="text-alert-gradient">Schedule & Roadmap</span>
           </h2>
-          <div className="mx-auto mt-3 flex max-w-2xl items-center justify-center gap-2 border border-accent/40 bg-accent/10 px-4 py-2 clip-tactical font-mono-tech text-[11px] tracking-[0.18em] text-accent">
-            <span aria-hidden>📍</span>
-            VENUE: JAYA AUDITORIUM | SEPT 11 · 5-HOUR MAKEATHON
+          <div className="mx-auto mt-4 flex max-w-xl items-center justify-center gap-2.5 border border-accent/50 bg-accent/12 px-5 py-2.5 clip-tactical">
+            <MapPin className="size-4 text-accent shrink-0" />
+            <span className="font-mono-tech text-[10px] sm:text-[11px] tracking-[0.18em] text-accent font-bold uppercase">
+              JAYA AUDITORIUM | SEPT 11 · 5-HR MAKEATHON
+            </span>
           </div>
         </div>
 
-        {preview ? (
-          <div className="mt-12">
-            <ol className="relative ml-4 space-y-6 border-l border-primary/40 pl-8 sm:ml-8 sm:pl-10">
-              {previewEvents.map((evt) => (
-                <li key={evt.title} className="group relative">
-                  <span className="absolute -left-[41px] top-4 grid size-4 place-items-center rounded-full border-2 border-primary bg-background transition-all group-hover:scale-125 group-hover:bg-primary sm:-left-[49px]" />
-                  <div className="panel-tactical p-5 transition-all hover:shadow-[var(--shadow-panel)] sm:p-6">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="border border-primary/50 bg-primary/12 px-2 py-0.5 font-mono-tech text-[10px] tracking-[0.18em] text-primary">
-                        {evt.phase}
-                      </span>
-                      <span className="flex items-center gap-1 font-mono-tech text-[11px] text-accent">
-                        <Clock className="size-3.5" aria-hidden />
-                        {evt.time}
-                      </span>
-                      <span className="ml-auto flex items-center gap-1 font-mono-tech text-[10px] text-muted-foreground">
-                        <MapPin className="size-3" aria-hidden />
-                        {evt.location}
-                      </span>
-                    </div>
-                    <h3 className="mt-3 font-display text-lg font-bold group-hover:text-accent sm:text-xl">
-                      {evt.title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {evt.description}
-                    </p>
-                    <div className="mt-4 border-t border-border pt-3 font-mono-tech text-[10px] tracking-[0.2em] text-accent">
-                      STATUS: {evt.status}
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ol>
-            <div className="mt-10 text-center">
-              <Button variant="tactical" size="xl" onClick={onExpand}>
-                <ChevronRight className="size-4" aria-hidden />
-                View full build schedule
-              </Button>
-            </div>
+        {/* Stage Filters (not in preview mode) */}
+        {!preview && (
+          <div className="mt-8 sm:mt-10 flex flex-wrap justify-center gap-2">
+            {FILTERS.map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setActive(f.id)}
+                className={`group flex items-center gap-2 px-4 py-2.5 clip-tactical font-mono-tech text-[10px] sm:text-[11px] uppercase tracking-[0.18em] transition-all duration-300 ${
+                  active === f.id
+                    ? "bg-accent text-accent-foreground shadow-[var(--glow-warn)] scale-105"
+                    : "border border-border bg-card text-muted-foreground hover:text-accent hover:border-accent/40"
+                }`}
+              >
+                <f.icon className={`size-3.5 transition-transform ${active === f.id ? "animate-pulse" : "group-hover:rotate-12"}`} />
+                {f.label}
+              </button>
+            ))}
           </div>
-        ) : (
-          <>
-            <div className="mt-10 flex flex-wrap justify-center gap-2">
-              {FILTERS.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => setActive(f.id)}
-                  className={`px-4 py-2 clip-tactical font-mono-tech text-[11px] uppercase tracking-[0.18em] transition-all ${
-                    active === f.id
-                      ? "bg-accent text-accent-foreground shadow-[var(--glow-warn)]"
-                      : "border border-border bg-card text-muted-foreground hover:text-accent"
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-
-            <ol className="relative mt-14 ml-4 space-y-6 border-l border-primary/40 pl-8 sm:ml-8 sm:pl-10">
-              {events.map((evt) => (
-                <li key={evt.title} className="group relative">
-                  <span className="absolute -left-[41px] top-4 grid size-4 place-items-center rounded-full border-2 border-primary bg-background transition-all group-hover:scale-125 group-hover:bg-primary sm:-left-[49px]" />
-                  <div className="panel-tactical p-5 transition-all hover:shadow-[var(--shadow-panel)] sm:p-6">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="border border-primary/50 bg-primary/12 px-2 py-0.5 font-mono-tech text-[10px] tracking-[0.18em] text-primary">
-                        {evt.phase}
-                      </span>
-                      <span className="flex items-center gap-1 font-mono-tech text-[11px] text-accent">
-                        <Clock className="size-3.5" aria-hidden />
-                        {evt.time}
-                      </span>
-                      <span className="ml-auto flex items-center gap-1 font-mono-tech text-[10px] text-muted-foreground">
-                        <MapPin className="size-3" aria-hidden />
-                        {evt.location}
-                      </span>
-                    </div>
-
-                    <h3 className="mt-3 font-display text-lg font-bold group-hover:text-accent sm:text-xl">
-                      {evt.title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {evt.description}
-                    </p>
-
-                    <div className="mt-4 border-t border-border pt-3 font-mono-tech text-[10px] tracking-[0.2em] text-accent">
-                      STATUS: {evt.status}
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </>
         )}
 
-        <div className="panel-tactical mt-10 sm:mt-16 space-y-4 p-8 text-center">
-          <h3 className="font-display text-2xl font-black uppercase">Ready to build your team?</h3>
-          <p className="mx-auto max-w-xl text-sm text-muted-foreground">
-            200 INR per team. Open to students, researchers, and builders. Secure your clearance
-            badge before squad lockdown.
-          </p>
-          <Button variant="alert" size="xl" onClick={onRegister}>
-            <Flame className="size-4" aria-hidden />
-            Secure squad clearance
-          </Button>
+        {/* Timeline */}
+        <ol className={`relative ${preview ? "mt-10" : "mt-12"} ml-3 sm:ml-8 space-y-5 sm:space-y-6`}>
+          {/* Vertical connecting line */}
+          <div className="absolute left-0 sm:left-0 top-0 bottom-0 w-px bg-gradient-to-b from-primary/60 via-accent/40 to-primary/20" />
+
+          {displayEvents.map((evt, idx) => {
+            const colors = STAGE_COLORS[evt.stage] || STAGE_COLORS.hacking!;
+            return (
+              <li
+                key={evt.title}
+                className="group relative pl-8 sm:pl-12"
+                style={{ animationDelay: `${idx * 0.08}s` }}
+              >
+                {/* Timeline dot */}
+                <div className={`absolute left-[-5px] sm:left-[-6px] top-5 size-3 sm:size-3.5 rounded-full ${colors.dot} ${colors.glow}
+                                transition-all duration-300 group-hover:scale-150 ring-2 ring-background`} />
+
+                {/* Event Card */}
+                <div className={`panel-tactical p-4 sm:p-6 transition-all duration-300
+                                group-hover:-translate-y-0.5 group-hover:shadow-[var(--shadow-panel)]
+                                border-l-2 ${colors.border}`}>
+                  {/* Meta row */}
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <span className="border border-primary/50 bg-primary/12 px-2.5 py-0.5 font-mono-tech text-[9px] sm:text-[10px] tracking-[0.18em] text-primary font-bold">
+                      {evt.phase}
+                    </span>
+                    <span className="flex items-center gap-1 font-mono-tech text-[10px] sm:text-[11px] text-accent font-bold">
+                      <Clock className="size-3.5" aria-hidden />
+                      {evt.time}
+                    </span>
+                    <span className="ml-auto flex items-center gap-1 font-mono-tech text-[9px] sm:text-[10px] text-muted-foreground">
+                      <MapPin className="size-3" aria-hidden />
+                      {evt.location}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="mt-3 font-display text-base sm:text-lg md:text-xl font-bold text-foreground group-hover:text-accent transition-colors duration-300">
+                    {evt.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                    {evt.description}
+                  </p>
+
+                  {/* Status bar */}
+                  <div className="mt-4 flex items-center justify-between border-t border-border/60 pt-3">
+                    <span className="font-mono-tech text-[9px] sm:text-[10px] tracking-[0.2em] text-accent font-bold">
+                      STATUS: {evt.status}
+                    </span>
+                    <div className="h-px flex-1 mx-3 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                    <span className="font-mono-tech text-[9px] text-muted-foreground">
+                      PHASE {String(idx + 1).padStart(2, "0")}/{String(displayEvents.length).padStart(2, "0")}
+                    </span>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+
+        {/* Preview expand button */}
+        {preview && (
+          <div className="mt-8 sm:mt-10 text-center">
+            <Button variant="tactical" size="xl" onClick={onExpand}
+              className="group hover:shadow-[0_0_20px_rgba(255,200,0,0.25)] transition-shadow">
+              <ChevronRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden />
+              View full build schedule
+            </Button>
+          </div>
+        )}
+
+        {/* CTA Panel */}
+        <div className="relative mt-10 sm:mt-14 overflow-hidden">
+          <div className="absolute inset-0 grid-tactical opacity-15 pointer-events-none" />
+          <div className="panel-tactical relative space-y-4 p-6 sm:p-8 text-center border border-primary/30">
+            {/* Corner brackets */}
+            <div className="absolute -top-1 -left-1 size-5 border-t-2 border-l-2 border-primary/50" />
+            <div className="absolute -top-1 -right-1 size-5 border-t-2 border-r-2 border-primary/50" />
+            <div className="absolute -bottom-1 -left-1 size-5 border-b-2 border-l-2 border-accent/50" />
+            <div className="absolute -bottom-1 -right-1 size-5 border-b-2 border-r-2 border-accent/50" />
+
+            <h3 className="font-display text-xl sm:text-2xl font-black uppercase">
+              Ready to build your <span className="text-alert-gradient">survival tech</span>?
+            </h3>
+            <p className="mx-auto max-w-xl text-xs sm:text-sm text-muted-foreground">
+              ₹200 per squad. Open to students, researchers, and builders. Secure your clearance
+              badge before squad lockdown.
+            </p>
+            <Button variant="alert" size="xl" onClick={onRegister}
+              className="group hover:shadow-[0_0_30px_rgba(224,76,17,0.5)] hover:scale-[1.02] transition-all duration-300">
+              <Flame className="size-4 group-hover:rotate-12 transition-transform" aria-hidden />
+              Secure squad clearance
+            </Button>
+          </div>
         </div>
       </div>
     </section>
