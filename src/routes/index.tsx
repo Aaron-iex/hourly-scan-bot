@@ -8,6 +8,7 @@ import { Roadmap } from "@/components/zeroth/Roadmap";
 import { Intel } from "@/components/zeroth/Intel";
 import { SiteFooter } from "@/components/zeroth/SiteFooter";
 import { RegisterDialog } from "@/components/zeroth/RegisterDialog";
+import { Sponsors } from "@/components/zeroth/Sponsors";
 
 const TITLE = "Project Zeroth Hour — 5-Hour Disaster Tech Hackathon";
 const DESCRIPTION =
