@@ -12,28 +12,28 @@ const ICONS = {
 
 export function Sectors({ onRegister }: { onRegister: (track: string) => void }) {
   return (
-    <section id="sectors" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+    <section id="sectors" className="mx-auto max-w-7xl px-4 py-8 sm:py-16 sm:px-6 lg:px-8">
       <div className="max-w-2xl">
         <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
-          // ECE TRACKS
+          // THREAT SECTORS
         </span>
         <h2 className="mt-3 font-display text-3xl font-black uppercase sm:text-5xl">
-          Five tracks of <span className="text-accent">electronics &amp; communication</span>
+          Five fronts of <span className="text-accent">Planetary Defence</span>
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Pick a track at enlistment. Each track ships its own hardware kits, mentor pool, and judging
-          rubric.
+          Pick a threat sector at enlistment. Each sector features its own dedicated challenges,
+          mentor pool, and judging rubric.
         </p>
       </div>
 
-      <div className="mt-8 border border-accent/40 bg-accent/10 px-5 py-4 clip-tactical">
+      <div className="mt-6 border border-accent/40 bg-accent/10 px-5 py-4 clip-tactical">
         <p className="text-center font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
           OVERALL PRIZE CACHE: 1ST 10,000 · 2ND 7,000 · 3RD 5,000 INR — TOP 3 OVERALL, IRRESPECTIVE
-          OF TRACK
+          OF SECTOR
         </p>
       </div>
 
-      <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {TRACKS.map((track) => {
           const Icon = ICONS[track.icon];
           return (
@@ -57,17 +57,6 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                 {track.brief}
               </p>
 
-              <ul className="mt-5 flex flex-wrap gap-1.5">
-                {track.stack.map((s) => (
-                  <li
-                    key={s}
-                    className="border border-border bg-muted px-2 py-0.5 font-mono-tech text-[10px] tracking-widest text-muted-foreground"
-                  >
-                    {s}
-                  </li>
-                ))}
-              </ul>
-
               <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
                 <span className="font-mono-tech text-[10px] tracking-[0.2em] text-primary">
                   {track.threat}
@@ -85,7 +74,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
             Undecided operative?
           </h3>
           <p className="text-sm text-muted-foreground">
-            Enlist without a track — squad matching assigns you where the signal is strongest.
+            Enlist without a sector — squad matching assigns you where the signal is strongest.
           </p>
           <Button variant="alert" onClick={() => onRegister("")}>
             Enlist now

@@ -53,7 +53,7 @@ export function SiteNav({
               ZEROTH HOUR
             </span>
             <span className="font-mono-tech text-[10px] tracking-[0.25em] text-muted-foreground">
-              GLOBAL CRISIS HACKATHON
+              GLOBAL CRISIS BUILDATHON
             </span>
           </span>
         </button>

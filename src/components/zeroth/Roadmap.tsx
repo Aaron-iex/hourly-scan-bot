@@ -25,7 +25,7 @@ export function Roadmap({
 
   return (
     <section id="roadmap" className="border-y border-border bg-card/40">
-      <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:py-20 sm:px-6 lg:px-8">
         <div className="text-center">
           <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
             // BUILD SCHEDULE
@@ -35,7 +35,7 @@ export function Roadmap({
           </h2>
           <div className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 border border-accent/40 bg-accent/10 px-4 py-2 clip-tactical font-mono-tech text-[11px] tracking-[0.18em] text-accent">
             <span aria-hidden>⚠️</span>
-            EVENT DATE: SEPT 11 | 5-HOUR HACKATHON — DETAILED TIMELINE TBA
+            EVENT DATE: SEPT 11 | 5-HOUR BUILDATHON — DETAILED TIMELINE TBA
           </div>
         </div>
 
@@ -133,11 +133,11 @@ export function Roadmap({
           </>
         )}
 
-        <div className="panel-tactical mt-16 space-y-4 p-8 text-center">
+        <div className="panel-tactical mt-10 sm:mt-16 space-y-4 p-8 text-center">
           <h3 className="font-display text-2xl font-black uppercase">Ready to build your team?</h3>
           <p className="mx-auto max-w-xl text-sm text-muted-foreground">
-            200 INR per team. Open to ECE students, researchers, and hardware builders. Secure
-            your clearance badge before squad lockdown.
+            200 INR per team. Open to students, researchers, and builders. Secure your clearance
+            badge before squad lockdown.
           </p>
           <Button variant="alert" size="xl" onClick={onRegister}>
             <Flame className="size-4" aria-hidden />

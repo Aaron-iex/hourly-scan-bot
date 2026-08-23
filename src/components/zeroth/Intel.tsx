@@ -1,13 +1,77 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Radio, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FAQS, MENTORS, STATS } from "@/data/zeroth";
+import { FAQS, STATS } from "@/data/zeroth";
+
+// Hardcoded or filtered mentor profiles for precise structure
+const HOD = {
+  name: "Dr. A. Saravanan",
+  role: "Head of Department, ECE",
+  org: "Faculty Mentor",
+  specialty: "Signal Processing & VLSI",
+  initials: "AS",
+};
+
+const FACULTY_COORDINATORS = [
+  {
+    name: "Faculty Coordinator I",
+    role: "Faculty Coordinator",
+    org: "Department of ECE",
+    specialty: "Embedded Systems",
+    initials: "FC",
+  },
+  {
+    name: "Faculty Coordinator II",
+    role: "Faculty Coordinator",
+    org: "Department of ECE",
+    specialty: "RF & Wireless",
+    initials: "FC",
+  },
+];
+
+const STUDENT_COORDINATORS = [
+  {
+    name: "Student Event Head",
+    role: "Event Head",
+    org: "Student Coordinator",
+    specialty: "Overall Operations",
+    initials: "SH",
+  },
+  {
+    name: "Technical Head",
+    role: "Technical Head",
+    org: "Student Coordinator",
+    specialty: "Infrastructure & Tools",
+    initials: "TH",
+  },
+  {
+    name: "Registration Lead",
+    role: "Registration Lead",
+    org: "Student Coordinator",
+    specialty: "Onboarding & Ops",
+    initials: "RL",
+  },
+  {
+    name: "Logistics Coordinator",
+    role: "Logistics",
+    org: "Student Coordinator",
+    specialty: "Venue & Equipment",
+    initials: "LC",
+  },
+  {
+    name: "Media Head",
+    role: "Media Head",
+    org: "Student Coordinator",
+    specialty: "Broadcast & Comm",
+    initials: "MH",
+  },
+];
 
 export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () => void }) {
   const [open, setOpen] = useState(0);
 
   return (
-    <section id="intel" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+    <section id="intel" className="mx-auto max-w-7xl px-4 py-12 sm:py-20 sm:px-6 lg:px-8">
       <div id="briefing" className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
           <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
@@ -26,7 +90,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
             Systems that hold get deployment funding; systems that fail get a debrief.
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap gap-3">
             <span className="flex items-center gap-2 border border-primary/40 bg-primary/10 px-3 py-1.5 font-mono-tech text-[11px] tracking-[0.18em] text-primary clip-tactical">
               <ShieldCheck className="size-3.5" aria-hidden /> 200 INR/TEAM
             </span>
@@ -60,19 +124,38 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
         </div>
       ) : (
         <>
-          <div className="mt-24">
+          {/* ECE HOD Section */}
+          <div className="mt-16">
             <h3 className="font-display text-2xl font-black uppercase">
-              Command <span className="text-accent">mentors</span>
+              ECE <span className="text-accent">HOD</span>
             </h3>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {MENTORS.map((m) => (
+            <div className="mt-6 max-w-sm">
+              <article className="panel-tactical p-5">
+                <span className="grid size-12 place-items-center border border-accent/50 bg-accent/12 font-display text-sm font-black text-accent">
+                  {HOD.initials}
+                </span>
+                <h4 className="mt-4 font-display text-base font-bold">{HOD.name}</h4>
+                <p className="mt-1 font-mono-tech text-[10px] tracking-[0.15em] text-primary">
+                  {HOD.role}
+                </p>
+                <p className="mt-2 text-sm text-muted-foreground">{HOD.org}</p>
+                <p className="mt-3 border-t border-border pt-3 font-mono-tech text-[10px] tracking-[0.15em] text-accent">
+                  {HOD.specialty}
+                </p>
+              </article>
+            </div>
+          </div>
+
+          {/* Faculty Coordinators Section */}
+          <div className="mt-16">
+            <h3 className="font-display text-2xl font-black uppercase">
+              Faculty <span className="text-accent">Co-ordinators</span>
+            </h3>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 max-w-2xl">
+              {FACULTY_COORDINATORS.map((m) => (
                 <article key={m.name} className="panel-tactical p-5">
                   <span className="grid size-12 place-items-center border border-accent/50 bg-accent/12 font-display text-sm font-black text-accent">
-                    {m.name
-                      .split(" ")
-                      .slice(-2)
-                      .map((w) => w[0])
-                      .join("")}
+                    {m.initials}
                   </span>
                   <h4 className="mt-4 font-display text-base font-bold">{m.name}</h4>
                   <p className="mt-1 font-mono-tech text-[10px] tracking-[0.15em] text-primary">
@@ -87,7 +170,31 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
             </div>
           </div>
 
-          <div className="mt-24 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+          {/* Student Coordinators Section */}
+          <div className="mt-16">
+            <h3 className="font-display text-2xl font-black uppercase">
+              Student <span className="text-accent">Co-ordinators</span>
+            </h3>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {STUDENT_COORDINATORS.map((m) => (
+                <article key={m.name} className="panel-tactical p-5">
+                  <span className="grid size-12 place-items-center border border-accent/50 bg-accent/12 font-display text-sm font-black text-accent">
+                    {m.initials}
+                  </span>
+                  <h4 className="mt-4 font-display text-base font-bold">{m.name}</h4>
+                  <p className="mt-1 font-mono-tech text-[10px] tracking-[0.15em] text-primary">
+                    {m.role}
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground">{m.org}</p>
+                  <p className="mt-3 border-t border-border pt-3 font-mono-tech text-[10px] tracking-[0.15em] text-accent">
+                    {m.specialty}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-16 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
             <h3 className="font-display text-2xl font-black uppercase">
               Frequently intercepted <span className="text-accent">questions</span>
             </h3>

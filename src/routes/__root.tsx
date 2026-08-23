@@ -80,13 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Project Zeroth Hour" },
       {
         name: "description",
-        content: "5-hour disaster tech hackathon — five planetary threat sectors, one deadline.",
+        content: "5-hour disaster tech buildathon — five planetary threat sectors, one deadline.",
       },
       { name: "author", content: "Project Zeroth Hour" },
       { property: "og:title", content: "Project Zeroth Hour" },
       {
         property: "og:description",
-        content: "5-hour disaster tech hackathon — five planetary threat sectors, one deadline.",
+        content: "5-hour disaster tech buildathon — five planetary threat sectors, one deadline.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

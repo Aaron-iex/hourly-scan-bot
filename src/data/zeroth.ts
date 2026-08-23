@@ -10,54 +10,54 @@ export type Track = {
 
 export const TRACKS: Track[] = [
   {
-    id: "embedded",
-    code: "TRACK 01",
-    title: "Embedded & IoT Systems",
-    icon: "zap",
-    threat: "REAL-TIME CRITICAL",
-    brief:
-      "Build firmware-driven solutions for real-world hardware. Think smart-grid monitors, wearable health telemetry, sensor-fusion boards, or low-power edge nodes that survive where the cloud cannot.",
-    stack: ["RTOS", "ARM Cortex", "Sensors", "Edge AI"],
-  },
-  {
-    id: "signal",
-    code: "TRACK 02",
-    title: "Signal & Image Processing",
+    id: "seismic",
+    code: "SECTOR 01",
+    title: "Tsunami & Earthquake Mitigation",
     icon: "waves",
-    threat: "NOISE FLOOR 92 dB",
+    threat: "RICHTER 8.9",
     brief:
-      "Extract meaning from noise. Ship adaptive filters, biomedical signal classifiers, radar return processors, or computer-vision pipelines that run on constrained hardware.",
-    stack: ["DSP", "FFT", "OpenCV", "MATLAB"],
+      "Build and innovate technology to help protect communities, forecast seismic disruptions, and coordinate immediate responses to tsunamis and earthquakes.",
+    stack: [],
   },
   {
-    id: "rf",
-    code: "TRACK 03",
-    title: "RF, Antennas & 5G/6G",
-    icon: "anchor",
-    threat: "SPECTRUM OVERLOAD",
-    brief:
-      "Own the airwaves. Design microstrip antennas, software-defined radio stacks, beamforming arrays, or low-latency modulation schemes for next-generation wireless links.",
-    stack: ["SDR", "Antenna Design", "Beamforming", "MIMO"],
-  },
-  {
-    id: "vlsi",
-    code: "TRACK 04",
-    title: "VLSI & Semiconductor Design",
+    id: "wildfire",
+    code: "SECTOR 02",
+    title: "Wildfire Suppression Tech",
     icon: "flame",
-    threat: "DENSITY 5NM",
+    threat: "HEAT INDEX 61°C",
     brief:
-      "Push silicon to its limit. Create low-power digital ASIC blocks, analog front-end layouts, or FPGA-accelerated inference engines that prove ideas before tape-out.",
-    stack: ["Verilog", "FPGA", "ASIC", "Low Power"],
+      "Unprecedented heatwaves ignite mega-blazes worldwide. Ship autonomous drone-swarm retardant coordination, satellite infrared trajectory models, or live evacuation routing for trapped citizens.",
+    stack: [],
+  },
+  {
+    id: "offworld",
+    code: "SECTOR 03",
+    title: "Off-World Habitat (Mars / Moon)",
+    icon: "rocket",
+    threat: "ATMOS COLLAPSE",
+    brief:
+      "When Earth's atmosphere fails, humanity looks outward. Create habitat life-support telemetry, solar-flare radiation monitors, regolith 3D-printing controllers, or Martian oxygen generation networks.",
+    stack: [],
+  },
+  {
+    id: "oceanic",
+    code: "SECTOR 04",
+    title: "Oceanic Civilizations",
+    icon: "anchor",
+    threat: "SEA LEVEL +4.2M",
+    brief:
+      "Rising seas swallow coastal megacities. Design submerged modular habitats, deep-current energy harvesting arrays, acoustic underwater data protocols, or marine food-security systems.",
+    stack: [],
   },
   {
     id: "open",
-    code: "TRACK 05",
-    title: "Open ECE Innovation",
-    icon: "rocket",
+    code: "SECTOR 05",
+    title: "Open Innovation (Doomsday Tech)",
+    icon: "zap",
     threat: "UNCLASSIFIED",
     brief:
-      "No rules, pure electronics ingenuity. Off-grid power harvesters, LiDAR rangefinders, acoustic levitation rigs, or any hardware idea that does not fit a single track.",
-    stack: ["Hardware", "Robotics", "Power", "Mixed-Signal"],
+      "No rules, pure survival ingenuity. Off-grid P2P radio messaging, EMP surge defence, automated triage medkits, or post-collapse resource distribution algorithms.",
+    stack: [],
   },
 ];
 
@@ -155,16 +155,16 @@ export const MENTORS = [
 
 export const FAQS = [
   {
-    q: "When exactly does Zeroth Hour run?",
-    a: "Confirmed for Sept 11 — a 5-hour hackathon. The detailed timeline will be released to registered squads before lockdown.",
+    q: "When is the buildathon?",
+    a: "Confirmed for Sept 11 — a 5-hour buildathon. The detailed timeline will be released to registered squads before lockdown.",
   },
   {
     q: "Who is allowed to enlist?",
-    a: "ECE students, independent engineers, designers, and researchers worldwide. Participation is 200 INR per team.",
+    a: "Students, independent engineers, designers, and researchers worldwide. Participation is 200 INR per team.",
   },
   {
     q: "How large can a squad be?",
-    a: "Between 2 and 5 operatives. Solo applicants are matched into squads during the briefing stage.",
+    a: "Between 1 and 4 members. Solo applicants are welcome to participate as well.",
   },
   {
     q: "Do I need hardware to compete?",
@@ -180,5 +180,5 @@ export const STATS = [
   { label: "PRIZE CACHE", value: "22,000 INR", desc: "1st 10k · 2nd 7k · 3rd 5k overall" },
   { label: "OPERATIVES", value: "500+", desc: "Engineers, designers, researchers" },
   { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous build" },
-  { label: "ECE TRACKS", value: "05", desc: "Electronics & communication" },
+  { label: "THREAT SECTORS", value: "05", desc: "Planetary defence tracks" },
 ];

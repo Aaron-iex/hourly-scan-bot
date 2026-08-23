@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { Activity, Award, Calendar, ChevronRight, Clock, Cpu, Flame, Users } from "lucide-react";
+import { Activity, Award, Calendar, ChevronRight, Clock, Cpu, Flame, Users, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-cataclysm.jpg";
 
 const TELEMETRY = [
-  { label: "SIGNAL STRENGTH", icon: Activity, dynamic: true },
-  { label: "PRIZE CACHE", icon: Award, value: "22,000 INR" },
-  { label: "ECE TRACKS", icon: Cpu, value: "05" },
-  { label: "OPERATIVES", icon: Users, value: "500+" },
+  { label: "SIGNAL STRENGTH", icon: Activity, id: "signal" },
+  { label: "TARGET LOCK", icon: Timer, id: "countdown" },
+  { label: "ECE TRACKS", icon: Cpu, value: "05", id: "tracks" },
+  { label: "OPERATIVES", icon: Users, id: "operatives" },
 ];
 
 export function Hero({ onRegister }: { onRegister: () => void }) {
   const [threat, setThreat] = useState(94.8);
   const [clock, setClock] = useState<string | null>(null);
+  const [operatives, setOperatives] = useState(0);
+  const [countdown, setCountdown] = useState("00:00:00:00");
 
   useEffect(() => {
     const tick = () => {
@@ -21,6 +23,50 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     };
     tick();
     const id = setInterval(tick, 2000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    let startTimestamp: number | null = null;
+    const duration = 2500;
+    const endValue = 500;
+
+    const animateCount = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setOperatives(Math.floor(ease * endValue));
+      if (progress < 1) {
+        requestAnimationFrame(animateCount);
+      }
+    };
+    requestAnimationFrame(animateCount);
+  }, []);
+
+  useEffect(() => {
+    const targetDate = new Date("2026-09-11T09:30:00").getTime();
+    
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+      
+      if (distance < 0) {
+        setCountdown("00:00:00:00");
+        return;
+      }
+      
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      setCountdown(
+        `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+      );
+    };
+    
+    updateCountdown();
+    const id = setInterval(updateCountdown, 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -36,25 +82,25 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_10%,var(--background)_78%)]" />
       <div className="absolute inset-0 -z-10 grid-tactical opacity-60" />
 
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-4 py-24 text-center sm:px-6 lg:px-8 lg:py-32">
+      <div className="mx-auto flex max-w-6xl flex-col items-center px-4 py-8 text-center sm:px-6 lg:px-8 lg:py-24">
         <div className="animate-rise inline-flex items-center gap-3 border border-primary/60 bg-primary/12 px-4 py-2 clip-tactical">
           <span className="relative flex size-2.5">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
             <span className="relative inline-flex size-2.5 rounded-full bg-primary" />
           </span>
           <span className="font-mono-tech text-[11px] tracking-[0.25em] text-accent">
-            BUILD MODE ACTIVE {clock ? `· ${clock}` : ""}
+            JAYA ENGINEERING COLLEGE {clock ? `· ${clock}` : ""}
           </span>
         </div>
 
         <h1 className="animate-rise mt-8 font-display text-4xl font-black uppercase leading-[1.05] sm:text-6xl lg:text-7xl">
-          ECE engineers, this is your
+          Engineers, designers, researchers
           <span className="mt-2 block animate-flicker text-alert-gradient">Zeroth Hour</span>
         </h1>
 
         <p className="animate-rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
           Embedded systems, signal processing, RF, and VLSI challenges are pushing electronics past
-          their limits. Join 500+ ECE engineers in a 5-hour sprint to prototype hardware and
+          their limits. Join the brightest minds in a 5-hour sprint to prototype hardware and
           communication tech that actually works.
         </p>
 
@@ -62,7 +108,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           <Calendar className="size-5 shrink-0 text-accent" aria-hidden />
           <div>
             <p className="font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
-              SEPT 11 // 5-HOUR HACKATHON
+              SEPT 11 // 5-HOUR BUILDATHON
             </p>
             <p className="font-mono-tech text-[11px] text-muted-foreground">
               Registration queue open — lock clearance before lockdown.
@@ -84,21 +130,50 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </Button>
         </div>
 
-        <dl className="mt-16 grid w-full grid-cols-2 gap-3 lg:grid-cols-4">
-          {TELEMETRY.map(({ label, icon: Icon, value, dynamic }) => (
-            <div key={label} className="panel-tactical p-4 text-left">
+        <div className="animate-rise mt-6 flex w-full max-w-lg flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 border border-primary/60 bg-primary/10 px-6 py-6 clip-tactical">
+            <p className="font-mono-tech text-[12px] tracking-[0.2em] text-accent">PRIZE CACHE</p>
+            <p className="font-display text-4xl font-black text-foreground drop-shadow-[0_0_15px_rgba(224,76,17,0.5)]">
+              22,000 INR
+            </p>
+            <p className="font-mono-tech text-[10px] text-muted-foreground text-center">
+              + CERTIFICATES AND MERCH
+            </p>
+          </div>
+          
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 border border-accent/60 bg-accent/10 px-6 py-6 clip-tactical">
+            <p className="font-mono-tech text-[12px] tracking-[0.2em] text-accent">REGISTRATION</p>
+            <p className="font-display text-4xl font-black text-foreground drop-shadow-[0_0_15px_rgba(255,200,0,0.5)]">
+              ₹200
+            </p>
+            <p className="font-mono-tech text-[10px] text-muted-foreground text-center">
+              INCLUDES WI-FI, FOOD & BEVERAGES
+            </p>
+          </div>
+        </div>
+
+        <dl className="mt-8 grid w-full grid-cols-2 gap-3 sm:mt-16 lg:grid-cols-4">
+          {TELEMETRY.map((item) => (
+            <div key={item.id} className="panel-tactical p-4 text-left">
               <dt className="flex items-center justify-between font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground">
-                {label}
-                <Icon className="size-3.5 text-primary" aria-hidden />
+                {item.label}
+                <item.icon className="size-3.5 text-primary" aria-hidden />
               </dt>
               <dd className="mt-2 font-display text-2xl font-black text-foreground">
-                {dynamic ? (
+                {item.id === "signal" && (
                   <span className="text-primary">
                     {threat}
                     <span className="text-sm text-accent"> dBm</span>
                   </span>
-                ) : (
-                  value
+                )}
+                {item.id === "countdown" && (
+                  <span className="text-accent tracking-wider">{countdown}</span>
+                )}
+                {item.id === "tracks" && item.value}
+                {item.id === "operatives" && (
+                  <span>
+                    {operatives}<span className="text-primary">+</span>
+                  </span>
                 )}
               </dd>
             </div>

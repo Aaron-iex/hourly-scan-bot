@@ -13,11 +13,14 @@ const FIELD =
   "w-full border border-border bg-input/60 px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary";
 const LABEL = "font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground";
 
+import { submitRegistrationData } from "@/lib/registrations";
+
 export function RegisterDialog({ open, onClose, initialTrack }: Props) {
   const [form, setForm] = useState({
     teamName: "",
     leaderName: "",
     email: "",
+    phone: "",
     institution: "",
     track: initialTrack || TRACKS[0]!.title,
     teamSize: "4",
@@ -25,6 +28,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
   });
   const [code, setCode] = useState("");
   const [copied, setCopied] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (open && initialTrack) setForm((f) => ({ ...f, track: initialTrack }));
@@ -41,15 +45,24 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
     };
   }, [open, onClose]);
 
-  if (!open) return null;
-
   const set = (k: keyof typeof form) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCode("ZH-" + Math.floor(100000 + Math.random() * 900000));
+    setIsSubmitting(true);
+    try {
+      const id = await submitRegistrationData(form);
+      setCode(id);
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : "Registration failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (!open) return null;
 
   const copy = async () => {
     await navigator.clipboard.writeText(code);
@@ -137,8 +150,20 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
                 />
               </label>
               <label className="space-y-1.5">
+                <span className={LABEL}>MOBILE NUMBER</span>
+                <input
+                  required
+                  type="tel"
+                  className={FIELD}
+                  value={form.phone}
+                  onChange={set("phone")}
+                  placeholder="+91 98765 43210"
+                />
+              </label>
+              <label className="space-y-1.5 sm:col-span-2">
                 <span className={LABEL}>INSTITUTION / ORG</span>
                 <input
+                  required
                   className={FIELD}
                   value={form.institution}
                   onChange={set("institution")}
@@ -158,9 +183,9 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
               <label className="space-y-1.5">
                 <span className={LABEL}>SQUAD SIZE</span>
                 <select className={FIELD} value={form.teamSize} onChange={set("teamSize")}>
-                  {["2", "3", "4", "5"].map((n) => (
+                  {["1", "2", "3", "4"].map((n) => (
                     <option key={n} value={n}>
-                      {n} operatives
+                      {n} {n === "1" ? "person" : "people"}
                     </option>
                   ))}
                 </select>
@@ -178,14 +203,19 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
               />
             </label>
 
-            <p className="flex items-center gap-2 font-mono-tech text-[10px] tracking-[0.15em] text-muted-foreground">
-              <ShieldCheck className="size-3.5 text-accent" aria-hidden />
-              NOTICE: Hackathon confirmed for Sept 11 — 5-hour sprint. Details TBA.
-            </p>
+            <div className="flex flex-col gap-2 rounded-md border border-accent/40 bg-accent/10 p-3">
+              <p className="flex items-center gap-2 font-mono-tech text-[12px] tracking-[0.1em] text-accent font-bold">
+                <ShieldCheck className="size-4" aria-hidden />
+                REGISTRATION FEE: ₹200 PER SQUAD
+              </p>
+              <p className="text-xs text-muted-foreground ml-6">
+                Includes high-speed Wi-Fi, Food & Beverages for the 5-hour buildathon duration.
+              </p>
+            </div>
 
-            <Button type="submit" variant="alert" size="xl" className="w-full">
+            <Button type="submit" variant="alert" size="xl" className="w-full" disabled={isSubmitting}>
               <Flame className="size-4" aria-hidden />
-              Transmit enrollment
+              {isSubmitting ? "Transmitting..." : "Transmit enrollment"}
             </Button>
           </form>
         )}
