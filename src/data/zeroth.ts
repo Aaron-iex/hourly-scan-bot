@@ -156,11 +156,11 @@ export const MENTORS = [
 export const FAQS = [
   {
     q: "When exactly does Zeroth Hour run?",
-    a: "Official dates are being finalised with our broadcast partners and will be announced soon. Registered squads receive the calendar alert first.",
+    a: "Confirmed for Sept 11 — a 5-hour hackathon. The detailed timeline will be released to registered squads before lockdown.",
   },
   {
     q: "Who is allowed to enlist?",
-    a: "University students, independent engineers, designers, and crisis researchers worldwide. Participation is free.",
+    a: "University students, independent engineers, designers, and crisis researchers worldwide. Participation is 200 INR per team.",
   },
   {
     q: "How large can a squad be?",
