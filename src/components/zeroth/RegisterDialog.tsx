@@ -71,9 +71,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
             <span className="font-mono-tech text-[10px] tracking-[0.22em] text-primary">
               DEFCON 1 // CLEARANCE REQUEST
             </span>
-            <h2 className="font-display text-lg font-black uppercase">
-              Squad enrollment protocol
-            </h2>
+            <h2 className="font-display text-lg font-black uppercase">Squad enrollment protocol</h2>
           </div>
           <button
             onClick={onClose}

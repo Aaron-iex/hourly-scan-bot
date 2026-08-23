@@ -64,9 +64,7 @@ export function SiteNav({
               key={l.id}
               onClick={() => handleTab(l.id)}
               className={`px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] transition-colors ${
-                activeTab === l.id
-                  ? "text-accent"
-                  : "text-muted-foreground hover:text-accent"
+                activeTab === l.id ? "text-accent" : "text-muted-foreground hover:text-accent"
               }`}
               aria-current={activeTab === l.id ? "page" : undefined}
             >

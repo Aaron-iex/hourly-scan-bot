@@ -134,9 +134,7 @@ export function Roadmap({
         )}
 
         <div className="panel-tactical mt-16 space-y-4 p-8 text-center">
-          <h3 className="font-display text-2xl font-black uppercase">
-            Ready to deploy your team?
-          </h3>
+          <h3 className="font-display text-2xl font-black uppercase">Ready to deploy your team?</h3>
           <p className="mx-auto max-w-xl text-sm text-muted-foreground">
             200 INR per team. Open to students, crisis researchers, and apocalyptic builders. Secure
             your clearance badge before squad lockdown.

@@ -40,27 +40,17 @@ function Index() {
   return (
     <div className="min-h-screen bg-background">
       <EmergencyTicker />
-      <SiteNav
-        onRegister={() => openRegister()}
-        activeTab={tab}
-        onTabChange={setTab}
-      />
+      <SiteNav onRegister={() => openRegister()} activeTab={tab} onTabChange={setTab} />
       <main>
         {tab === "home" && (
           <>
             <Hero onRegister={() => openRegister()} />
             <Sectors onRegister={openRegister} />
-            <Roadmap
-              onRegister={() => openRegister()}
-              preview
-              onExpand={() => setTab("events")}
-            />
+            <Roadmap onRegister={() => openRegister()} preview onExpand={() => setTab("events")} />
             <Intel preview onExpand={() => setTab("about")} />
           </>
         )}
-        {tab === "events" && (
-          <Roadmap onRegister={() => openRegister()} />
-        )}
+        {tab === "events" && <Roadmap onRegister={() => openRegister()} />}
         {tab === "about" && <Intel />}
       </main>
       <SiteFooter />
