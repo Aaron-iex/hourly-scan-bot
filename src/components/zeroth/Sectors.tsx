@@ -10,7 +10,6 @@ const ICONS = {
   zap: Zap,
 } satisfies Record<string, LucideIcon>;
 
-
 export function Sectors({ onRegister }: { onRegister: (track: string) => void }) {
   return (
     <section id="sectors" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
@@ -27,7 +26,14 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
         </p>
       </div>
 
-      <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 border border-accent/40 bg-accent/10 px-5 py-4 clip-tactical">
+        <p className="text-center font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
+          OVERALL PRIZE CACHE: 1ST 10,000 · 2ND 7,000 · 3RD 5,000 INR — TOP 3 OVERALL,
+          IRRESPECTIVE OF TRACK
+        </p>
+      </div>
+
+      <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {TRACKS.map((track) => {
           const Icon = ICONS[track.icon];
           return (

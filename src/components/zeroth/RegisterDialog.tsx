@@ -182,7 +182,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
 
             <p className="flex items-center gap-2 font-mono-tech text-[10px] tracking-[0.15em] text-muted-foreground">
               <ShieldCheck className="size-3.5 text-accent" aria-hidden />
-              DEMO ENROLLMENT — NO DATA LEAVES THIS BROWSER
+              NOTICE: Hackathon confirmed for Sept 11 — 5-hour sprint. Details TBA.
             </p>
 
             <Button type="submit" variant="alert" size="xl" className="w-full">
