@@ -5,9 +5,9 @@ import { TIMELINE, type Stage } from "@/data/zeroth";
 
 const FILTERS: { id: Stage | "all"; label: string }[] = [
   { id: "all", label: "All phases" },
-  { id: "prep", label: "Stage 1 · Briefing" },
-  { id: "hacking", label: "Stage 2 · Lockdown" },
-  { id: "pitch", label: "Stage 3 · Evacuation" },
+  { id: "prep", label: "Stage 1 · Reporting (08:00 AM)" },
+  { id: "hacking", label: "Stage 2 · Sprint (11:00 AM)" },
+  { id: "pitch", label: "Stage 3 · Freeze & Awards (04:00 PM)" },
 ];
 
 export function Roadmap({
@@ -21,21 +21,21 @@ export function Roadmap({
 }) {
   const [active, setActive] = useState<Stage | "all">("all");
   const events = active === "all" ? TIMELINE : TIMELINE.filter((e) => e.stage === active);
-  const previewEvents = TIMELINE.slice(0, 2);
+  const previewEvents = TIMELINE.slice(0, 3);
 
   return (
     <section id="roadmap" className="border-y border-border bg-card/40">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:py-20 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:py-16 sm:px-6 lg:px-8">
         <div className="text-center">
           <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
-            // BUILD SCHEDULE
+            // MAKEATHON SCHEDULE
           </span>
-          <h2 className="mt-3 font-display text-3xl font-black uppercase sm:text-5xl">
-            Build <span className="text-accent">roadmap</span>
+          <h2 className="mt-2 font-display text-2xl font-black uppercase sm:text-4xl">
+            Event <span className="text-accent">Schedule & Roadmap</span>
           </h2>
-          <div className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 border border-accent/40 bg-accent/10 px-4 py-2 clip-tactical font-mono-tech text-[11px] tracking-[0.18em] text-accent">
-            <span aria-hidden>⚠️</span>
-            EVENT DATE: SEPT 11 | 5-HOUR MAKEATHON — DETAILED TIMELINE TBA
+          <div className="mx-auto mt-3 flex max-w-2xl items-center justify-center gap-2 border border-accent/40 bg-accent/10 px-4 py-2 clip-tactical font-mono-tech text-[11px] tracking-[0.18em] text-accent">
+            <span aria-hidden>📍</span>
+            VENUE: JAYA AUDITORIUM | SEPT 11 · 5-HOUR MAKEATHON
           </div>
         </div>
 

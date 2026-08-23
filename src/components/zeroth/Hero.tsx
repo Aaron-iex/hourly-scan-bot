@@ -82,56 +82,67 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_10%,var(--background)_78%)]" />
       <div className="absolute inset-0 -z-10 grid-tactical opacity-60" />
 
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-4 py-8 text-center sm:px-6 lg:px-8 lg:py-24">
-        <div className="animate-rise inline-flex items-center gap-3 border border-primary/60 bg-primary/12 px-4 py-2 clip-tactical">
-          <span className="relative flex size-2.5">
+      <div className="mx-auto flex max-w-5xl flex-col items-center px-4 py-6 text-center sm:px-6 lg:px-8 lg:py-16">
+        <div className="animate-rise inline-flex items-center gap-2 border border-primary/60 bg-primary/12 px-3 py-1 clip-tactical">
+          <span className="relative flex size-2">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
-            <span className="relative inline-flex size-2.5 rounded-full bg-primary" />
+            <span className="relative inline-flex size-2 rounded-full bg-primary" />
           </span>
-          <span className="font-mono-tech text-[11px] tracking-[0.25em] text-accent">
-            JAYA ENGINEERING COLLEGE {clock ? `· ${clock}` : ""}
+          <span className="font-mono-tech text-[10px] tracking-[0.25em] text-accent">
+            DEFCON 1 PROTOCOL {clock ? `· ${clock}` : ""}
           </span>
         </div>
 
-        <div className="animate-rise mt-5 space-y-1.5">
-          <p className="font-mono-tech text-xs sm:text-sm tracking-[0.25em] uppercase text-primary font-bold">
+        {/* College & Department */}
+        <div className="animate-rise mt-4 space-y-1 max-w-3xl">
+          <h2 className="font-display text-xl sm:text-3xl md:text-4xl font-black uppercase tracking-wider text-foreground">
+            JAYA ENGINEERING COLLEGE
+          </h2>
+          <p className="font-mono-tech text-[11px] sm:text-xs tracking-[0.18em] uppercase text-primary font-bold">
             DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
           </p>
-          <p className="font-mono-tech text-[11px] tracking-[0.3em] text-muted-foreground uppercase">
-            // PRESENTS
-          </p>
+          <div className="pt-1">
+            <span className="inline-block border border-accent/40 bg-accent/10 px-3 py-0.5 clip-tactical font-mono-tech text-[10px] sm:text-xs tracking-[0.3em] uppercase text-accent font-semibold">
+              // PRESENTS
+            </span>
+          </div>
         </div>
 
-        <h1 className="animate-rise mt-4 font-display text-4xl font-black uppercase leading-[1.05] sm:text-6xl lg:text-7xl">
-          <span className="block text-foreground">MAKEATHON</span>
-          <span className="mt-2 block animate-flicker text-alert-gradient">PROJECT ZEROTH HOUR</span>
+        {/* Main Event Title - Same size for Makeathon, reduced Project Zeroth Hour */}
+        <h1 className="animate-rise mt-3 font-display uppercase">
+          <span className="block text-xl sm:text-3xl md:text-4xl font-black text-foreground tracking-tight">
+            MAKEATHON
+          </span>
+          <span className="mt-1 block text-lg sm:text-2xl md:text-3xl font-extrabold animate-flicker text-alert-gradient tracking-wide">
+            PROJECT ZEROTH HOUR
+          </span>
         </h1>
 
-        <p className="animate-rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+        <p className="animate-rise mt-3 max-w-xl text-xs sm:text-sm leading-relaxed text-muted-foreground">
           Embedded systems, signal processing, RF, and VLSI challenges are pushing electronics past
           their limits. Join the brightest minds in a 5-hour sprint to prototype hardware and
           communication tech that actually works.
         </p>
 
-        <div className="animate-rise mt-8 flex w-full max-w-lg items-center gap-3 border border-accent/60 bg-accent/10 px-5 py-4 clip-tactical text-left">
-          <Calendar className="size-5 shrink-0 text-accent" aria-hidden />
+        <div className="animate-rise mt-4 flex w-full max-w-md items-center gap-3 border border-accent/60 bg-accent/10 px-4 py-2.5 clip-tactical text-left">
+          <Calendar className="size-4 shrink-0 text-accent" aria-hidden />
           <div>
-            <p className="font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
+            <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
               SEPT 11 // 5-HOUR MAKEATHON
             </p>
-            <p className="font-mono-tech text-[11px] text-muted-foreground">
-              Registration queue open — lock clearance before lockdown.
+            <p className="font-mono-tech text-[10px] text-muted-foreground">
+              Venue: Jaya Auditorium · Registration queue open
             </p>
           </div>
         </div>
 
-        <div className="animate-rise mt-8 flex flex-col gap-3 sm:flex-row">
-          <Button variant="alert" size="xl" onClick={onRegister}>
+        <div className="animate-rise mt-4 flex flex-col gap-2.5 sm:flex-row w-full sm:w-auto">
+          <Button variant="alert" size="default" onClick={onRegister} className="w-full sm:w-auto">
             <Flame className="size-4" aria-hidden />
             Enlist your squad
             <ChevronRight className="size-4" aria-hidden />
           </Button>
-          <Button variant="tactical" size="xl" asChild>
+          <Button variant="tactical" size="default" asChild className="w-full sm:w-auto">
             <a href="#roadmap">
               <Clock className="size-4" aria-hidden />
               View build schedule
@@ -139,24 +150,24 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </Button>
         </div>
 
-        <div className="animate-rise mt-6 flex w-full max-w-lg flex-col sm:flex-row gap-4 justify-center">
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 border border-primary/60 bg-primary/10 px-6 py-6 clip-tactical">
-            <p className="font-mono-tech text-[12px] tracking-[0.2em] text-accent">PRIZE CACHE</p>
-            <p className="font-display text-4xl font-black text-foreground drop-shadow-[0_0_15px_rgba(224,76,17,0.5)]">
+        <div className="animate-rise mt-4 flex w-full max-w-md flex-row gap-3 justify-center">
+          <div className="flex flex-1 flex-col items-center justify-center gap-1 border border-primary/60 bg-primary/10 px-3 py-3 clip-tactical">
+            <p className="font-mono-tech text-[10px] tracking-[0.2em] text-accent">PRIZE CACHE</p>
+            <p className="font-display text-xl sm:text-2xl font-black text-foreground drop-shadow-[0_0_15px_rgba(224,76,17,0.5)]">
               22,000 INR
             </p>
-            <p className="font-mono-tech text-[10px] text-muted-foreground text-center">
-              + CERTIFICATES AND MERCH
+            <p className="font-mono-tech text-[9px] text-muted-foreground text-center">
+              + MERCH & CERTIFICATES
             </p>
           </div>
           
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 border border-accent/60 bg-accent/10 px-6 py-6 clip-tactical">
-            <p className="font-mono-tech text-[12px] tracking-[0.2em] text-accent">REGISTRATION</p>
-            <p className="font-display text-4xl font-black text-foreground drop-shadow-[0_0_15px_rgba(255,200,0,0.5)]">
+          <div className="flex flex-1 flex-col items-center justify-center gap-1 border border-accent/60 bg-accent/10 px-3 py-3 clip-tactical">
+            <p className="font-mono-tech text-[10px] tracking-[0.2em] text-accent">REGISTRATION</p>
+            <p className="font-display text-xl sm:text-2xl font-black text-foreground drop-shadow-[0_0_15px_rgba(255,200,0,0.5)]">
               ₹200
             </p>
-            <p className="font-mono-tech text-[10px] text-muted-foreground text-center">
-              INCLUDES WI-FI, FOOD & BEVERAGES
+            <p className="font-mono-tech text-[9px] text-muted-foreground text-center">
+              FOOD & WI-FI INCLUDED
             </p>
           </div>
         </div>
