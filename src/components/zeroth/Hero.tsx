@@ -54,7 +54,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
 
         <p className="animate-rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
           Catastrophic seismic shifts, unchecked wildfire infernos, and oceanic surges are
-          overwhelming global infrastructure. Join 500+ crisis engineers in a 48-hour emergency
+          overwhelming global infrastructure. Join 500+ crisis engineers in a 5-hour emergency
           sprint to prototype life-saving disaster technology.
         </p>
 
@@ -62,7 +62,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           <Calendar className="size-5 shrink-0 text-accent" aria-hidden />
           <div>
             <p className="font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
-              Official dates announced soon
+              SEPT 11 // 5-HOUR HACKATHON
             </p>
             <p className="font-mono-tech text-[11px] text-muted-foreground">
               Registration queue open — lock clearance before lockdown.

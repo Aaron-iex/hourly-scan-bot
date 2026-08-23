@@ -75,9 +75,9 @@ export type TimelineEvent = {
 
 export const TIMELINE: TimelineEvent[] = [
   {
-    phase: "STAGE 1 // BRIEFING",
-    time: "T-MINUS 14 DAYS",
-    title: "Operative Onboarding & Squad Matching",
+    phase: "T-0 HRS // BRIEFING",
+    time: "09:00",
+    title: "Operative Onboarding & Track Selection",
     location: "Virtual Command Center",
     stage: "prep",
     description:
@@ -85,29 +85,19 @@ export const TIMELINE: TimelineEvent[] = [
     status: "REGISTRATION OPEN",
   },
   {
-    phase: "STAGE 1 // BRIEFING",
-    time: "DAY 1 · 09:00",
-    title: "Zeroth Hour Keynote: Planetary Survival Tech",
-    location: "Main Auditorium & Live Broadcast",
-    stage: "prep",
-    description:
-      "Opening address by crisis engineers and seismic researchers detailing real-world disaster dataset baselines.",
-    status: "SCHEDULED",
-  },
-  {
-    phase: "STAGE 2 // LOCKDOWN",
-    time: "DAY 1 · 11:00",
-    title: "DEFCON 1 Sprint Start",
+    phase: "T+0.5 HRS // LOCKDOWN",
+    time: "09:30",
+    title: "DEFCON 1 Sprint Start — 5-Hour Hackathon Begins",
     location: "Command Labs / Online Platform",
     stage: "hacking",
     description:
-      "The 48-hour continuous build begins. Mentors deployed across drone robotics, sub-sea sensors, and off-grid radio.",
+      "The 5-hour continuous build begins. Mentors deployed across drone robotics, sub-sea sensors, and off-grid radio.",
     status: "CRITICAL SPRINT",
   },
   {
-    phase: "STAGE 2 // LOCKDOWN",
-    time: "DAY 2 · 14:00",
-    title: "Mid-Point Crisis Simulation",
+    phase: "T+2.5 HRS // MID-POINT",
+    time: "11:30",
+    title: "Mid-Point Crisis Injection & Status Check",
     location: "War Room Mentor Sessions",
     stage: "hacking",
     description:
@@ -115,8 +105,8 @@ export const TIMELINE: TimelineEvent[] = [
     status: "SIMULATION EVENT",
   },
   {
-    phase: "STAGE 3 // EVACUATION",
-    time: "DAY 3 · 11:00",
+    phase: "T+4.5 HRS // CODE FREEZE",
+    time: "13:30",
     title: "Final Code Freeze & Repository Lock",
     location: "Platform Repo Lock",
     stage: "pitch",
@@ -125,13 +115,13 @@ export const TIMELINE: TimelineEvent[] = [
     status: "CODE FREEZE",
   },
   {
-    phase: "STAGE 3 // EVACUATION",
-    time: "DAY 3 · 16:00",
-    title: "Grand Evacuation Pitch & Award Ceremony",
+    phase: "T+5 HRS // EVACUATION",
+    time: "14:00",
+    title: "Lightning Pitches & 15k INR Award Ceremony",
     location: "DEFCON Main Stage & Global Stream",
     stage: "pitch",
     description:
-      "Top 10 finalists present live. $50,000 in cash prizes, incubator grants, and deployment funds awarded.",
+      "Top finalists present live. 15,000 INR in cash prizes, certificates, and deployment funds awarded.",
     status: "GRAND FINALE",
   },
 ];
@@ -166,11 +156,11 @@ export const MENTORS = [
 export const FAQS = [
   {
     q: "When exactly does Zeroth Hour run?",
-    a: "Official dates are being finalised with our broadcast partners and will be announced soon. Registered squads receive the calendar alert first.",
+    a: "Confirmed for Sept 11 — a 5-hour hackathon. The detailed timeline will be released to registered squads before lockdown.",
   },
   {
     q: "Who is allowed to enlist?",
-    a: "University students, independent engineers, designers, and crisis researchers worldwide. Participation is free.",
+    a: "University students, independent engineers, designers, and crisis researchers worldwide. Participation is 200 INR per team.",
   },
   {
     q: "How large can a squad be?",
@@ -187,8 +177,8 @@ export const FAQS = [
 ];
 
 export const STATS = [
-  { label: "PRIZE CACHE", value: "$50,000+", desc: "Cash, grants & deployment funds" },
+  { label: "PRIZE CACHE", value: "22,000 INR", desc: "1st 10k · 2nd 7k · 3rd 5k overall" },
   { label: "OPERATIVES", value: "500+", desc: "Engineers, designers, researchers" },
-  { label: "SPRINT WINDOW", value: "48 HRS", desc: "Continuous crisis build" },
+  { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous crisis build" },
   { label: "THREAT SECTORS", value: "05", desc: "Planetary defence tracks" },
 ];

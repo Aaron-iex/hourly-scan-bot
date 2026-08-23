@@ -12,7 +12,7 @@ export function SiteFooter() {
             <span className="font-display text-sm font-black tracking-[0.2em]">ZEROTH HOUR</span>
           </div>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            Global disaster mitigation and planetary survival tech hackathon. 48 hours, five threat
+            Global disaster mitigation and planetary survival tech hackathon. 5 hours, five threat
             sectors, one deadline that never moves.
           </p>
           <div className="mt-5 flex gap-2">
@@ -54,7 +54,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 font-mono-tech text-xs text-muted-foreground">
             <li>ops@zerothhour.earth</li>
             <li>PRESS: broadcast@zerothhour.earth</li>
-            <li>STATUS: DEFCON 1 — DATES TBA</li>
+            <li>STATUS: DEFCON 1 — SEPT 11 · 5-HOUR SPRINT</li>
           </ul>
         </div>
       </div>
