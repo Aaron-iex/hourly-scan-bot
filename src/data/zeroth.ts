@@ -117,11 +117,11 @@ export const TIMELINE: TimelineEvent[] = [
   {
     phase: "T+5 HRS // EVACUATION",
     time: "14:00",
-    title: "Lightning Pitches & 15k INR Award Ceremony",
+    title: "Lightning Pitches & Prize Award Ceremony",
     location: "DEFCON Main Stage & Global Stream",
     stage: "pitch",
     description:
-      "Top finalists present live. 15,000 INR in cash prizes, certificates, and deployment funds awarded.",
+      "Top finalists present live. Prizes of ₹10,000, ₹7,000, and ₹5,000 are awarded to the top three teams.",
     status: "GRAND FINALE",
   },
 ];
@@ -170,7 +170,7 @@ export const FAQS = [
   },
   {
     q: "Who is allowed to enlist?",
-    a: "University students, independent engineers, designers, and crisis researchers worldwide. Participation is 200 INR per team.",
+    a: "University students and independent builders can participate. Entry is ₹200 per team. Wi-Fi and lunch will be provided at the venue.",
   },
   {
     q: "How large can a squad be?",
@@ -187,8 +187,8 @@ export const FAQS = [
 ];
 
 export const STATS = [
-  { label: "PRIZE CACHE", value: "15,000 INR", desc: "1st 10k · 2nd 3k · 3rd 2k overall" },
-  { label: "OPERATIVES", value: "500+", desc: "Engineers, designers, researchers" },
+  { label: "PRIZE POOL", value: "₹22,000", desc: "1st ₹10k · 2nd ₹7k · 3rd ₹5k" },
+  { label: "TEAM FORMAT", value: "ECE", desc: "Student teams and builders" },
   { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous crisis build" },
   { label: "THREAT SECTORS", value: "05", desc: "Planetary defence tracks" },
 ];

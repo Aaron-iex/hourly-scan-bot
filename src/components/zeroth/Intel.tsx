@@ -17,18 +17,19 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
             Engineering the <span className="text-accent">last hour</span>
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-            Zeroth Hour is a 5-hour crisis engineering hackathon built around one premise: the
-            warning already fired. Operatives prototype systems that predict, contain, and survive
-            planetary-scale disaster — judged by researchers who fight these events for a living.
+            Zeroth Hour is a 5-hour ECE hackathon built around one clear challenge: keep critical systems
+            communicating when conditions turn hostile. Teams prototype practical solutions across
+            communication systems, embedded technologies, and resilient electronics.
           </p>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            Every submission is stress-tested by a live disaster injection at the sprint midpoint.
-            Systems that hold get deployment funding; systems that fail get a debrief.
+            Bring a focused idea, build it with your team, and present the result at the final review.
+            The event is designed for student teams to turn engineering fundamentals into useful,
+            testable prototypes.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <span className="flex items-center gap-2 border border-primary/40 bg-primary/10 px-3 py-1.5 font-mono-tech text-[11px] tracking-[0.18em] text-primary clip-tactical">
-              <ShieldCheck className="size-3.5" aria-hidden /> 200 INR/TEAM
+              <ShieldCheck className="size-3.5" aria-hidden /> ₹200 / TEAM
             </span>
             <span className="flex items-center gap-2 border border-accent/40 bg-accent/10 px-3 py-1.5 font-mono-tech text-[11px] tracking-[0.18em] text-accent clip-tactical">
               <Radio className="size-3.5" aria-hidden /> HYBRID · GLOBAL STREAM

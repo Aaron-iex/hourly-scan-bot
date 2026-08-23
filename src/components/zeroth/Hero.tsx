@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Activity, Award, Calendar, ChevronRight, Clock, Cpu, Flame, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-cataclysm.jpg";
+import { Sponsors } from "./Sponsors";
 
 const TELEMETRY = [
   { label: "THREAT LEVEL", icon: Activity, dynamic: true },
-  { label: "PRIZE CACHE", icon: Award, value: "15,000 INR" },
+  { label: "PRIZE POOL", icon: Award, value: "₹22,000" },
   { label: "THREAT SECTORS", icon: Cpu, value: "05" },
-  { label: "OPERATIVES", icon: Users, value: "500+" },
+  { label: "TEAM FORMAT", icon: Users, value: "ECE" },
 ];
 
 export function Hero({ onRegister }: { onRegister: () => void }) {
@@ -53,9 +54,9 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
         </h1>
 
         <p className="animate-rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          When the signal drops, the engineers take over. Join 500+ ECE innovators in a 5-hour emergency
-          sprint to prototype intelligent communication systems, embedded technologies, and resilient
-          electronics for a world on the edge.
+          When the signal drops, engineers keep the systems alive. Join ECE student teams for a focused
+          5-hour sprint to build practical communication systems, embedded technologies, and resilient
+          electronics inspired by the high-stakes world of Zeroth Hour.
         </p>
 
         <div className="animate-rise mt-8 flex w-full max-w-lg items-center gap-3 border border-accent/60 bg-accent/10 px-5 py-4 clip-tactical text-left">
@@ -65,7 +66,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               SEPT 9 // 5-HOUR HACKATHON
             </p>
             <p className="font-mono-tech text-[11px] text-muted-foreground">
-              Registration queue open — lock clearance before lockdown.
+              ₹200 per team · Wi-Fi and lunch provided · Registration details to follow.
             </p>
           </div>
         </div>
@@ -119,6 +120,10 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             </svg>
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--background),transparent_25%,transparent_75%,var(--background))]" />
           </div>
+        </div>
+
+        <div className="mt-8 w-full max-w-3xl">
+          <Sponsors />
         </div>
       </div>
     </section>

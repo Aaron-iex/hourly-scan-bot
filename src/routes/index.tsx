@@ -8,11 +8,10 @@ import { Roadmap } from "@/components/zeroth/Roadmap";
 import { Intel } from "@/components/zeroth/Intel";
 import { SiteFooter } from "@/components/zeroth/SiteFooter";
 import { RegisterDialog } from "@/components/zeroth/RegisterDialog";
-import { Sponsors } from "@/components/zeroth/Sponsors";
 
 const TITLE = "Project Zeroth Hour — 5-Hour Disaster Tech Hackathon";
 const DESCRIPTION =
-  "Join 500+ crisis engineers for a 5-hour hackathon across five planetary threat sectors: seismic, wildfire, off-world, oceanic and open doomsday tech. 22,000 INR overall prize cache.";
+  "Project Zeroth Hour is a five-hour ECE hackathon for building practical communication, embedded, and resilient electronics solutions. Entry is ₹200 per team; Wi-Fi and lunch will be provided. Prize pool: ₹22,000 total — ₹10,000, ₹7,000, and ₹5,000 for the top three teams.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,7 +40,6 @@ function Index() {
   return (
     <div className="min-h-screen bg-background">
       <EmergencyTicker />
-      <Sponsors />
       <SiteNav onRegister={() => openRegister()} activeTab={tab} onTabChange={setTab} />
       <main>
         {tab === "home" && (

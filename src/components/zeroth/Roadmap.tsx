@@ -136,8 +136,7 @@ export function Roadmap({
         <div className="panel-tactical mt-16 space-y-4 p-8 text-center">
           <h3 className="font-display text-2xl font-black uppercase">Ready to deploy your team?</h3>
           <p className="mx-auto max-w-xl text-sm text-muted-foreground">
-            200 INR per team. Open to students, crisis researchers, and apocalyptic builders. Secure
-            your clearance badge before squad lockdown.
+            Entry is exactly ₹200 per team. Wi-Fi and lunch will be provided at the venue. Bring your team, build for five hours, and present a working idea before the final review.
           </p>
           <Button variant="alert" size="xl" onClick={onRegister}>
             <Flame className="size-4" aria-hidden />
