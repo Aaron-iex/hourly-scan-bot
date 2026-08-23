@@ -2,14 +2,21 @@ import { useEffect, useState } from "react";
 import { Menu, ShieldAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const LINKS = [
-  { href: "#briefing", label: "Briefing" },
-  { href: "#sectors", label: "Sectors" },
-  { href: "#roadmap", label: "Roadmap" },
-  { href: "#intel", label: "Intel" },
+const TABS: { id: "home" | "events" | "about"; label: string }[] = [
+  { id: "home", label: "Home" },
+  { id: "events", label: "Events" },
+  { id: "about", label: "About" },
 ];
 
-export function SiteNav({ onRegister }: { onRegister: () => void }) {
+export function SiteNav({
+  onRegister,
+  activeTab,
+  onTabChange,
+}: {
+  onRegister: () => void;
+  activeTab: "home" | "events" | "about";
+  onTabChange: (tab: "home" | "events" | "about") => void;
+}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -20,6 +27,12 @@ export function SiteNav({ onRegister }: { onRegister: () => void }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const handleTab = (tab: "home" | "events" | "about") => {
+    onTabChange(tab);
+    setOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <header
       className={`sticky top-0 z-40 border-b transition-colors ${
@@ -27,7 +40,11 @@ export function SiteNav({ onRegister }: { onRegister: () => void }) {
       }`}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="#top" className="flex items-center gap-3">
+        <button
+          onClick={() => handleTab("home")}
+          className="flex items-center gap-3"
+          aria-label="Go to home tab"
+        >
           <span className="grid size-9 place-items-center border border-primary/60 bg-primary/15 clip-tactical text-primary">
             <ShieldAlert className="size-4.5" aria-hidden />
           </span>
@@ -39,17 +56,22 @@ export function SiteNav({ onRegister }: { onRegister: () => void }) {
               GLOBAL CRISIS HACKATHON
             </span>
           </span>
-        </a>
+        </button>
 
         <div className="hidden items-center gap-1 md:flex">
-          {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-accent"
+          {TABS.map((l) => (
+            <button
+              key={l.id}
+              onClick={() => handleTab(l.id)}
+              className={`px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] transition-colors ${
+                activeTab === l.id
+                  ? "text-accent"
+                  : "text-muted-foreground hover:text-accent"
+              }`}
+              aria-current={activeTab === l.id ? "page" : undefined}
             >
               {l.label}
-            </a>
+            </button>
           ))}
           <Button variant="alert" size="default" className="ml-3" onClick={onRegister}>
             Register
@@ -67,15 +89,16 @@ export function SiteNav({ onRegister }: { onRegister: () => void }) {
 
       {open && (
         <div className="border-t border-border bg-background/95 px-4 pb-4 backdrop-blur-xl md:hidden">
-          {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              onClick={() => setOpen(false)}
-              className="block border-b border-border/60 py-3 font-mono-tech text-xs uppercase tracking-[0.2em] text-muted-foreground"
+          {TABS.map((l) => (
+            <button
+              key={l.id}
+              onClick={() => handleTab(l.id)}
+              className={`block w-full border-b border-border/60 py-3 text-left font-mono-tech text-xs uppercase tracking-[0.2em] ${
+                activeTab === l.id ? "text-accent" : "text-muted-foreground"
+              }`}
             >
               {l.label}
-            </a>
+            </button>
           ))}
           <Button
             variant="alert"

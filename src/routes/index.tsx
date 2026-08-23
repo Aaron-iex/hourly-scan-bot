@@ -9,9 +9,9 @@ import { Intel } from "@/components/zeroth/Intel";
 import { SiteFooter } from "@/components/zeroth/SiteFooter";
 import { RegisterDialog } from "@/components/zeroth/RegisterDialog";
 
-const TITLE = "Project Zeroth Hour — 48-Hour Disaster Tech Hackathon";
+const TITLE = "Project Zeroth Hour — 5-Hour Disaster Tech Hackathon";
 const DESCRIPTION =
-  "Join 500+ crisis engineers for a 48-hour hackathon across five planetary threat sectors: seismic, wildfire, off-world, oceanic and open doomsday tech. $50,000 prize cache.";
+  "Join 500+ crisis engineers for a 5-hour hackathon across five planetary threat sectors: seismic, wildfire, off-world, oceanic and open doomsday tech. 22,000 INR overall prize cache.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,6 +30,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [open, setOpen] = useState(false);
   const [track, setTrack] = useState("");
+  const [tab, setTab] = useState<"home" | "events" | "about">("home");
 
   const openRegister = (selected = "") => {
     setTrack(selected);
@@ -39,12 +40,28 @@ function Index() {
   return (
     <div className="min-h-screen bg-background">
       <EmergencyTicker />
-      <SiteNav onRegister={() => openRegister()} />
+      <SiteNav
+        onRegister={() => openRegister()}
+        activeTab={tab}
+        onTabChange={setTab}
+      />
       <main>
-        <Hero onRegister={() => openRegister()} />
-        <Sectors onRegister={openRegister} />
-        <Roadmap onRegister={() => openRegister()} />
-        <Intel />
+        {tab === "home" && (
+          <>
+            <Hero onRegister={() => openRegister()} />
+            <Sectors onRegister={openRegister} />
+            <Roadmap
+              onRegister={() => openRegister()}
+              preview
+              onExpand={() => setTab("events")}
+            />
+            <Intel preview onExpand={() => setTab("about")} />
+          </>
+        )}
+        {tab === "events" && (
+          <Roadmap onRegister={() => openRegister()} />
+        )}
+        {tab === "about" && <Intel />}
       </main>
       <SiteFooter />
       <RegisterDialog open={open} onClose={() => setOpen(false)} initialTrack={track} />
