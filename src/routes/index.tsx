@@ -7,11 +7,12 @@ import { Sectors } from "@/components/zeroth/Sectors";
 import { Roadmap } from "@/components/zeroth/Roadmap";
 import { Intel } from "@/components/zeroth/Intel";
 import { SiteFooter } from "@/components/zeroth/SiteFooter";
+import { Sponsors } from "@/components/zeroth/Sponsors";
 import { RegisterDialog } from "@/components/zeroth/RegisterDialog";
 
-const TITLE = "Project Zeroth Hour — 5-Hour Disaster Tech Hackathon";
+const TITLE = "Zeroth Hour — ECE 5-Hour Tech Hackathon";
 const DESCRIPTION =
-  "Join 500+ crisis engineers for a 5-hour hackathon across five planetary threat sectors: seismic, wildfire, off-world, oceanic and open doomsday tech. 22,000 INR overall prize cache.";
+  "Join 500+ ECE engineers for a 5-hour hackathon across five electronics and communication tracks: embedded systems, signal processing, RF and antennas, VLSI, and open innovation. 22,000 INR overall prize cache.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,6 +46,7 @@ function Index() {
         {tab === "home" && (
           <>
             <Hero onRegister={() => openRegister()} />
+            <Sponsors />
             <Sectors onRegister={openRegister} />
             <Roadmap onRegister={() => openRegister()} preview onExpand={() => setTab("events")} />
             <Intel preview onExpand={() => setTab("about")} />

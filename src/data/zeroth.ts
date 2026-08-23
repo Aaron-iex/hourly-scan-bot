@@ -10,54 +10,54 @@ export type Track = {
 
 export const TRACKS: Track[] = [
   {
-    id: "seismic",
-    code: "SECTOR 01",
-    title: "Tsunami & Earthquake Mitigation",
+    id: "embedded",
+    code: "TRACK 01",
+    title: "Embedded & IoT Systems",
+    icon: "zap",
+    threat: "REAL-TIME CRITICAL",
+    brief:
+      "Build firmware-driven solutions for real-world hardware. Think smart-grid monitors, wearable health telemetry, sensor-fusion boards, or low-power edge nodes that survive where the cloud cannot.",
+    stack: ["RTOS", "ARM Cortex", "Sensors", "Edge AI"],
+  },
+  {
+    id: "signal",
+    code: "TRACK 02",
+    title: "Signal & Image Processing",
     icon: "waves",
-    threat: "RICHTER 8.9",
+    threat: "NOISE FLOOR 92 dB",
     brief:
-      "The Pacific Ring of Fire has reached critical instability. Build real-time AI seismic telemetry, automated coastal siren grids, ocean-bed hydrophone mesh networks, or anti-collapse dampening algorithms.",
-    stack: ["Sensor Fusion", "Edge AI", "GIS", "Early Warning"],
+      "Extract meaning from noise. Ship adaptive filters, biomedical signal classifiers, radar return processors, or computer-vision pipelines that run on constrained hardware.",
+    stack: ["DSP", "FFT", "OpenCV", "MATLAB"],
   },
   {
-    id: "wildfire",
-    code: "SECTOR 02",
-    title: "Wildfire Suppression Tech",
-    icon: "flame",
-    threat: "HEAT INDEX 61°C",
-    brief:
-      "Unprecedented heatwaves ignite mega-blazes worldwide. Ship autonomous drone-swarm retardant coordination, satellite infrared trajectory models, or live evacuation routing for trapped citizens.",
-    stack: ["Drone Swarms", "Computer Vision", "Routing", "Satellite IR"],
-  },
-  {
-    id: "offworld",
-    code: "SECTOR 03",
-    title: "Off-World Habitat (Mars / Moon)",
-    icon: "rocket",
-    threat: "ATMOS COLLAPSE",
-    brief:
-      "When Earth's atmosphere fails, humanity looks outward. Create habitat life-support telemetry, solar-flare radiation monitors, regolith 3D-printing controllers, or Martian oxygen generation networks.",
-    stack: ["Life Support", "Telemetry", "Robotics", "ISRU"],
-  },
-  {
-    id: "oceanic",
-    code: "SECTOR 04",
-    title: "Oceanic Civilizations",
+    id: "rf",
+    code: "TRACK 03",
+    title: "RF, Antennas & 5G/6G",
     icon: "anchor",
-    threat: "SEA LEVEL +4.2M",
+    threat: "SPECTRUM OVERLOAD",
     brief:
-      "Rising seas swallow coastal megacities. Design submerged modular habitats, deep-current energy harvesting arrays, acoustic underwater data protocols, or marine food-security systems.",
-    stack: ["Hydro Power", "Acoustics", "Structures", "Aquaculture"],
+      "Own the airwaves. Design microstrip antennas, software-defined radio stacks, beamforming arrays, or low-latency modulation schemes for next-generation wireless links.",
+    stack: ["SDR", "Antenna Design", "Beamforming", "MIMO"],
+  },
+  {
+    id: "vlsi",
+    code: "TRACK 04",
+    title: "VLSI & Semiconductor Design",
+    icon: "flame",
+    threat: "DENSITY 5NM",
+    brief:
+      "Push silicon to its limit. Create low-power digital ASIC blocks, analog front-end layouts, or FPGA-accelerated inference engines that prove ideas before tape-out.",
+    stack: ["Verilog", "FPGA", "ASIC", "Low Power"],
   },
   {
     id: "open",
-    code: "SECTOR 05",
-    title: "Open Innovation (Doomsday Tech)",
-    icon: "zap",
+    code: "TRACK 05",
+    title: "Open ECE Innovation",
+    icon: "rocket",
     threat: "UNCLASSIFIED",
     brief:
-      "No rules, pure survival ingenuity. Off-grid P2P radio messaging, EMP surge defence, automated triage medkits, or post-collapse resource distribution algorithms.",
-    stack: ["Mesh Radio", "Hardware", "Crypto", "Logistics"],
+      "No rules, pure electronics ingenuity. Off-grid power harvesters, LiDAR rangefinders, acoustic levitation rigs, or any hardware idea that does not fit a single track.",
+    stack: ["Hardware", "Robotics", "Power", "Mixed-Signal"],
   },
 ];
 
@@ -78,30 +78,30 @@ export const TIMELINE: TimelineEvent[] = [
     phase: "T-0 HRS // BRIEFING",
     time: "09:00",
     title: "Operative Onboarding & Track Selection",
-    location: "Virtual Command Center",
+    location: "ECE Labs / Virtual Command Center",
     stage: "prep",
     description:
-      "Squad registration closes. Access classified crisis API keys, disaster datasets, and team formation channels.",
+      "Squad registration closes. Access hardware kits, component inventory, datasheets, and team formation channels.",
     status: "REGISTRATION OPEN",
   },
   {
     phase: "T+0.5 HRS // LOCKDOWN",
     time: "09:30",
-    title: "DEFCON 1 Sprint Start — 5-Hour Hackathon Begins",
-    location: "Command Labs / Online Platform",
+    title: "Sprint Start — 5-Hour Build Begins",
+    location: "ECE Project Labs / Online Platform",
     stage: "hacking",
     description:
-      "The 5-hour continuous build begins. Mentors deployed across drone robotics, sub-sea sensors, and off-grid radio.",
+      "The 5-hour continuous build begins. Mentors deployed across embedded systems, DSP, RF, and VLSI tracks.",
     status: "CRITICAL SPRINT",
   },
   {
     phase: "T+2.5 HRS // MID-POINT",
     time: "11:30",
-    title: "Mid-Point Crisis Injection & Status Check",
+    title: "Mid-Point Constraint Injection & Status Check",
     location: "War Room Mentor Sessions",
     stage: "hacking",
     description:
-      "Live disaster injection test. Teams adapt prediction models to unexpected secondary shockwaves.",
+      "Live constraint injection test. Teams adapt to unexpected power, noise, or bandwidth limits on their prototypes.",
     status: "SIMULATION EVENT",
   },
   {
@@ -115,41 +115,41 @@ export const TIMELINE: TimelineEvent[] = [
     status: "CODE FREEZE",
   },
   {
-    phase: "T+5 HRS // EVACUATION",
+    phase: "T+5 HRS // DEBRIEF",
     time: "14:00",
-    title: "Lightning Pitches & 15k INR Award Ceremony",
-    location: "DEFCON Main Stage & Global Stream",
+    title: "Lightning Pitches & Award Ceremony",
+    location: "ECE Main Stage & Global Stream",
     stage: "pitch",
     description:
-      "Top finalists present live. 15,000 INR in cash prizes, certificates, and deployment funds awarded.",
+      "Top finalists present live. Cash prizes, certificates, and deployment funds awarded across all tracks.",
     status: "GRAND FINALE",
   },
 ];
 
 export const MENTORS = [
   {
-    name: "Dr. Evelyn Vance",
-    role: "Chief Seismic Telemetry Lead",
-    org: "Pacific Fault Monitoring Institute",
-    specialty: "Seismic AI & Hydrophones",
+    name: "Dr. A. Saravanan",
+    role: "Head of Department, ECE",
+    org: "Faculty Mentor",
+    specialty: "Signal Processing & VLSI",
   },
   {
-    name: "Cmdr. Marcus Vance",
-    role: "Autonomous Drone Robotics Director",
-    org: "AeroShield Wildfire Containment",
-    specialty: "Swarm Robotics & GIS",
+    name: "Faculty Coordinator I",
+    role: "Faculty Coordinator",
+    org: "Department of ECE",
+    specialty: "Embedded Systems",
   },
   {
-    name: "Dr. Astra Lin",
-    role: "Exoplanet Life Support Architect",
-    org: "Mars Habitat Foundation",
-    specialty: "Lunar & Martian Life Support",
+    name: "Faculty Coordinator II",
+    role: "Faculty Coordinator",
+    org: "Department of ECE",
+    specialty: "RF & Wireless",
   },
   {
-    name: "Kaelen Thorne",
-    role: "Post-Collapse Mesh Communications",
-    org: "Open EMP Grid Alliance",
-    specialty: "Off-grid LoRa Protocols",
+    name: "Student Event Head",
+    role: "Event Head",
+    org: "Student Coordinator",
+    specialty: "Overall Operations",
   },
 ];
 
@@ -160,7 +160,7 @@ export const FAQS = [
   },
   {
     q: "Who is allowed to enlist?",
-    a: "University students, independent engineers, designers, and crisis researchers worldwide. Participation is 200 INR per team.",
+    a: "ECE students, independent engineers, designers, and researchers worldwide. Participation is 200 INR per team.",
   },
   {
     q: "How large can a squad be?",
@@ -172,13 +172,13 @@ export const FAQS = [
   },
   {
     q: "What is actually judged?",
-    a: "Real-world disaster impact, technical depth, resilience under the mid-point crisis simulation, and clarity of the evacuation pitch.",
+    a: "Engineering depth, hardware-software integration, resilience under the mid-point constraint injection, and clarity of the final pitch.",
   },
 ];
 
 export const STATS = [
   { label: "PRIZE CACHE", value: "22,000 INR", desc: "1st 10k · 2nd 7k · 3rd 5k overall" },
   { label: "OPERATIVES", value: "500+", desc: "Engineers, designers, researchers" },
-  { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous crisis build" },
-  { label: "THREAT SECTORS", value: "05", desc: "Planetary defence tracks" },
+  { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous build" },
+  { label: "ECE TRACKS", value: "05", desc: "Electronics & communication" },
 ];

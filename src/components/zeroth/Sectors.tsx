@@ -15,13 +15,13 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
     <section id="sectors" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
       <div className="max-w-2xl">
         <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
-          // THREAT SECTORS
+          // ECE TRACKS
         </span>
         <h2 className="mt-3 font-display text-3xl font-black uppercase sm:text-5xl">
-          Five fronts of <span className="text-accent">planetary defence</span>
+          Five tracks of <span className="text-accent">electronics &amp; communication</span>
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Pick a sector at enlistment. Each track ships its own datasets, mentor pool, and judging
+          Pick a track at enlistment. Each track ships its own hardware kits, mentor pool, and judging
           rubric.
         </p>
       </div>
@@ -85,7 +85,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
             Undecided operative?
           </h3>
           <p className="text-sm text-muted-foreground">
-            Enlist without a sector — squad matching assigns you where the threat is highest.
+            Enlist without a track — squad matching assigns you where the signal is strongest.
           </p>
           <Button variant="alert" onClick={() => onRegister("")}>
             Enlist now

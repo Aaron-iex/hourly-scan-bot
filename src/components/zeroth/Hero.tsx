@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-cataclysm.jpg";
 
 const TELEMETRY = [
-  { label: "THREAT LEVEL", icon: Activity, dynamic: true },
-  { label: "PRIZE CACHE", icon: Award, value: "$50,000+" },
-  { label: "THREAT SECTORS", icon: Cpu, value: "05" },
+  { label: "SIGNAL STRENGTH", icon: Activity, dynamic: true },
+  { label: "PRIZE CACHE", icon: Award, value: "22,000 INR" },
+  { label: "ECE TRACKS", icon: Cpu, value: "05" },
   { label: "OPERATIVES", icon: Users, value: "500+" },
 ];
 
@@ -28,7 +28,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     <section id="top" className="relative isolate overflow-hidden scanlines">
       <img
         src={heroImage}
-        alt="Cracked fault line splitting a burning city skyline"
+        alt="Circuit traces glowing on a dark silicon substrate"
         width={1920}
         height={1088}
         className="absolute inset-0 -z-20 size-full object-cover opacity-45"
@@ -43,19 +43,19 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             <span className="relative inline-flex size-2.5 rounded-full bg-primary" />
           </span>
           <span className="font-mono-tech text-[11px] tracking-[0.25em] text-accent">
-            DEFCON 1 ACTIVE {clock ? `· ${clock}` : ""}
+            BUILD MODE ACTIVE {clock ? `· ${clock}` : ""}
           </span>
         </div>
 
         <h1 className="animate-rise mt-8 font-display text-4xl font-black uppercase leading-[1.05] sm:text-6xl lg:text-7xl">
-          The earth is at its
+          ECE engineers, this is your
           <span className="mt-2 block animate-flicker text-alert-gradient">Zeroth Hour</span>
         </h1>
 
         <p className="animate-rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Catastrophic seismic shifts, unchecked wildfire infernos, and oceanic surges are
-          overwhelming global infrastructure. Join 500+ crisis engineers in a 5-hour emergency
-          sprint to prototype life-saving disaster technology.
+          Embedded systems, signal processing, RF, and VLSI challenges are pushing electronics past
+          their limits. Join 500+ ECE engineers in a 5-hour sprint to prototype hardware and
+          communication tech that actually works.
         </p>
 
         <div className="animate-rise mt-8 flex w-full max-w-lg items-center gap-3 border border-accent/60 bg-accent/10 px-5 py-4 clip-tactical text-left">
@@ -79,7 +79,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           <Button variant="tactical" size="xl" asChild>
             <a href="#roadmap">
               <Clock className="size-4" aria-hidden />
-              View evacuation roadmap
+              View build schedule
             </a>
           </Button>
         </div>
@@ -95,7 +95,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
                 {dynamic ? (
                   <span className="text-primary">
                     {threat}
-                    <span className="text-sm text-accent"> % SEISMIC</span>
+                    <span className="text-sm text-accent"> dBm</span>
                   </span>
                 ) : (
                   value
@@ -107,8 +107,8 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
 
         <div className="mt-10 w-full max-w-3xl">
           <div className="mb-1 flex items-center justify-between font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground">
-            <span>TECTONIC STRAIN WAVEFORM</span>
-            <span className="text-primary">RICHTER 8.9 PREDICTED</span>
+            <span>RF SPECTRUM WAVEFORM</span>
+            <span className="text-primary">2.4 GHz ACTIVE</span>
           </div>
           <div className="relative h-14 border border-primary/40 bg-card/70 p-1">
             <svg viewBox="0 0 500 40" className="size-full fill-none stroke-primary" aria-hidden>

@@ -28,10 +28,10 @@ export function Roadmap({
       <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
         <div className="text-center">
           <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
-            // TACTICAL TIMELINE
+            // BUILD SCHEDULE
           </span>
           <h2 className="mt-3 font-display text-3xl font-black uppercase sm:text-5xl">
-            Evacuation <span className="text-accent">roadmap</span>
+            Build <span className="text-accent">roadmap</span>
           </h2>
           <div className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 border border-accent/40 bg-accent/10 px-4 py-2 clip-tactical font-mono-tech text-[11px] tracking-[0.18em] text-accent">
             <span aria-hidden>⚠️</span>
@@ -75,7 +75,7 @@ export function Roadmap({
             <div className="mt-10 text-center">
               <Button variant="tactical" size="xl" onClick={onExpand}>
                 <ChevronRight className="size-4" aria-hidden />
-                View full evacuation schedule
+                View full build schedule
               </Button>
             </div>
           </div>
@@ -134,9 +134,9 @@ export function Roadmap({
         )}
 
         <div className="panel-tactical mt-16 space-y-4 p-8 text-center">
-          <h3 className="font-display text-2xl font-black uppercase">Ready to deploy your team?</h3>
+          <h3 className="font-display text-2xl font-black uppercase">Ready to build your team?</h3>
           <p className="mx-auto max-w-xl text-sm text-muted-foreground">
-            200 INR per team. Open to students, crisis researchers, and apocalyptic builders. Secure
+            200 INR per team. Open to ECE students, researchers, and hardware builders. Secure
             your clearance badge before squad lockdown.
           </p>
           <Button variant="alert" size="xl" onClick={onRegister}>
