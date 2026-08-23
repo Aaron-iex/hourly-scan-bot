@@ -77,16 +77,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Project Zeroth Hour" },
+      { title: "ECE Department | Electronics & Communication Engineering" },
       {
         name: "description",
-        content: "5-hour disaster tech hackathon — five planetary threat sectors, one deadline.",
+        content: "Electronics and Communication Engineering — learning, building, and connecting the future.",
       },
       { name: "author", content: "Project Zeroth Hour" },
       { property: "og:title", content: "Project Zeroth Hour" },
       {
         property: "og:description",
-        content: "5-hour disaster tech hackathon — five planetary threat sectors, one deadline.",
+        content: "Electronics and Communication Engineering — learning, building, and connecting the future.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

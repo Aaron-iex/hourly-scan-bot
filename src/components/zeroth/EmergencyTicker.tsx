@@ -1,35 +1,3 @@
-import { AlertTriangle, Radio } from "lucide-react";
-
-const ALERTS = [
-  "PRIORITY BROADCAST // DEFCON 1 ACTIVE",
-  "SEISMIC STRAIN RISING ALONG PACIFIC RING OF FIRE",
-  "EVENT DATE: SEPT 11 | 5-HOUR HACKATHON — DETAILED TIMELINE TBA",
-  "SQUAD REGISTRATION QUEUE IS OPEN — CLEARANCE PASSES ISSUING",
-  "OVERALL PRIZE CACHE: 22,000 INR UNLOCKED FOR SURVIVAL TECH",
-];
-
-export function EmergencyTicker() {
-  const line = [...ALERTS, ...ALERTS];
-
-  return (
-    <div className="relative flex h-9 items-center overflow-hidden border-b border-primary/40 bg-primary/12">
-      <div className="z-10 flex h-full shrink-0 items-center gap-2 bg-primary px-3 text-primary-foreground">
-        <Radio className="size-3.5 animate-pulse" aria-hidden />
-        <span className="font-mono-tech text-[10px] tracking-[0.2em]">LIVE</span>
-      </div>
-      <div className="relative flex-1 overflow-hidden">
-        <div className="flex w-max animate-ticker items-center">
-          {line.map((text, i) => (
-            <span
-              key={i}
-              className="flex items-center gap-2 whitespace-nowrap px-6 font-mono-tech text-[11px] tracking-[0.18em] text-accent"
-            >
-              <AlertTriangle className="size-3 text-primary" aria-hidden />
-              {text}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { Radio } from "lucide-react";
+const ALERTS=["ECE DEPARTMENT // INNOVATION IN MOTION","SEPTEMBER 9 // FIVE-HOUR HACKATHON","REGISTRATION OPENING SOON // ₹200 PER TEAM","OVERALL PRIZE POOL // ₹15,000"];
+export function EmergencyTicker(){const line=[...ALERTS,...ALERTS];return <div className="flex h-9 items-center overflow-hidden border-b border-primary/30 bg-primary/10"><div className="flex h-full shrink-0 items-center gap-2 bg-primary px-3 text-primary-foreground"><Radio /><span className="font-mono-tech text-[10px] tracking-[0.2em]">LIVE</span></div><div className="overflow-hidden"><div className="flex w-max animate-ticker">{line.map((text,i)=><span key={i} className="whitespace-nowrap px-6 font-mono-tech text-[11px] tracking-[0.18em] text-accent">{text}</span>)}</div></div></div>}
