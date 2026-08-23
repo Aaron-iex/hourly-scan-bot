@@ -45,26 +45,26 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
 
   useEffect(() => {
     const targetDate = new Date("2026-09-11T09:30:00").getTime();
-    
+
     const updateCountdown = () => {
       const now = new Date().getTime();
       const distance = targetDate - now;
-      
+
       if (distance < 0) {
         setCountdown("00:00:00:00");
         return;
       }
-      
+
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      
+
       setCountdown(
         `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
       );
     };
-    
+
     updateCountdown();
     const id = setInterval(updateCountdown, 1000);
     return () => clearInterval(id);
@@ -74,51 +74,88 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     <section id="top" className="relative isolate overflow-hidden scanlines">
       <img
         src={heroImage}
-        alt="Circuit traces glowing on a dark silicon substrate"
+        alt="Operative facing planetary cataclysm with tactical terminal"
         width={1920}
         height={1088}
-        className="absolute inset-0 -z-20 size-full object-cover opacity-45"
+        className="absolute inset-0 -z-20 size-full object-cover object-center opacity-60 brightness-95 contrast-105"
       />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_10%,var(--background)_78%)]" />
-      <div className="absolute inset-0 -z-10 grid-tactical opacity-60" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--background)_88%)]" />
+      <div className="absolute inset-0 -z-10 grid-tactical opacity-50" />
 
-      <div className="mx-auto flex max-w-5xl flex-col items-center px-4 py-6 text-center sm:px-6 lg:px-8 lg:py-16">
-        <div className="animate-rise inline-flex items-center gap-2 border border-primary/60 bg-primary/12 px-3 py-1 clip-tactical">
+      <div className="mx-auto flex max-w-6xl flex-col items-center px-3 py-2 text-center sm:px-6 lg:px-8 sm:py-6 lg:py-8">
+        <div className="animate-rise inline-flex items-center gap-2 border border-primary/60 bg-primary/15 px-3.5 py-1 clip-tactical mb-2 shadow-[0_0_12px_rgba(224,76,17,0.3)]">
           <span className="relative flex size-2">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
             <span className="relative inline-flex size-2 rounded-full bg-primary" />
           </span>
-          <span className="font-mono-tech text-[10px] tracking-[0.25em] text-accent">
+          <span className="font-mono-tech text-[10px] tracking-[0.25em] text-accent font-bold">
             DEFCON 1 PROTOCOL {clock ? `· ${clock}` : ""}
           </span>
         </div>
 
-        {/* College & Department */}
-        <div className="animate-rise mt-4 space-y-1 max-w-3xl">
-          <h2 className="font-display text-xl sm:text-3xl md:text-4xl font-black uppercase tracking-wider text-foreground">
-            JAYA ENGINEERING COLLEGE
-          </h2>
-          <p className="font-mono-tech text-[11px] sm:text-xs tracking-[0.18em] uppercase text-primary font-bold">
-            DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
-          </p>
-          <div className="pt-1">
-            <span className="inline-block border border-accent/40 bg-accent/10 px-3 py-0.5 clip-tactical font-mono-tech text-[10px] sm:text-xs tracking-[0.3em] uppercase text-accent font-semibold">
-              // PRESENTS
-            </span>
+        {/* Top College Header: Logo (Left) | Text Details (Center) | 31 Years (Right) */}
+        <div className="animate-rise w-full max-w-5xl px-2 sm:px-4">
+          <div className="flex flex-row items-center justify-center gap-3 sm:gap-6">
+            {/* Left College Logo */}
+            <div className="shrink-0">
+              <div className="size-14 sm:size-20 md:size-24 rounded-full overflow-hidden border-2 border-primary/50 bg-black/70 shadow-[0_0_20px_rgba(224,76,17,0.35)] flex items-center justify-center transition-transform hover:scale-105">
+                <img
+                  src="/images/jec-emblem.png"
+                  alt="Jaya Educational Trust Emblem"
+                  className="size-full object-cover scale-105"
+                />
+              </div>
+            </div>
+
+            {/* Center College Details */}
+            <div className="flex-1 min-w-0 text-center">
+              <h2 className="font-display text-base sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight sm:tracking-wide text-foreground drop-shadow-[0_2px_15px_rgba(255,255,255,0.3)] leading-tight">
+                JAYA ENGINEERING COLLEGE
+              </h2>
+              <p className="mt-1 font-mono-tech text-[8px] sm:text-xs md:text-sm text-muted-foreground font-medium tracking-tight sm:tracking-normal">
+                Accredited by NAAC & NBA | Approved by AICTE | Affiliated to Anna University
+              </p>
+              <p className="mt-0.5 font-mono-tech text-[8px] sm:text-[11px] text-accent font-bold tracking-wide">
+                📍 CTH Road, Thiruninravur, Chennai, Tamil Nadu - 602024
+              </p>
+            </div>
+
+            {/* Right 31 Years Badge */}
+            <div className="shrink-0">
+              <div className="size-14 sm:size-20 md:size-24 rounded-full overflow-hidden border-2 border-accent/50 bg-black/70 shadow-[0_0_20px_rgba(255,200,0,0.35)] flex items-center justify-center transition-transform hover:scale-105">
+                <img
+                  src="/images/jec-31years.png"
+                  alt="31 Years of Excellence"
+                  className="size-full object-cover scale-105"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Department & Presents */}
+          <div className="mt-3 pt-2 space-y-2">
+            <p className="font-mono-tech text-xs sm:text-base md:text-lg tracking-[0.2em] uppercase text-primary font-black drop-shadow-[0_0_12px_rgba(224,76,17,0.5)]">
+              DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
+            </p>
+            <div>
+              <span className="inline-block border border-accent/50 bg-accent/15 px-4 py-1 clip-tactical font-mono-tech text-[10px] sm:text-xs tracking-[0.3em] uppercase text-accent font-bold shadow-[0_0_10px_rgba(255,200,0,0.2)]">
+                // PRESENTS
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Main Event Title - Same size for Makeathon, reduced Project Zeroth Hour */}
-        <h1 className="animate-rise mt-3 font-display uppercase">
-          <span className="block text-xl sm:text-3xl md:text-4xl font-black text-foreground tracking-tight">
+        {/* Main Event Title */}
+        <h1 className="animate-rise mt-6 sm:mt-8 font-display uppercase">
+          <span className="block text-2xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground tracking-tight drop-shadow-[0_0_25px_rgba(255,255,255,0.2)]">
             MAKEATHON
           </span>
-          <span className="mt-1 block text-lg sm:text-2xl md:text-3xl font-extrabold animate-flicker text-alert-gradient tracking-wide">
+          <span className="mt-2 block text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold animate-flicker text-alert-gradient tracking-wide">
             PROJECT ZEROTH HOUR
           </span>
         </h1>
 
-        <p className="animate-rise mt-3 max-w-xl text-xs sm:text-sm leading-relaxed text-muted-foreground">
+        <p className="animate-rise mt-4 max-w-2xl text-xs sm:text-base leading-relaxed text-muted-foreground font-medium">
           Embedded systems, signal processing, RF, and VLSI challenges are pushing electronics past
           their limits. Join the brightest minds in a 5-hour sprint to prototype hardware and
           communication tech that actually works.
@@ -160,7 +197,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               + MERCH & CERTIFICATES
             </p>
           </div>
-          
+
           <div className="flex flex-1 flex-col items-center justify-center gap-1 border border-accent/60 bg-accent/10 px-3 py-3 clip-tactical">
             <p className="font-mono-tech text-[10px] tracking-[0.2em] text-accent">REGISTRATION</p>
             <p className="font-display text-xl sm:text-2xl font-black text-foreground drop-shadow-[0_0_15px_rgba(255,200,0,0.5)]">

@@ -52,8 +52,8 @@ export function SiteFooter() {
             EMERGENCY CONTACT
           </h4>
           <ul className="mt-4 space-y-2 font-mono-tech text-xs text-muted-foreground">
-            <li>ops@zerothhour.earth</li>
-            <li>PRESS: broadcast@zerothhour.earth</li>
+            <li>+91-6381198548</li>
+            <li>PRESS: mylabathulaaaronnissi@gmail.com</li>
             <li>STATUS: DEFCON 1 — SEPT 11 · 5-HOUR SPRINT</li>
           </ul>
         </div>
