@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b18"/>
+      <stop offset="50%" stop-color="#e04c11"/>
+      <stop offset="100%" stop-color="#ffb800"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Hex/Tactical Shield -->
+  <polygon points="32,4 58,18 58,46 32,60 6,46 6,18" fill="#090a0f" stroke="url(#grad)" stroke-width="3.5" filter="url(#glow)"/>
+  
+  <!-- Inner Tactical Cut -->
+  <polygon points="32,10 52,21 52,43 32,54 12,43 12,21" fill="#14161f" stroke="#ff6b18" stroke-width="1.5" stroke-opacity="0.4"/>
+
+  <!-- ZH Monogram -->
+  <g fill="url(#grad)" font-family="monospace, sans-serif" font-weight="900" font-size="22" text-anchor="middle">
+    <text x="32" y="40" letter-spacing="1">ZH</text>
+  </g>
+
+  <!-- Hazard / Pulse Dots -->
+  <circle cx="32" cy="10" r="2" fill="#ffb800" />
+  <circle cx="52" cy="21" r="1.5" fill="#e04c11" />
+  <circle cx="12" cy="21" r="1.5" fill="#e04c11" />
+</svg>

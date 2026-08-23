@@ -1,25 +1,29 @@
-# Last Hour Check
+# Project Zeroth Hour — Makeathon
 
-https://github.com/DhanushR-art/last-hour-
-Check for Website first
+**Jaya Engineering College // Department of Electronics and Communication Engineering**  
+*Presents Makeathon: Project Zeroth Hour*
 
-This project was built with [Lovable](https://lovable.dev).
+A 5-hour high-intensity planetary defence and hardware prototype makeathon across 5 threat fronts.
 
-## Build with Lovable
+---
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/726c2e45-438a-4f62-b51d-b603af640e98).
+## ⚡ Event Details
+- **Date:** September 11
+- **Venue:** Jaya Auditorium
+- **Format:** 1–4 Members per Squad
+- **Overall Prize Cache:** ₹22,000 INR
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+---
 
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## 🚀 Quickstart & Local Development
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+# Install dependencies
+npm install
+
+# Start local development server
 npm run dev
 ```
+
+Visit `http://localhost:8080` in your browser.
+Command Center & Registrations export portal: `http://localhost:8080/admin`.
