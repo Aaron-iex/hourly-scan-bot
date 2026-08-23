@@ -11,9 +11,9 @@ import { Sponsors } from "@/components/zeroth/Sponsors";
 import { RegisterDialog } from "@/components/zeroth/RegisterDialog";
 import { SabotageQuiz } from "@/components/zeroth/SabotageQuiz";
 
-const TITLE = "Zeroth Hour — 5-Hour Planetary Defence Buildathon";
+const TITLE = "Zeroth Hour — 5-Hour Planetary Defence Makeathon";
 const DESCRIPTION =
-  "Join 500+ engineers for a 5-hour buildathon across five fronts of planetary defence: tsunami, earthquake, wildfire suppression, oceanic habitats, off-world habitation, and doomsday tech. 22,000 INR overall prize cache.";
+  "Jaya Engineering College Department of ECE presents Makeathon: Project Zeroth Hour. Join 500+ engineers for a 5-hour makeathon across five fronts of planetary defence. 22,000 INR overall prize cache.";
 
 export const Route = createFileRoute("/")({
   head: () => ({

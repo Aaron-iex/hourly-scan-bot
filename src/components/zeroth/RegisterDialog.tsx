@@ -209,7 +209,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
                 REGISTRATION FEE: ₹200 PER SQUAD
               </p>
               <p className="text-xs text-muted-foreground ml-6">
-                Includes high-speed Wi-Fi, Food & Beverages for the 5-hour buildathon duration.
+                Includes high-speed Wi-Fi, Food & Beverages for the 5-hour makeathon duration.
               </p>
             </div>
 

@@ -93,9 +93,18 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </span>
         </div>
 
-        <h1 className="animate-rise mt-8 font-display text-4xl font-black uppercase leading-[1.05] sm:text-6xl lg:text-7xl">
-          Engineers, designers, researchers
-          <span className="mt-2 block animate-flicker text-alert-gradient">Zeroth Hour</span>
+        <div className="animate-rise mt-5 space-y-1.5">
+          <p className="font-mono-tech text-xs sm:text-sm tracking-[0.25em] uppercase text-primary font-bold">
+            DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
+          </p>
+          <p className="font-mono-tech text-[11px] tracking-[0.3em] text-muted-foreground uppercase">
+            // PRESENTS
+          </p>
+        </div>
+
+        <h1 className="animate-rise mt-4 font-display text-4xl font-black uppercase leading-[1.05] sm:text-6xl lg:text-7xl">
+          <span className="block text-foreground">MAKEATHON</span>
+          <span className="mt-2 block animate-flicker text-alert-gradient">PROJECT ZEROTH HOUR</span>
         </h1>
 
         <p className="animate-rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
@@ -108,7 +117,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           <Calendar className="size-5 shrink-0 text-accent" aria-hidden />
           <div>
             <p className="font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
-              SEPT 11 // 5-HOUR BUILDATHON
+              SEPT 11 // 5-HOUR MAKEATHON
             </p>
             <p className="font-mono-tech text-[11px] text-muted-foreground">
               Registration queue open — lock clearance before lockdown.

@@ -12,7 +12,7 @@ export function SiteFooter() {
             <span className="font-display text-sm font-black tracking-[0.2em]">ZEROTH HOUR</span>
           </div>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            Global disaster mitigation and planetary survival tech buildathon. 5 hours, five threat
+            Global disaster mitigation and planetary survival tech makeathon. 5 hours, five threat
             sectors, one deadline that never moves.
           </p>
           <div className="mt-5 flex gap-2">
