@@ -177,8 +177,8 @@ export const FAQS = [
 ];
 
 export const STATS = [
-  { label: "PRIZE CACHE", value: "$50,000+", desc: "Cash, grants & deployment funds" },
+  { label: "PRIZE CACHE", value: "22,000 INR", desc: "1st 10k · 2nd 7k · 3rd 5k overall" },
   { label: "OPERATIVES", value: "500+", desc: "Engineers, designers, researchers" },
-  { label: "SPRINT WINDOW", value: "48 HRS", desc: "Continuous crisis build" },
+  { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous crisis build" },
   { label: "THREAT SECTORS", value: "05", desc: "Planetary defence tracks" },
 ];
