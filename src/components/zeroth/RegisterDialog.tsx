@@ -10,8 +10,8 @@ type Props = {
 };
 
 const FIELD =
-  "w-full border border-border bg-input/60 px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary";
-const LABEL = "font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground";
+  "w-full border border-border bg-input/80 px-3 py-2 text-base sm:text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary rounded-none";
+const LABEL = "font-mono-tech text-[10px] tracking-[0.18em] text-muted-foreground uppercase";
 
 import { submitRegistrationData } from "@/lib/registrations";
 
@@ -72,64 +72,68 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-background/85 p-2 sm:p-4 backdrop-blur-md"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/85 p-2 sm:p-4 backdrop-blur-md flex items-start sm:items-center justify-center min-h-screen"
       role="dialog"
       aria-modal="true"
       aria-label="Squad enrollment protocol"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="panel-tactical mx-auto my-3 sm:my-8 w-full max-w-2xl shadow-[var(--shadow-panel)]">
-        <div className="flex items-center justify-between border-b border-primary/40 bg-primary/12 px-4 py-3 sm:px-6 sm:py-4">
-          <div>
-            <span className="font-mono-tech text-[10px] tracking-[0.22em] text-primary">
+      <div className="panel-tactical my-4 sm:my-8 w-full max-w-2xl shadow-[var(--shadow-panel)] border border-primary/50 overflow-hidden">
+        {/* Modal Header */}
+        <div className="flex items-center justify-between border-b border-primary/40 bg-primary/15 px-3.5 py-3 sm:px-6 sm:py-4">
+          <div className="min-w-0 pr-2">
+            <span className="font-mono-tech text-[9px] sm:text-[10px] tracking-[0.2em] text-primary font-bold block">
               DEFCON 1 // CLEARANCE REQUEST
             </span>
-            <h2 className="font-display text-base sm:text-lg font-black uppercase">Squad enrollment protocol</h2>
+            <h2 className="font-display text-sm sm:text-lg font-black uppercase text-foreground truncate">
+              Squad enrollment protocol
+            </h2>
           </div>
           <button
             onClick={onClose}
             aria-label="Close registration"
-            className="grid size-9 place-items-center border border-border text-muted-foreground hover:text-primary"
+            className="grid size-8 sm:size-9 shrink-0 place-items-center border border-border bg-card/80 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
           >
             <X className="size-4" />
           </button>
         </div>
 
         {code ? (
-          <div className="space-y-5 p-8 text-center">
+          <div className="space-y-4 p-5 sm:p-8 text-center">
             <CheckCircle2 className="mx-auto size-12 text-accent" aria-hidden />
-            <h3 className="font-display text-2xl font-black uppercase">Clearance granted</h3>
-            <p className="text-sm text-muted-foreground">
-              Squad <span className="text-accent">{form.teamName || "UNNAMED"}</span> is queued for{" "}
-              {form.track}. Confirmation dispatched to {form.email || "your inbox"}.
+            <h3 className="font-display text-xl sm:text-2xl font-black uppercase">Clearance granted</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Squad <span className="text-accent font-bold">{form.teamName || "UNNAMED"}</span> is queued for{" "}
+              <span className="text-primary font-semibold">{form.track}</span>. Confirmation dispatched to{" "}
+              <span className="text-foreground">{form.email || "your inbox"}</span>.
             </p>
-            <div className="panel-tactical mx-auto max-w-sm p-5">
+            <div className="panel-tactical mx-auto max-w-sm p-4 sm:p-5 border border-accent/40 bg-accent/10">
               <p className={LABEL}>DEFCON 1 CLEARANCE PASS</p>
-              <p className="mt-2 font-display text-3xl font-black text-alert-gradient">{code}</p>
-              <Button variant="tactical" size="sm" className="mt-4" onClick={copy}>
+              <p className="mt-2 font-display text-2xl sm:text-3xl font-black text-alert-gradient">{code}</p>
+              <Button variant="tactical" size="sm" className="mt-3 w-full" onClick={copy}>
                 <Copy className="size-3.5" aria-hidden />
-                {copied ? "Copied" : "Copy code"}
+                {copied ? "Copied to clipboard!" : "Copy clearance code"}
               </Button>
             </div>
-            <Button variant="alert" onClick={onClose}>
+            <Button variant="alert" size="default" className="w-full sm:w-auto mt-2" onClick={onClose}>
               Return to broadcast
             </Button>
           </div>
         ) : (
-          <form onSubmit={submit} className="space-y-4 p-6 sm:p-8">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="space-y-1.5">
-                <span className={LABEL}>SQUAD NAME</span>
+          <form onSubmit={submit} className="space-y-3.5 p-3.5 sm:p-6">
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+              <label className="space-y-1 block">
+                <span className={LABEL}>SQUAD NAME *</span>
                 <input
                   required
                   className={FIELD}
                   value={form.teamName}
                   onChange={set("teamName")}
-                  placeholder="Fault Line Runners"
+                  placeholder="e.g. Quantum Pioneers"
                 />
               </label>
-              <label className="space-y-1.5">
-                <span className={LABEL}>SQUAD LEADER</span>
+              <label className="space-y-1 block">
+                <span className={LABEL}>SQUAD LEADER *</span>
                 <input
                   required
                   className={FIELD}
@@ -138,8 +142,8 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
                   placeholder="Full name"
                 />
               </label>
-              <label className="space-y-1.5">
-                <span className={LABEL}>CONTACT EMAIL</span>
+              <label className="space-y-1 block">
+                <span className={LABEL}>CONTACT EMAIL *</span>
                 <input
                   required
                   type="email"
@@ -149,8 +153,8 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
                   placeholder="operative@domain.org"
                 />
               </label>
-              <label className="space-y-1.5">
-                <span className={LABEL}>MOBILE NUMBER</span>
+              <label className="space-y-1 block">
+                <span className={LABEL}>MOBILE NUMBER *</span>
                 <input
                   required
                   type="tel"
@@ -160,18 +164,18 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
                   placeholder="+91 98765 43210"
                 />
               </label>
-              <label className="space-y-1.5 sm:col-span-2">
-                <span className={LABEL}>INSTITUTION / ORG</span>
+              <label className="space-y-1 block sm:col-span-2">
+                <span className={LABEL}>INSTITUTION / COLLEGE *</span>
                 <input
                   required
                   className={FIELD}
                   value={form.institution}
                   onChange={set("institution")}
-                  placeholder="University or company"
+                  placeholder="College or University name"
                 />
               </label>
-              <label className="space-y-1.5">
-                <span className={LABEL}>THREAT SECTOR</span>
+              <label className="space-y-1 block">
+                <span className={LABEL}>THREAT SECTOR *</span>
                 <select className={FIELD} value={form.track} onChange={set("track")}>
                   {TRACKS.map((t) => (
                     <option key={t.id} value={t.title}>
@@ -180,42 +184,48 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
                   ))}
                 </select>
               </label>
-              <label className="space-y-1.5">
-                <span className={LABEL}>SQUAD SIZE</span>
+              <label className="space-y-1 block">
+                <span className={LABEL}>SQUAD SIZE *</span>
                 <select className={FIELD} value={form.teamSize} onChange={set("teamSize")}>
                   {["1", "2", "3", "4"].map((n) => (
                     <option key={n} value={n}>
-                      {n} {n === "1" ? "person" : "people"}
+                      {n} {n === "1" ? "Member (Solo)" : "Members"}
                     </option>
                   ))}
                 </select>
               </label>
             </div>
 
-            <label className="block space-y-1.5">
-              <span className={LABEL}>MISSION BRIEF (OPTIONAL)</span>
+            <label className="block space-y-1">
+              <span className={LABEL}>PROJECT BRIEF / IDEA (OPTIONAL)</span>
               <textarea
-                rows={3}
+                rows={2}
                 className={FIELD}
                 value={form.brief}
                 onChange={set("brief")}
-                placeholder="What are you building to keep people alive?"
+                placeholder="Briefly describe your hardware/communication prototype idea..."
               />
             </label>
 
-            <div className="flex flex-col gap-2 rounded-md border border-accent/40 bg-accent/10 p-3">
-              <p className="flex items-center gap-2 font-mono-tech text-[12px] tracking-[0.1em] text-accent font-bold">
-                <ShieldCheck className="size-4" aria-hidden />
+            <div className="flex flex-col gap-1 rounded-sm border border-accent/40 bg-accent/10 p-2.5 sm:p-3">
+              <p className="flex items-center gap-1.5 font-mono-tech text-[11px] sm:text-xs tracking-wide text-accent font-bold">
+                <ShieldCheck className="size-3.5 shrink-0" aria-hidden />
                 REGISTRATION FEE: ₹200 PER SQUAD
               </p>
-              <p className="text-xs text-muted-foreground ml-6">
+              <p className="text-[10px] sm:text-xs text-muted-foreground ml-5">
                 Includes high-speed Wi-Fi, Food & Beverages for the 5-hour makeathon duration.
               </p>
             </div>
 
-            <Button type="submit" variant="alert" size="xl" className="w-full" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              variant="alert"
+              size="default"
+              className="w-full h-11 text-sm font-bold tracking-wider uppercase"
+              disabled={isSubmitting}
+            >
               <Flame className="size-4" aria-hidden />
-              {isSubmitting ? "Transmitting..." : "Transmit enrollment"}
+              {isSubmitting ? "Transmitting Clearance..." : "Transmit Squad Enrollment"}
             </Button>
           </form>
         )}
