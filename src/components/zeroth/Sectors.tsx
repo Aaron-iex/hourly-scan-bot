@@ -32,7 +32,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
         </div>
         <h2 className="font-display text-3xl font-black uppercase sm:text-5xl leading-tight">
           Five fronts of{" "}
-          <span className="text-alert-gradient glitch-text inline-block">Planetary Defence</span>
+          <span className="text-alert-gradient inline-block">Planetary Defence</span>
         </h2>
         <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
           Pick a threat sector at enlistment. Each sector features its own dedicated challenges,
