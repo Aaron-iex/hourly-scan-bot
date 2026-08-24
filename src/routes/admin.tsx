@@ -38,7 +38,7 @@ function AdminDashboard() {
   }, []);
 
   const getSavedPin = () => {
-    return import.meta.env.VITE_ADMIN_PIN || localStorage.getItem(PIN_STORAGE_KEY) || DEFAULT_ADMIN_PIN;
+    return import.meta.env['VITE_ADMIN_PIN'] || localStorage.getItem(PIN_STORAGE_KEY) || DEFAULT_ADMIN_PIN;
   };
 
   const handleLogin = (e: React.FormEvent) => {

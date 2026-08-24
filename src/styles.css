@@ -299,20 +299,6 @@
   }
 }
 
-@utility neon-text {
-  text-shadow:
-    0 0 7px color-mix(in oklab, var(--primary) 80%, transparent),
-    0 0 21px color-mix(in oklab, var(--primary) 60%, transparent),
-    0 0 42px color-mix(in oklab, var(--primary) 40%, transparent);
-}
-
-@utility neon-text-accent {
-  text-shadow:
-    0 0 7px color-mix(in oklab, var(--accent) 80%, transparent),
-    0 0 21px color-mix(in oklab, var(--accent) 60%, transparent),
-    0 0 42px color-mix(in oklab, var(--accent) 40%, transparent);
-}
-
 @utility glitch-text {
   animation: var(--animate-glitch);
 }

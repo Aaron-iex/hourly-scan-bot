@@ -6,7 +6,19 @@ import { FAQS, STATS } from "@/data/zeroth";
 import { Linkedin, Phone, Mail } from "lucide-react";
 
 // Hardcoded or filtered mentor profiles for precise structure
-const HOD = {
+type Member = {
+  name: string;
+  role: string;
+  org: string;
+  initials: string;
+  image?: string;
+  imagePos?: string;
+  specialty?: string;
+  phone?: string;
+  linkedin?: string;
+};
+
+const HOD: Member = {
   name: "Dr. A. Saravanan",
   role: "Head of Department, ECE",
   org: "Faculty Mentor",
@@ -15,7 +27,7 @@ const HOD = {
   imagePos: "center -2%",
 };
 
-const FACULTY_COORDINATORS = [
+const FACULTY_COORDINATORS: Member[] = [
   {
     name: "V. Jaya Prakash",
     role: "Faculty Coordinator",
@@ -25,7 +37,7 @@ const FACULTY_COORDINATORS = [
   },
 ];
 
-const STUDENT_COORDINATORS = [
+const STUDENT_COORDINATORS: Member[] = [
   {
     name: "Aaron Nissi",
     role: "Event Head",
