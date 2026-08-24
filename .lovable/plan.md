@@ -43,3 +43,10 @@ The hero puts the college header, titles, countdown and stat panels on top of th
 - Parallax/pop-out via CSS transforms and a small pointer-move hook; no new animation dependency.
 - `neon-text` and `neon-text-accent` utilities removed from `src/styles.css` after all call sites are cleaned.
 - Verification: production build plus Playwright screenshots of the hero and registration flow at mobile and desktop widths.
+
+## Step 0: fix existing build errors first
+
+The project currently fails typecheck; these are fixed before the hero work:
+- `Intel.tsx` — `HOD` and `FACULTY_COORDINATORS` entries have no `linkedin` field, so the optional LinkedIn links error out. Add an optional `linkedin?: string` to the shared member type (or drop the link block for those two groups).
+- `Roadmap.tsx:86` — index-signature access: use `map['hacking']`.
+- `admin.tsx:41` — index-signature access: use `import.meta.env['VITE_ADMIN_PIN']`.
