@@ -197,7 +197,9 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* offset for sticky nav h-16 + padding */
     color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
@@ -205,6 +207,29 @@
     color: var(--color-foreground);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+    touch-action: manipulation;
+  }
+
+  /* GPU-accelerate animated elements */
+  .animate-rise,
+  .animate-flicker,
+  .animate-float,
+  .animate-ticker,
+  .animate-radar-sweep,
+  .animate-slide-x,
+  .animate-pulse-glow {
+    will-change: transform, opacity;
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    html { scroll-behavior: auto; }
   }
 
   h1,
@@ -297,6 +322,20 @@
     border-radius: inherit;
     opacity: 0.7;
   }
+}
+
+@utility neon-text {
+  text-shadow:
+    0 0 7px color-mix(in oklab, var(--primary) 80%, transparent),
+    0 0 21px color-mix(in oklab, var(--primary) 60%, transparent),
+    0 0 42px color-mix(in oklab, var(--primary) 40%, transparent);
+}
+
+@utility neon-text-accent {
+  text-shadow:
+    0 0 7px color-mix(in oklab, var(--accent) 80%, transparent),
+    0 0 21px color-mix(in oklab, var(--accent) 60%, transparent),
+    0 0 42px color-mix(in oklab, var(--accent) 40%, transparent);
 }
 
 @utility glitch-text {

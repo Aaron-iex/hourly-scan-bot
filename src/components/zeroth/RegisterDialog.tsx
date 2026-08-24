@@ -10,8 +10,8 @@ type Props = {
 };
 
 const FIELD =
-  "w-full border border-border bg-input/80 px-3 py-2 text-base sm:text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary rounded-none";
-const LABEL = "font-mono-tech text-[10px] tracking-[0.18em] text-muted-foreground uppercase";
+  "w-full border border-border bg-input/80 px-3 py-2.5 text-[16px] sm:text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/30 rounded-none appearance-none";
+const LABEL = "font-mono-tech text-[10px] tracking-[0.18em] text-muted-foreground uppercase block mb-1";
 
 import { submitRegistrationData } from "@/lib/registrations";
 
@@ -72,13 +72,15 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/85 p-2 sm:p-4 backdrop-blur-md flex items-start sm:items-center justify-center min-h-screen"
+      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       aria-label="Squad enrollment protocol"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="panel-tactical my-4 sm:my-8 w-full max-w-2xl shadow-[var(--shadow-panel)] border border-primary/50 overflow-hidden">
+      <div className="h-full overflow-y-auto overscroll-contain -webkit-overflow-scrolling-touch p-2 sm:p-4 pb-[env(safe-area-inset-bottom,16px)]">
+      <div className="flex min-h-full items-start sm:items-center justify-center">
+      <div className="panel-tactical my-2 sm:my-8 w-full max-w-2xl shadow-[var(--shadow-panel)] border border-primary/50 overflow-hidden animate-rise">
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-primary/40 bg-primary/15 px-3.5 py-3 sm:px-6 sm:py-4">
           <div className="min-w-0 pr-2">
@@ -221,7 +223,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
               type="submit"
               variant="alert"
               size="default"
-              className="w-full h-11 text-sm font-bold tracking-wider uppercase"
+              className="w-full h-12 sm:h-11 text-sm font-bold tracking-wider uppercase touch-manipulation"
               disabled={isSubmitting}
             >
               <Flame className="size-4" aria-hidden />
@@ -229,6 +231,8 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
             </Button>
           </form>
         )}
+      </div>
+      </div>
       </div>
     </div>
   );

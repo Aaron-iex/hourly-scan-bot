@@ -8,6 +8,8 @@ const TABS: { id: "home" | "events" | "about"; label: string }[] = [
   { id: "about", label: "About" },
 ];
 
+const SECTION_ANCHORS = ["#top", "#briefing", "#sectors", "#roadmap", "#intel"];
+
 export function SiteNav({
   onRegister,
   activeTab,
@@ -27,10 +29,28 @@ export function SiteNav({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth >= 768) setOpen(false); };
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [open]);
+
   const handleTab = (tab: "home" | "events" | "about") => {
     onTabChange(tab);
     setOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Smooth scroll to top with a slight delay so mobile menu closes first
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   };
 
   return (
