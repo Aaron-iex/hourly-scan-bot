@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Calendar, ChevronRight, Clock, Flame, Radio, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroBoy from "@/assets/hero-boy.png";
@@ -97,19 +97,19 @@ function FlipDigit({ value, label }: { value: string; label: string }) {
         {value.split("").map((char, i) => (
           <div
             key={i}
-            className="relative size-7 sm:size-10 md:size-12 flex items-center justify-center
+            className="relative size-6 sm:size-9 md:size-11 flex items-center justify-center
                        bg-black/60 backdrop-blur-md
                        border border-primary/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_12px_rgba(0,0,0,0.5)]"
             style={{ clipPath: "inset(0 round 3px)" }}
           >
             <div className="absolute inset-x-0 top-1/2 h-px bg-white/10" />
-            <span className="font-display text-base sm:text-2xl md:text-3xl font-black text-foreground tabular-nums drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            <span className="font-display text-sm sm:text-xl md:text-2xl font-black text-foreground tabular-nums drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
               {char}
             </span>
           </div>
         ))}
       </div>
-      <span className="font-mono-tech text-[7px] sm:text-[9px] tracking-[0.18em] text-muted-foreground uppercase font-semibold">
+      <span className="font-mono-tech text-[6px] sm:text-[8px] tracking-[0.16em] text-muted-foreground uppercase font-semibold">
         {label}
       </span>
     </div>
@@ -212,34 +212,13 @@ function LiveWaveform() {
 
 /* ═══════════════════════════════════════════════════════
    HERO COMPONENT
-   Boy Center Stage • Clean Typography • Fluid Motion
+   Boy Center Stage • One Word Makeathon • Clock In Header
    ═══════════════════════════════════════════════════════ */
 export function Hero({ onRegister }: { onRegister: () => void }) {
   const [clock, setClock] = useState<string | null>(null);
   const [operatives, setOperatives] = useState(0);
   const [cd, setCd] = useState({ d: "00", h: "00", m: "00", s: "00" });
   const [introDone, setIntroDone] = useState(false);
-
-  // Parallax tilt state for the boy cutout
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const stageRef = useRef<HTMLDivElement>(null);
-
-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!stageRef.current) return;
-    const rect = stageRef.current.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const normX = (e.clientX - cx) / (rect.width / 2);
-    const normY = (e.clientY - cy) / (rect.height / 2);
-    setTilt({
-      x: Math.max(-1, Math.min(1, normX)),
-      y: Math.max(-1, Math.min(1, normY)),
-    });
-  }, []);
-
-  const handlePointerLeave = useCallback(() => {
-    setTilt({ x: 0, y: 0 });
-  }, []);
 
   useEffect(() => {
     const tick = () => setClock(new Date().toUTCString().slice(17, 25) + " UTC");
@@ -275,24 +254,11 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     return () => clearInterval(id);
   }, []);
 
-  const boyTransformStyle = useMemo(() => {
-    return {
-      transform: `perspective(1000px) rotateY(${tilt.x * 6}deg) rotateX(${-tilt.y * 6}deg) translateY(${tilt.y * -4}px)`,
-      transition: "transform 0.25s ease-out",
-    };
-  }, [tilt]);
-
   return (
     <>
       {!introDone && <IntroSequence onComplete={() => setIntroDone(true)} />}
 
-      <section
-        id="top"
-        ref={stageRef}
-        onPointerMove={handlePointerMove}
-        onPointerLeave={handlePointerLeave}
-        className="relative isolate overflow-hidden bg-background"
-      >
+      <section id="top" className="relative isolate overflow-hidden bg-background">
         {/* Background Ruined City Plate */}
         <img
           src={heroPlate}
@@ -323,8 +289,8 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             </span>
           </div>
 
-          {/* ── 2. TOP: College Branding Header ── */}
-          <div className="w-full max-w-5xl rounded-lg bg-black/40 backdrop-blur-sm border border-white/5 p-3 sm:p-4 mb-3 sm:mb-5">
+          {/* ── 2. TOP: College Branding Header with Integrated Countdown Clock ── */}
+          <div className="w-full max-w-5xl rounded-lg bg-black/45 backdrop-blur-sm border border-white/5 p-3 sm:p-4 mb-3 sm:mb-4">
             <div className="flex flex-row items-center justify-between gap-3 sm:gap-6">
               {/* College Logo */}
               <div className="shrink-0">
@@ -361,53 +327,70 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
                 </div>
               </div>
             </div>
+
+            {/* ── Integrated Countdown Clock In Between / Below College Header ── */}
+            <div className="mt-3 pt-2.5 border-t border-white/10 flex flex-col items-center justify-center">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Clock className="size-3 text-primary animate-pulse" />
+                <span className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.22em] text-primary font-bold uppercase">
+                  Time to Zero Hour
+                </span>
+              </div>
+              <div className="flex items-start gap-1.5 sm:gap-2.5 justify-center">
+                <FlipDigit value={cd.d} label="Days" />
+                <span className="font-display text-sm sm:text-xl font-black text-primary mt-0.5 sm:mt-1 animate-pulse">:</span>
+                <FlipDigit value={cd.h} label="Hours" />
+                <span className="font-display text-sm sm:text-xl font-black text-primary mt-0.5 sm:mt-1 animate-pulse">:</span>
+                <FlipDigit value={cd.m} label="Mins" />
+                <span className="font-display text-sm sm:text-xl font-black text-primary mt-0.5 sm:mt-1 animate-pulse">:</span>
+                <FlipDigit value={cd.s} label="Secs" />
+              </div>
+            </div>
           </div>
 
           {/* ═══════════════════════════════════════════════════════
-              3. CENTER STAGE: 3-COLUMN HERO (BOY CENTERPIECE)
-              Desktop (md+): Left MAKEATHON | Center Boy | Right ZEROTH HOUR
-              Mobile: Stacked cleanly with boy in center free of text
+              3. CENTER STAGE: 3-COLUMN HERO (BOY CENTERPIECE - NO HOVER)
+              Left MAKEATHON (One Word) | Center Boy Cutout | Right ZEROTH HOUR
              ═══════════════════════════════════════════════════════ */}
-          <div className="relative w-full my-2 sm:my-4">
+          <div className="relative w-full my-2 sm:my-3">
 
             {/* Desktop 3-Column Grid */}
             <div className="hidden md:grid md:grid-cols-[1.1fr_auto_1.1fr] items-center justify-center gap-4 lg:gap-8 max-w-6xl mx-auto">
 
-              {/* Left Column: MAKEATHON */}
+              {/* Left Column: MAKEATHON (One Single Word) */}
               <div className="text-right flex flex-col items-end justify-center pr-2">
                 <div className="inline-flex items-center gap-2 mb-2 font-mono-tech text-xs tracking-[0.25em] text-primary font-bold uppercase border-r-2 border-primary pr-3">
-                  <Flame className="size-3.5 text-primary animate-pulse" />
+                  <Flame className="size-3.5 text-primary" />
                   <span>5-HOUR HARDWARE SPRINT</span>
                 </div>
-                <h1 className="font-display font-black text-5xl lg:text-7xl xl:text-8xl uppercase tracking-tighter text-foreground leading-[0.88] select-none">
-                  MAKE<br />ATHON
+                <h1 className="font-display font-black text-4xl lg:text-6xl xl:text-7xl uppercase tracking-tighter text-foreground leading-none select-none">
+                  MAKEATHON
                 </h1>
-                <p className="mt-3 max-w-xs text-xs font-mono-tech tracking-wide text-muted-foreground leading-relaxed">
+                <p className="mt-2.5 max-w-xs text-xs font-mono-tech tracking-wide text-muted-foreground leading-relaxed">
                   EMBEDDED · DSP · RF · VLSI · INNOVATION
                 </p>
-                <div className="mt-4 flex items-center gap-2 text-[10px] font-mono-tech text-accent font-semibold tracking-wider bg-accent/10 border border-accent/30 px-3 py-1 clip-tactical">
+                <div className="mt-3.5 flex items-center gap-2 text-[10px] font-mono-tech text-accent font-semibold tracking-wider bg-accent/10 border border-accent/30 px-3 py-1 clip-tactical">
                   <Zap className="size-3 text-accent" />
                   <span>₹22K CASH PRIZE CACHE</span>
                 </div>
               </div>
 
-              {/* Center Stage: The Boy Cutout */}
+              {/* Center Stage: The Boy Cutout (Clean & Static, No Hover) */}
               <div className="relative flex flex-col items-center justify-center px-2">
                 {/* Subtle Radial Floor Glow */}
                 <div className="absolute bottom-2 inset-x-0 h-28 bg-[radial-gradient(ellipse_at_center,rgba(224,76,17,0.45)_0%,transparent_70%)] pointer-events-none -z-10" />
 
-                {/* The Cutout Image with Parallax Tilt */}
-                <div style={boyTransformStyle} className="relative z-10 select-none">
+                {/* The Static Cutout Image */}
+                <div className="relative z-10 select-none">
                   <img
                     src={heroBoy}
                     alt="Makeathon Operative"
-                    className="h-[320px] lg:h-[430px] xl:h-[480px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] animate-float"
-                    style={{ animationDuration: "6s" }}
+                    className="h-[300px] lg:h-[400px] xl:h-[440px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)]"
                   />
                 </div>
 
                 {/* Stage Pedestal Line */}
-                <div className="mt-[-8px] h-1 w-44 lg:w-56 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70" />
+                <div className="mt-[-6px] h-1 w-44 lg:w-56 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70" />
               </div>
 
               {/* Right Column: ZEROTH HOUR */}
@@ -416,13 +399,13 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
                   <Shield className="size-3.5 text-accent" />
                   <span>PLANETARY DEFENCE</span>
                 </div>
-                <h1 className="font-display font-black text-5xl lg:text-7xl xl:text-8xl uppercase tracking-tighter text-foreground leading-[0.88] select-none">
-                  ZEROTH<br /><span className="text-alert-gradient">HOUR</span>
+                <h1 className="font-display font-black text-4xl lg:text-6xl xl:text-7xl uppercase tracking-tighter text-foreground leading-none select-none">
+                  ZEROTH <span className="text-alert-gradient">HOUR</span>
                 </h1>
-                <p className="mt-3 max-w-xs text-xs font-mono-tech tracking-wide text-muted-foreground leading-relaxed">
+                <p className="mt-2.5 max-w-xs text-xs font-mono-tech tracking-wide text-muted-foreground leading-relaxed">
                   HARDWARE DEFENCE UNDER DEFCON 1 PRESSURE
                 </p>
-                <div className="mt-4 flex items-center gap-2 text-[10px] font-mono-tech text-primary font-semibold tracking-wider bg-primary/10 border border-primary/30 px-3 py-1 clip-tactical">
+                <div className="mt-3.5 flex items-center gap-2 text-[10px] font-mono-tech text-primary font-semibold tracking-wider bg-primary/10 border border-primary/30 px-3 py-1 clip-tactical">
                   <Clock className="size-3 text-primary" />
                   <span>SEPTEMBER 11, 2026</span>
                 </div>
@@ -432,26 +415,25 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
 
             {/* Mobile Stacked Layout (Clean separation, zero text on boy) */}
             <div className="flex md:hidden flex-col items-center text-center">
-              {/* Top Title: MAKEATHON */}
+              {/* Top Title: MAKEATHON (One Word) */}
               <div className="w-full">
                 <span className="font-mono-tech text-[9px] tracking-[0.25em] text-primary font-bold uppercase">
                   // 5-HOUR HARDWARE SPRINT
                 </span>
-                <h1 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tighter text-foreground leading-none mt-0.5">
+                <h1 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tighter text-foreground leading-none mt-0.5">
                   MAKEATHON
                 </h1>
               </div>
 
-              {/* Center: Boy Cutout */}
+              {/* Center: Boy Cutout (Static, No Hover) */}
               <div className="relative my-2">
                 <div className="absolute bottom-0 inset-x-0 h-20 bg-[radial-gradient(ellipse_at_center,rgba(224,76,17,0.4)_0%,transparent_70%)] pointer-events-none -z-10" />
                 <img
                   src={heroBoy}
                   alt="Makeathon Operative"
-                  className="h-[240px] sm:h-[290px] w-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.85)] mx-auto animate-float"
-                  style={{ animationDuration: "6s" }}
+                  className="h-[220px] sm:h-[260px] w-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.85)] mx-auto"
                 />
-                <div className="mt-[-6px] h-0.5 w-36 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70 mx-auto" />
+                <div className="mt-[-4px] h-0.5 w-32 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70 mx-auto" />
               </div>
 
               {/* Bottom Title: PROJECT ZEROTH HOUR */}
@@ -468,30 +450,11 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
 
           {/* ═══════════════════════════════════════════════════════
-              4. BOTTOM: COUNTDOWN & ACTION CONTROLS
+              4. ACTION CONTROLS & DETAILS
              ═══════════════════════════════════════════════════════ */}
 
-          {/* Split-Flap Countdown Timer */}
-          <HudBrackets className="mt-4 sm:mt-6 px-4 py-3 sm:px-8 sm:py-4 bg-black/50 backdrop-blur-md border border-primary/30 shadow-[0_8px_24px_rgba(0,0,0,0.6)]">
-            <div className="flex items-center gap-1.5 mb-2 justify-center">
-              <Clock className="size-3.5 text-primary" />
-              <span className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.24em] text-primary font-bold uppercase">
-                Time to Zero Hour
-              </span>
-            </div>
-            <div className="flex items-start gap-1.5 sm:gap-3.5 justify-center">
-              <FlipDigit value={cd.d} label="Days" />
-              <span className="font-display text-base sm:text-2xl font-black text-primary mt-0.5 sm:mt-1.5 animate-pulse">:</span>
-              <FlipDigit value={cd.h} label="Hours" />
-              <span className="font-display text-base sm:text-2xl font-black text-primary mt-0.5 sm:mt-1.5 animate-pulse">:</span>
-              <FlipDigit value={cd.m} label="Mins" />
-              <span className="font-display text-base sm:text-2xl font-black text-primary mt-0.5 sm:mt-1.5 animate-pulse">:</span>
-              <FlipDigit value={cd.s} label="Secs" />
-            </div>
-          </HudBrackets>
-
           {/* Date & Venue Badge */}
-          <div className="mt-4 flex w-full max-w-md items-center gap-3 border border-accent/60 bg-black/60 backdrop-blur-sm px-4 py-2.5 clip-tactical text-left group hover:border-accent transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
+          <div className="mt-2 flex w-full max-w-md items-center gap-3 border border-accent/60 bg-black/60 backdrop-blur-sm px-4 py-2.5 clip-tactical text-left group hover:border-accent transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
             <Calendar className="size-5 shrink-0 text-accent" aria-hidden />
             <div>
               <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
@@ -504,7 +467,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
 
           {/* Action CTA Buttons */}
-          <div className="mt-4 flex flex-col gap-2.5 sm:flex-row w-full sm:w-auto">
+          <div className="mt-3.5 flex flex-col gap-2.5 sm:flex-row w-full sm:w-auto">
             <Button
               variant="alert"
               size="default"
@@ -529,7 +492,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
 
           {/* Prize + Fee Cards */}
-          <div className="mt-4 flex w-full max-w-md flex-row gap-3 justify-center">
+          <div className="mt-3.5 flex w-full max-w-md flex-row gap-3 justify-center">
             <HudBrackets className="flex flex-1 flex-col items-center justify-center gap-0.5 bg-black/50 backdrop-blur-sm px-3 py-2.5 border border-primary/30 group hover:border-primary transition-colors">
               <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent font-bold">PRIZE CACHE</p>
               <p className="font-display text-xl sm:text-3xl font-black text-foreground">₹22K</p>
@@ -543,7 +506,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
 
           {/* Live Tactical Readouts */}
-          <div className="mt-4 sm:mt-6 grid w-full grid-cols-3 gap-2.5 max-w-lg">
+          <div className="mt-3.5 sm:mt-5 grid w-full grid-cols-3 gap-2.5 max-w-lg">
             {[
               { label: "THREAT LEVEL", value: "CRITICAL", color: "text-primary", icon: Zap },
               { label: "OPERATIVES", value: `${operatives}+`, color: "text-foreground", icon: Shield },
@@ -559,7 +522,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
 
           {/* Live Waveform Monitor */}
-          <div className="mt-4 sm:mt-6 w-full max-w-2xl">
+          <div className="mt-3.5 sm:mt-5 w-full max-w-2xl">
             <div className="mb-1 flex items-center justify-between font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <span className="size-1.5 rounded-full bg-primary animate-pulse" />
