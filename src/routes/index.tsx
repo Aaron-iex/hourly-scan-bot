@@ -11,8 +11,6 @@ import { Sponsors } from "@/components/zeroth/Sponsors";
 import { RegisterDialog } from "@/components/zeroth/RegisterDialog";
 import { SabotageQuiz } from "@/components/zeroth/SabotageQuiz";
 
-import { Reveal } from "@/components/zeroth/Reveal";
-
 const TITLE = "Zeroth Hour — 5-Hour Planetary Defence Makeathon";
 const DESCRIPTION =
   "Jaya Engineering College Department of ECE presents Makeathon: Project Zeroth Hour. Join 500+ engineers for a 5-hour makeathon across five fronts of planetary defence. 22,000 INR overall prize cache.";
@@ -49,17 +47,17 @@ function Index() {
         {tab === "home" && (
           <>
             <Hero onRegister={() => openRegister()} />
-            <Reveal><Sponsors /></Reveal>
-            <Reveal><Sectors onRegister={openRegister} /></Reveal>
-            <Reveal><SabotageQuiz /></Reveal>
-            <Reveal><Roadmap onRegister={() => openRegister()} preview onExpand={() => setTab("events")} /></Reveal>
-            <Reveal><Intel preview onExpand={() => setTab("about")} /></Reveal>
+            <Sponsors />
+            <Sectors onRegister={openRegister} />
+            <SabotageQuiz />
+            <Roadmap onRegister={() => openRegister()} preview onExpand={() => setTab("events")} />
+            <Intel preview onExpand={() => setTab("about")} />
           </>
         )}
         {tab === "events" && (
           <>
             <Roadmap onRegister={() => openRegister()} />
-            <Reveal><SabotageQuiz /></Reveal>
+            <SabotageQuiz />
           </>
         )}
         {tab === "about" && <Intel />}
