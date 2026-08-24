@@ -83,7 +83,7 @@ export function Roadmap({
           <div className="absolute left-0 sm:left-0 top-0 bottom-0 w-px bg-gradient-to-b from-primary/60 via-accent/40 to-primary/20" />
 
           {displayEvents.map((evt, idx) => {
-            const colors = STAGE_COLORS[evt.stage] || STAGE_COLORS.hacking!;
+            const colors = STAGE_COLORS[evt.stage] || STAGE_COLORS['hacking']!;
             return (
               <li
                 key={evt.title}
