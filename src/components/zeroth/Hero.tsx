@@ -1,72 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Calendar, ChevronRight, Clock, Flame, Crosshair, Radio, Shield, Zap, AlertTriangle, Skull } from "lucide-react";
+import { Calendar, ChevronRight, Clock, Flame, Crosshair, Radio, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-cataclysm.jpg";
-
-/* ─── Cinematic Opening Sequence ─── */
-const DISASTER_SEQUENCE = [
-  { text: "⚠ SEISMIC BREACH DETECTED", color: "text-red-500" },
-  { text: "◈ CORE MELTDOWN IMMINENT", color: "text-orange-400" },
-  { text: "◉ RF BLACKOUT — ALL BANDS", color: "text-yellow-400" },
-  { text: "△ GLOBAL COMMS FAILURE", color: "text-red-400" },
-  { text: "▣ INITIATING ZEROTH HOUR PROTOCOL", color: "text-primary" },
-];
-
-function CinematicIntro({ onComplete }: { onComplete: () => void }) {
-  const [phase, setPhase] = useState(0); // 0-4 = disaster lines, 5 = fade out
-  const [opacity, setOpacity] = useState(1);
-
-  useEffect(() => {
-    if (phase < DISASTER_SEQUENCE.length) {
-      const id = setTimeout(() => setPhase((p) => p + 1), 650);
-      return () => clearTimeout(id);
-    } else {
-      // start fade out
-      setOpacity(0);
-      const id = setTimeout(onComplete, 800);
-      return () => clearTimeout(id);
-    }
-  }, [phase, onComplete]);
-
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black pointer-events-none transition-opacity duration-700"
-      style={{ opacity }}
-    >
-      {/* Scanline overlay */}
-      <div className="absolute inset-0 scanlines opacity-60" />
-      {/* Grid */}
-      <div className="absolute inset-0 grid-tactical opacity-15" />
-
-      {/* Central warning icon */}
-      <div className="relative mb-6">
-        <AlertTriangle className="size-10 sm:size-14 text-primary animate-pulse" />
-        <div className="absolute inset-0 animate-ping">
-          <AlertTriangle className="size-10 sm:size-14 text-primary opacity-30" />
-        </div>
-      </div>
-
-      {/* Disaster lines */}
-      <div className="flex flex-col items-center gap-2 sm:gap-3">
-        {DISASTER_SEQUENCE.map((item, i) => (
-          <div
-            key={i}
-            className={`font-mono-tech text-xs sm:text-sm tracking-[0.2em] uppercase transition-all duration-300 ${
-              i < phase ? `${item.color} opacity-100 translate-y-0` : "opacity-0 translate-y-4"
-            }`}
-          >
-            {item.text}
-          </div>
-        ))}
-      </div>
-
-      {/* Bottom flash bar */}
-      {phase >= 3 && (
-        <div className="absolute bottom-0 inset-x-0 h-1 bg-primary animate-pulse" />
-      )}
-    </div>
-  );
-}
+import { IntroSequence, INTRO_KEY } from "./IntroSequence";
+import heroPlate from "@/assets/hero-plate.jpg";
+import heroBoy from "@/assets/hero-boy.png";
 
 /* ─── Floating Ember Particle Canvas ─── */
 function EmberCanvas() {
@@ -74,31 +11,37 @@ function EmberCanvas() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    let rafId: number;
-    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+    let rafId = 0;
+    let visible = true;
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
     resize();
     window.addEventListener("resize", resize, { passive: true });
-    type Ember = { x: number; y: number; vx: number; vy: number; r: number; alpha: number; hue: number; decay: number };
-    const embers: Ember[] = Array.from({ length: 60 }, () => ({
+    const count = window.innerWidth < 640 ? 22 : 45;
+    type Ember = { x: number; y: number; vx: number; vy: number; r: number; alpha: number; hue: number };
+    const embers: Ember[] = Array.from({ length: count }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.35,
       vy: -(Math.random() * 0.6 + 0.12),
       r: Math.random() * 2.2 + 0.4,
-      alpha: Math.random() * 0.55 + 0.08,
+      alpha: Math.random() * 0.5 + 0.08,
       hue: Math.random() > 0.6 ? 35 : Math.random() > 0.3 ? 55 : 15,
-      decay: Math.random() * 0.002 + 0.001,
     }));
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       embers.forEach((e) => {
-        e.x += e.vx + Math.sin(Date.now() * 0.001 + e.y) * 0.08;
+        e.x += e.vx;
         e.y += e.vy;
-        e.alpha += (Math.random() - 0.5) * 0.015;
-        e.alpha = Math.max(0.03, Math.min(0.6, e.alpha));
-        if (e.y < -6) { e.y = canvas.height + 6; e.x = Math.random() * canvas.width; e.alpha = 0.4; }
+        if (e.y < -6) {
+          e.y = canvas.height + 6;
+          e.x = Math.random() * canvas.width;
+        }
         ctx.save();
         ctx.globalAlpha = e.alpha;
         const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r * 3.5);
@@ -111,91 +54,72 @@ function EmberCanvas() {
         ctx.fill();
         ctx.restore();
       });
-      rafId = requestAnimationFrame(draw);
+      if (visible) rafId = requestAnimationFrame(draw);
     };
     draw();
-    return () => { cancelAnimationFrame(rafId); window.removeEventListener("resize", resize); };
+    const io = new IntersectionObserver(([entry]) => {
+      const nowVisible = !!entry?.isIntersecting;
+      if (nowVisible && !visible) {
+        visible = true;
+        draw();
+      } else if (!nowVisible) {
+        visible = false;
+        cancelAnimationFrame(rafId);
+      }
+    });
+    io.observe(canvas);
+    return () => {
+      visible = false;
+      cancelAnimationFrame(rafId);
+      io.disconnect();
+      window.removeEventListener("resize", resize);
+    };
   }, []);
   return <canvas ref={canvasRef} className="absolute inset-0 -z-10 size-full pointer-events-none" aria-hidden />;
 }
 
-/* ─── Animated SVG Radar Sweep behind title ─── */
+/* ─── Animated SVG Radar Sweep behind the figure ─── */
 function RadarSweep() {
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10" aria-hidden>
-      <svg viewBox="0 0 400 400" className="size-[180px] sm:size-[320px] md:size-[420px] opacity-10 sm:opacity-15">
+    <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center" aria-hidden>
+      <svg viewBox="0 0 400 400" className="size-[240px] opacity-20 sm:size-[380px] md:size-[440px]">
         {[60, 120, 180].map((r) => (
-          <circle key={r} cx="200" cy="200" r={r} fill="none" stroke="var(--primary)" strokeWidth="0.5" strokeDasharray="4 6" opacity="0.5" />
+          <circle key={r} cx="200" cy="200" r={r} fill="none" stroke="var(--primary)" strokeWidth="0.6" strokeDasharray="4 6" opacity="0.6" />
         ))}
-        <line x1="200" y1="20" x2="200" y2="380" stroke="var(--primary)" strokeWidth="0.3" opacity="0.3" />
-        <line x1="20" y1="200" x2="380" y2="200" stroke="var(--primary)" strokeWidth="0.3" opacity="0.3" />
         <g className="animate-radar-sweep" style={{ transformOrigin: "200px 200px" }}>
           <defs>
-            <linearGradient id="sweep-grad" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(0 0.5 0.5)">
+            <linearGradient id="sweep-grad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="var(--primary)" stopOpacity="0" />
               <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.6" />
             </linearGradient>
           </defs>
-          <path d="M200,200 L200,20 A180,180,0,0,1,356,116 Z" fill="url(#sweep-grad)" opacity="0.4" />
+          <path d="M200,200 L200,20 A180,180,0,0,1,356,116 Z" fill="url(#sweep-grad)" opacity="0.45" />
         </g>
-        {[
-          { cx: 260, cy: 130 }, { cx: 145, cy: 270 }, { cx: 310, cy: 220 },
-          { cx: 120, cy: 140 }, { cx: 250, cy: 290 },
-        ].map((d, i) => (
-          <circle key={i} cx={d.cx} cy={d.cy} r="2.5" fill="var(--accent)" opacity="0.7">
-            <animate attributeName="opacity" values="0.7;0.2;0.7" dur={`${2 + i * 0.5}s`} repeatCount="indefinite" />
-          </circle>
-        ))}
       </svg>
     </div>
-  );
-}
-
-/* ─── Typewriter Effect ─── */
-function Typewriter({ text, speed = 28, className }: { text: string; speed?: number; className?: string }) {
-  const [displayed, setDisplayed] = useState("");
-  const [cursor, setCursor] = useState(true);
-  useEffect(() => {
-    let i = 0;
-    const id = setInterval(() => {
-      if (i < text.length) { setDisplayed(text.slice(0, i + 1)); i++; }
-      else clearInterval(id);
-    }, speed);
-    return () => clearInterval(id);
-  }, [text, speed]);
-  useEffect(() => {
-    const id = setInterval(() => setCursor((c) => !c), 530);
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <span className={className}>
-      {displayed}
-      <span className={`inline-block w-[2px] h-[1em] bg-primary ml-0.5 align-text-bottom ${cursor ? "opacity-100" : "opacity-0"}`} />
-    </span>
   );
 }
 
 /* ─── Split-Flap Countdown Digit ─── */
 function FlipDigit({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col items-center gap-0.5 sm:gap-1">
-      <div className="relative flex gap-[1px] sm:gap-[2px]">
+    <div className="flex flex-col items-center gap-1">
+      <div className="flex gap-[2px]">
         {value.split("").map((char, i) => (
           <div
             key={i}
-            className="relative size-7 sm:size-11 md:size-13 flex items-center justify-center
-                       bg-black/40 backdrop-blur-sm
-                       border border-primary/25"
-            style={{ clipPath: "inset(0 round 2px)" }}
+            className="relative flex size-8 items-center justify-center border border-primary/30 bg-black/45 sm:size-11 md:size-12"
           >
             <div className="absolute inset-x-0 top-1/2 h-px bg-primary/15" />
-            <span className="font-display text-base sm:text-2xl md:text-3xl font-black text-foreground tabular-nums drop-shadow-[0_0_8px_rgba(224,76,17,0.5)]">
+            <span className="font-display text-lg font-black tabular-nums text-foreground sm:text-2xl md:text-3xl">
               {char}
             </span>
           </div>
         ))}
       </div>
-      <span className="font-mono-tech text-[7px] sm:text-[9px] tracking-[0.18em] text-muted-foreground uppercase">{label}</span>
+      <span className="font-mono-tech text-[8px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[10px]">
+        {label}
+      </span>
     </div>
   );
 }
@@ -204,14 +128,10 @@ function FlipDigit({ value, label }: { value: string; label: string }) {
 function HudBrackets({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`relative ${className}`}>
-      {/* TL */}
-      <div className="absolute -top-1.5 -left-1.5 size-4 border-t-2 border-l-2 border-primary/50 pointer-events-none" />
-      {/* TR */}
-      <div className="absolute -top-1.5 -right-1.5 size-4 border-t-2 border-r-2 border-primary/50 pointer-events-none" />
-      {/* BL */}
-      <div className="absolute -bottom-1.5 -left-1.5 size-4 border-b-2 border-l-2 border-accent/50 pointer-events-none" />
-      {/* BR */}
-      <div className="absolute -bottom-1.5 -right-1.5 size-4 border-b-2 border-r-2 border-accent/50 pointer-events-none" />
+      <div className="pointer-events-none absolute -top-1.5 -left-1.5 size-4 border-t-2 border-l-2 border-primary/50" />
+      <div className="pointer-events-none absolute -top-1.5 -right-1.5 size-4 border-t-2 border-r-2 border-primary/50" />
+      <div className="pointer-events-none absolute -bottom-1.5 -left-1.5 size-4 border-b-2 border-l-2 border-accent/50" />
+      <div className="pointer-events-none absolute -bottom-1.5 -right-1.5 size-4 border-b-2 border-r-2 border-accent/50" />
       {children}
     </div>
   );
@@ -223,47 +143,60 @@ function LiveWaveform() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    let rafId: number;
-    const resize = () => { canvas.width = canvas.offsetWidth * 2; canvas.height = canvas.offsetHeight * 2; };
+    let rafId = 0;
+    const resize = () => {
+      canvas.width = canvas.offsetWidth * 2;
+      canvas.height = canvas.offsetHeight * 2;
+    };
     resize();
     const draw = () => {
-      const w = canvas.width, h = canvas.height;
+      const w = canvas.width;
+      const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
       const t = Date.now() * 0.002;
-      // primary wave
       ctx.beginPath();
-      ctx.strokeStyle = "rgba(224,76,17,0.6)";
+      ctx.strokeStyle = "rgba(224,76,17,0.75)";
       ctx.lineWidth = 2;
-      for (let x = 0; x < w; x++) {
-        const noise = Math.sin(x * 0.04 + t) * 8 + Math.sin(x * 0.015 + t * 1.3) * 14 + Math.random() * 2;
-        const y = h / 2 + noise + (x > w * 0.3 && x < w * 0.4 ? Math.sin(x * 0.1) * 25 : 0)
-                + (x > w * 0.6 && x < w * 0.75 ? Math.cos(x * 0.08 + t) * 20 : 0);
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      // accent glow wave
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(255,200,0,0.25)";
-      ctx.lineWidth = 1.5;
       for (let x = 0; x < w; x++) {
         const noise = Math.sin(x * 0.03 + t * 0.7) * 6 + Math.cos(x * 0.02 + t * 1.1) * 10;
         const y = h / 2 + noise;
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
       ctx.stroke();
-      // scan line
-      const scanX = ((t * 50) % w);
+      const scanX = (t * 50) % w;
       ctx.fillStyle = "rgba(224,76,17,0.15)";
       ctx.fillRect(scanX - 1, 0, 3, h);
       rafId = requestAnimationFrame(draw);
     };
     draw();
     window.addEventListener("resize", resize, { passive: true });
-    return () => { cancelAnimationFrame(rafId); window.removeEventListener("resize", resize); };
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
   return <canvas ref={canvasRef} className="size-full" aria-hidden />;
+}
+
+/* ─── Pointer parallax for the figure ─── */
+function useParallax() {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    const onMove = (e: PointerEvent) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      setOffset({ x: ((e.clientX - cx) / cx) * 10, y: ((e.clientY - cy) / cy) * 6 });
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+  return offset;
 }
 
 /* ─── HERO ─── */
@@ -271,6 +204,19 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
   const [clock, setClock] = useState<string | null>(null);
   const [operatives, setOperatives] = useState(0);
   const [cd, setCd] = useState({ d: "00", h: "00", m: "00", s: "00" });
+  const [intro, setIntro] = useState(false);
+  const parallax = useParallax();
+
+  useEffect(() => {
+    const seen = sessionStorage.getItem(INTRO_KEY);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!seen && !reduced) setIntro(true);
+  }, []);
+
+  const handleIntroDone = useCallback(() => {
+    sessionStorage.setItem(INTRO_KEY, "1");
+    setIntro(false);
+  }, []);
 
   useEffect(() => {
     const tick = () => setClock(new Date().toUTCString().slice(17, 25) + " UTC");
@@ -306,189 +252,209 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     return () => clearInterval(id);
   }, []);
 
-  const [introDone, setIntroComplete] = useState(false);
-  const handleIntroDone = useCallback(() => setIntroComplete(true), []);
-
   return (
     <>
-    {!introDone && <CinematicIntro onComplete={handleIntroDone} />}
-    <section id="top" className="relative isolate overflow-hidden scanlines">
-      {/* BG Layers — keep image visible */}
-      <img src={heroImage} alt="" width={1920} height={1088}
-        className="absolute inset-0 -z-20 size-full object-cover object-[center_30%] opacity-60 brightness-[0.85] contrast-110 saturate-[1.15]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_40%,transparent_25%,var(--background)_90%)]" />
-      <div className="absolute inset-0 -z-10 grid-tactical opacity-30" />
-      <EmberCanvas />
-      <div className="absolute bottom-0 inset-x-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent pointer-events-none -z-10" />
+      {intro && <IntroSequence onComplete={handleIntroDone} />}
+      <section id="top" className="relative isolate overflow-hidden scanlines">
+        {/* BG plate */}
+        <img
+          src={heroPlate}
+          alt=""
+          width={1920}
+          height={1080}
+          className="absolute inset-0 -z-20 size-full object-cover object-[center_35%] opacity-55 brightness-[0.8] contrast-110"
+        />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_45%,transparent_20%,var(--background)_92%)]" />
+        <div className="absolute inset-0 -z-10 grid-tactical opacity-25" />
+        <EmberCanvas />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-t from-background to-transparent sm:h-48" />
 
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-2 py-2 text-center sm:px-6 lg:px-8 sm:py-8">
-
-        {/* ── DEFCON Badge ── */}
-        <div className="animate-rise inline-flex items-center gap-2.5 border border-primary/60 bg-primary/15 px-4 py-1.5 clip-tactical mb-3 animate-pulse-glow">
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
-            <span className="relative inline-flex size-2 rounded-full bg-primary" />
-          </span>
-          <Radio className="size-3 text-primary animate-pulse" />
-          <span className="font-mono-tech text-[10px] tracking-[0.25em] text-accent font-bold">
-            DEFCON 1 PROTOCOL {clock ? `// ${clock}` : ""}
-          </span>
-        </div>
-
-        {/* ── College Header ── */}
-        <div className="animate-rise w-full max-w-5xl px-1 sm:px-4">
-          <div className="flex flex-row items-center justify-center gap-3 sm:gap-6">
-            <div className="shrink-0">
-              <div className="size-14 sm:size-20 md:size-24 rounded-full overflow-hidden border-2 border-primary/50 bg-black/70 shadow-[0_0_20px_rgba(224,76,17,0.35)] flex items-center justify-center transition-transform duration-300 hover:scale-110 animate-float">
-                <img src="/images/jec-emblem.png" alt="Jaya Educational Trust Emblem" className="size-full object-cover scale-105" />
-              </div>
-            </div>
-            <div className="flex-1 min-w-0 text-center">
-              <h2 className="font-display text-sm sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight sm:tracking-wide text-foreground leading-tight neon-text">
-                JAYA ENGINEERING COLLEGE
-              </h2>
-              <p className="mt-1 font-mono-tech text-[7px] sm:text-xs md:text-sm text-muted-foreground font-medium">
-                Accredited by NAAC & NBA | Approved by AICTE | Affiliated to Anna University
-              </p>
-              <p className="mt-0.5 font-mono-tech text-[7px] sm:text-[11px] text-accent font-bold tracking-wide">
-                📍 CTH Road, Thiruninravur, Chennai — 602024
-              </p>
-            </div>
-            <div className="shrink-0">
-              <div className="size-14 sm:size-20 md:size-24 rounded-full overflow-hidden border-2 border-accent/50 bg-black/70 shadow-[0_0_20px_rgba(255,200,0,0.35)] flex items-center justify-center transition-transform duration-300 hover:scale-110 animate-float" style={{ animationDelay: "1s" }}>
-                <img src="/images/jec-31years.png" alt="31 Years of Excellence" className="size-full object-cover scale-105" />
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-3 pt-2 space-y-2">
-            <p className="font-mono-tech text-[10px] sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.2em] uppercase text-primary font-black neon-text">
-              DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
-            </p>
-            <span className="inline-block border border-accent/50 bg-accent/15 px-4 py-1 clip-tactical font-mono-tech text-[10px] sm:text-xs tracking-[0.3em] uppercase text-accent font-bold">
-              // PRESENTS
+        <div className="mx-auto flex max-w-6xl flex-col items-center px-4 py-4 text-center sm:px-6 sm:py-8 lg:px-8">
+          {/* ── DEFCON Badge ── */}
+          <div className="animate-rise mb-4 inline-flex max-w-full items-center gap-2 border border-primary/60 bg-primary/15 px-3 py-1.5 clip-tactical sm:px-4">
+            <span className="relative flex size-2 shrink-0">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
+              <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            </span>
+            <Radio className="size-3 shrink-0 text-primary" aria-hidden />
+            <span className="truncate font-mono-tech text-[9px] font-bold tracking-[0.2em] text-accent sm:text-[10px] sm:tracking-[0.25em]">
+              DEFCON 1 PROTOCOL {clock ? `// ${clock}` : ""}
             </span>
           </div>
-        </div>
 
-        {/* ── Main Event Title with Radar ── */}
-        <div className="relative mt-6 sm:mt-8">
-          <RadarSweep />
-          <HudBrackets className="px-6 py-4 sm:px-12 sm:py-6">
-            <h1 className="animate-rise font-display uppercase">
-              <span className="block text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-foreground tracking-tighter glitch-text"
-                    style={{ textShadow: "0 0 40px rgba(255,255,255,0.2), 0 0 80px rgba(224,76,17,0.15)" }}>
-                MAKEATHON
+          {/* ── College Header ── */}
+          <div className="animate-rise w-full max-w-5xl">
+            <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:gap-6">
+              <div className="size-12 shrink-0 overflow-hidden rounded-full border-2 border-primary/50 bg-black/70 sm:size-20 md:size-24">
+                <img src="/images/jec-emblem.png" alt="Jaya Educational Trust emblem" className="size-full object-cover" />
+              </div>
+              <div className="min-w-0 text-center">
+                <h2 className="font-display text-[13px] leading-tight font-black uppercase tracking-tight text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
+                  Jaya Engineering College
+                </h2>
+                <p className="mt-1 font-mono-tech text-[7px] text-muted-foreground sm:text-xs md:text-sm">
+                  Accredited by NAAC &amp; NBA | Approved by AICTE | Affiliated to Anna University
+                </p>
+                <p className="mt-0.5 font-mono-tech text-[7px] font-bold tracking-wide text-accent sm:text-[11px]">
+                  CTH Road, Thiruninravur, Chennai — 602024
+                </p>
+              </div>
+              <div className="size-12 shrink-0 overflow-hidden rounded-full border-2 border-accent/50 bg-black/70 sm:size-20 md:size-24">
+                <img src="/images/jec-31years.png" alt="31 years of excellence" className="size-full object-cover" />
+              </div>
+            </div>
+
+            <div className="mt-3 space-y-2">
+              <p className="font-mono-tech text-[9px] font-black uppercase tracking-[0.15em] text-primary sm:text-sm sm:tracking-[0.2em] md:text-base">
+                Department of Electronics and Communication Engineering
+              </p>
+              <span className="inline-block border border-accent/50 bg-accent/15 px-4 py-1 clip-tactical font-mono-tech text-[9px] font-bold uppercase tracking-[0.3em] text-accent sm:text-xs">
+                // Presents
               </span>
-              <span className="mt-2 block text-lg sm:text-3xl md:text-4xl lg:text-5xl font-extrabold animate-flicker shimmer-text tracking-wide">
-                PROJECT ZEROTH HOUR
-              </span>
+            </div>
+          </div>
+
+          {/* ── STAGE: MAKEATHON · figure · ZEROTH HOUR ── */}
+          <div className="relative mt-6 grid w-full items-center gap-2 sm:mt-8 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-4">
+            {/* LEFT — MAKEATHON */}
+            <h1 className="animate-rise order-1 font-display text-[clamp(2.1rem,12vw,3.2rem)] leading-[0.85] font-black uppercase tracking-tighter text-foreground md:order-none md:justify-self-end md:text-right md:text-[clamp(2.6rem,5.4vw,4.6rem)]">
+              Make<span className="block md:inline">athon</span>
             </h1>
-          </HudBrackets>
-          {/* Floating crosshair */}
-          <Crosshair className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 size-6 sm:size-8 text-primary/40 animate-float" style={{ animationDelay: "0.5s" }} />
-        </div>
 
-        {/* ── Breathing gap — BG image visible ── */}
-        <div className="mt-6 sm:mt-8" />
-
-        {/* ── Split-Flap Countdown (transparent — BG visible) ── */}
-        <HudBrackets className="animate-rise mt-5 sm:mt-6 px-3 py-3 sm:px-8 sm:py-5 border border-primary/20 bg-black/20 backdrop-blur-[2px]">
-          <div className="flex items-center gap-1.5 mb-2 sm:mb-3 justify-center">
-            <Shield className="size-3 sm:size-3.5 text-primary" />
-            <span className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.22em] text-primary font-bold uppercase">
-              Time to Zero Hour
-            </span>
-          </div>
-          <div className="flex items-start gap-1.5 sm:gap-3 justify-center">
-            <FlipDigit value={cd.d} label="Days" />
-            <span className="font-display text-base sm:text-2xl font-black text-primary mt-1 sm:mt-2 animate-flicker">:</span>
-            <FlipDigit value={cd.h} label="Hrs" />
-            <span className="font-display text-base sm:text-2xl font-black text-primary mt-1 sm:mt-2 animate-flicker">:</span>
-            <FlipDigit value={cd.m} label="Min" />
-            <span className="font-display text-base sm:text-2xl font-black text-primary mt-1 sm:mt-2 animate-flicker">:</span>
-            <FlipDigit value={cd.s} label="Sec" />
-          </div>
-        </HudBrackets>
-
-        {/* ── Date & Venue ── */}
-        <div className="animate-rise mt-5 flex w-full max-w-md items-center gap-3 border border-accent/60 bg-accent/10 px-4 py-2.5 clip-tactical text-left group hover:bg-accent/15 transition-colors">
-          <Calendar className="size-5 shrink-0 text-accent group-hover:animate-bounce" aria-hidden />
-          <div>
-            <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
-              SEPT 11 // 5-HOUR MAKEATHON
-            </p>
-            <p className="font-mono-tech text-[10px] text-muted-foreground">
-              Venue: Jaya Auditorium · Registration queue open
-            </p>
-          </div>
-        </div>
-
-        {/* ── CTA Buttons ── */}
-        <div className="animate-rise mt-5 flex flex-col gap-2.5 sm:flex-row w-full sm:w-auto">
-          <Button variant="alert" size="default" onClick={onRegister}
-            className="w-full sm:w-auto group relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_35px_rgba(224,76,17,0.6)] hover:scale-[1.02]">
-            <Flame className="size-4 transition-transform group-hover:rotate-12 group-hover:scale-110" aria-hidden />
-            Enlist your squad
-            <ChevronRight className="size-4 transition-transform group-hover:translate-x-1.5" aria-hidden />
-          </Button>
-          <Button variant="tactical" size="default" asChild
-            className="w-full sm:w-auto group transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:scale-[1.02]">
-            <a href="#roadmap">
-              <Clock className="size-4 transition-transform group-hover:rotate-[-15deg]" aria-hidden />
-              View build schedule
-            </a>
-          </Button>
-        </div>
-
-        {/* ── Prize + Registration Cards ── */}
-        <div className="animate-rise mt-4 sm:mt-5 flex w-full max-w-lg flex-row gap-2 sm:gap-3 justify-center">
-          <HudBrackets className="flex flex-1 flex-col items-center justify-center gap-0.5 sm:gap-1 bg-black/20 backdrop-blur-[2px] px-2 py-2.5 sm:px-3 sm:py-3.5 group hover:bg-primary/12 transition-colors border border-primary/15">
-            <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent">PRIZE CACHE</p>
-            <p className="font-display text-xl sm:text-3xl font-black text-foreground neon-text">₹22K</p>
-            <p className="font-mono-tech text-[7px] sm:text-[9px] text-muted-foreground text-center">+ MERCH & CERTS</p>
-          </HudBrackets>
-          <HudBrackets className="flex flex-1 flex-col items-center justify-center gap-0.5 sm:gap-1 bg-black/20 backdrop-blur-[2px] px-2 py-2.5 sm:px-3 sm:py-3.5 group hover:bg-accent/12 transition-colors border border-accent/15">
-            <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent">REGISTRATION</p>
-            <p className="font-display text-xl sm:text-3xl font-black text-foreground neon-text-accent">₹200</p>
-            <p className="font-mono-tech text-[7px] sm:text-[9px] text-muted-foreground text-center">FOOD & WI-FI INCLUDED</p>
-          </HudBrackets>
-        </div>
-
-        {/* ── Live Tactical Readouts ── */}
-        <div className="animate-rise mt-6 sm:mt-8 grid w-full grid-cols-3 gap-3 max-w-lg">
-          {[
-            { label: "THREAT LEVEL", value: "CRITICAL", color: "text-primary neon-text", icon: Zap },
-            { label: "OPERATIVES", value: `${operatives}+`, color: "text-foreground", icon: Shield },
-            { label: "ECE TRACKS", value: "05", color: "text-alert-gradient", icon: Crosshair },
-          ].map((item, i) => (
-            <div key={i} className="group panel-tactical p-3 sm:p-4 text-center transition-all duration-300 hover:-translate-y-1">
-              <item.icon className="size-4 text-primary mx-auto mb-1.5 transition-transform group-hover:scale-125 group-hover:rotate-12" aria-hidden />
-              <p className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.2em] text-muted-foreground">{item.label}</p>
-              <p className={`font-display text-lg sm:text-xl font-black mt-0.5 ${item.color}`}>{item.value}</p>
-              <div className="mt-1.5 h-px w-0 group-hover:w-full bg-gradient-to-r from-primary to-accent transition-all duration-500 mx-auto" />
+            {/* CENTER — the figure, popping out */}
+            <div className="relative order-2 flex items-end justify-center md:order-none">
+              <RadarSweep />
+              {/* ground glow */}
+              <div
+                className="pointer-events-none absolute bottom-1 left-1/2 h-6 w-[70%] -translate-x-1/2 rounded-[50%] bg-primary/45 blur-xl sm:h-8"
+                aria-hidden
+              />
+              <img
+                src={heroBoy}
+                alt="Student operative holding a glowing laptop amid the crisis zone"
+                width={231}
+                height={532}
+                className="animate-float relative z-10 h-[210px] w-auto drop-shadow-[0_25px_45px_rgba(0,0,0,0.75)] transition-transform duration-300 ease-out sm:h-[300px] md:h-[360px] lg:h-[420px]"
+                style={{ transform: `translate3d(${parallax.x}px, ${parallax.y}px, 0)` }}
+              />
             </div>
-          ))}
-        </div>
 
-        {/* ── Live Waveform ── */}
-        <div className="animate-rise mt-5 sm:mt-6 w-full max-w-3xl">
-          <div className="mb-1 flex items-center justify-between font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-              RF SPECTRUM — LIVE
-            </span>
-            <span className="text-primary font-bold">2.4 GHz</span>
+            {/* RIGHT — ZEROTH HOUR */}
+            <div className="animate-rise order-3 md:order-none md:justify-self-start md:text-left">
+              <p className="font-display text-[clamp(1.6rem,9vw,2.4rem)] leading-[0.9] font-black uppercase tracking-tight text-primary md:text-[clamp(2rem,4.4vw,3.6rem)]">
+                Zeroth
+                <span className="block text-accent">Hour</span>
+              </p>
+              <p className="mt-2 font-mono-tech text-[9px] uppercase tracking-[0.28em] text-muted-foreground sm:text-[11px]">
+                Sept 11 // 5-hour sprint
+              </p>
+            </div>
           </div>
-          <HudBrackets>
-            <div className="relative h-10 sm:h-14 md:h-16 bg-black/25 backdrop-blur-[1px] overflow-hidden border border-primary/15">
-              <LiveWaveform />
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--background),transparent_15%,transparent_85%,var(--background))]" />
+
+          {/* ── Countdown ── */}
+          <HudBrackets className="animate-rise mt-8 border border-primary/20 bg-black/25 px-3 py-3 sm:mt-10 sm:px-8 sm:py-5">
+            <div className="mb-2 flex items-center justify-center gap-1.5 sm:mb-3">
+              <Shield className="size-3 text-primary sm:size-3.5" aria-hidden />
+              <span className="font-mono-tech text-[8px] font-bold uppercase tracking-[0.22em] text-primary sm:text-[10px]">
+                Time to Zero Hour
+              </span>
+            </div>
+            <div className="flex items-start justify-center gap-1.5 sm:gap-3">
+              <FlipDigit value={cd.d} label="Days" />
+              <span className="mt-1 font-display text-base font-black text-primary sm:mt-2 sm:text-2xl">:</span>
+              <FlipDigit value={cd.h} label="Hrs" />
+              <span className="mt-1 font-display text-base font-black text-primary sm:mt-2 sm:text-2xl">:</span>
+              <FlipDigit value={cd.m} label="Min" />
+              <span className="mt-1 font-display text-base font-black text-primary sm:mt-2 sm:text-2xl">:</span>
+              <FlipDigit value={cd.s} label="Sec" />
             </div>
           </HudBrackets>
+
+          {/* ── Date & Venue ── */}
+          <div className="animate-rise mt-5 flex w-full max-w-md items-center gap-3 border border-accent/60 bg-accent/10 px-4 py-2.5 text-left clip-tactical">
+            <Calendar className="size-5 shrink-0 text-accent" aria-hidden />
+            <div className="min-w-0">
+              <p className="font-display text-xs font-bold uppercase tracking-[0.12em] text-accent sm:text-sm">
+                Sept 11 // 5-hour makeathon
+              </p>
+              <p className="font-mono-tech text-[10px] text-muted-foreground">
+                Venue: Jaya Auditorium · Registration queue open
+              </p>
+            </div>
+          </div>
+
+          {/* ── CTA Buttons ── */}
+          <div className="animate-rise mt-5 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
+            <Button
+              variant="alert"
+              onClick={onRegister}
+              className="group w-full min-h-11 sm:w-auto transition-transform duration-200 hover:scale-[1.02]"
+            >
+              <Flame className="size-4 transition-transform group-hover:rotate-12" aria-hidden />
+              Enlist your squad
+              <ChevronRight className="size-4 transition-transform group-hover:translate-x-1.5" aria-hidden />
+            </Button>
+            <Button variant="tactical" asChild className="group w-full min-h-11 sm:w-auto">
+              <a href="#roadmap">
+                <Clock className="size-4" aria-hidden />
+                View build schedule
+              </a>
+            </Button>
+          </div>
+
+          {/* ── Prize + Registration Cards ── */}
+          <div className="animate-rise mt-5 flex w-full max-w-lg justify-center gap-2 sm:gap-3">
+            <HudBrackets className="flex flex-1 flex-col items-center justify-center gap-1 border border-primary/15 bg-black/30 px-2 py-3 transition-colors hover:bg-primary/12 sm:px-3">
+              <p className="font-mono-tech text-[8px] tracking-[0.2em] text-accent sm:text-[10px]">PRIZE CACHE</p>
+              <p className="font-display text-xl font-black text-foreground sm:text-3xl">₹22K</p>
+              <p className="text-center font-mono-tech text-[7px] text-muted-foreground sm:text-[9px]">+ MERCH &amp; CERTS</p>
+            </HudBrackets>
+            <HudBrackets className="flex flex-1 flex-col items-center justify-center gap-1 border border-accent/15 bg-black/30 px-2 py-3 transition-colors hover:bg-accent/12 sm:px-3">
+              <p className="font-mono-tech text-[8px] tracking-[0.2em] text-accent sm:text-[10px]">REGISTRATION</p>
+              <p className="font-display text-xl font-black text-foreground sm:text-3xl">₹200</p>
+              <p className="text-center font-mono-tech text-[7px] text-muted-foreground sm:text-[9px]">FOOD &amp; WI-FI INCLUDED</p>
+            </HudBrackets>
+          </div>
+
+          {/* ── Live Tactical Readouts ── */}
+          <div className="animate-rise mt-6 grid w-full max-w-lg grid-cols-3 gap-2 sm:mt-8 sm:gap-3">
+            {[
+              { label: "THREAT LEVEL", value: "CRITICAL", color: "text-primary", icon: Zap },
+              { label: "OPERATIVES", value: `${operatives}+`, color: "text-foreground", icon: Shield },
+              { label: "ECE TRACKS", value: "05", color: "text-accent", icon: Crosshair },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="group panel-tactical p-2.5 text-center transition-transform duration-300 hover:-translate-y-1 sm:p-4"
+              >
+                <item.icon className="mx-auto mb-1.5 size-4 text-primary transition-transform group-hover:scale-125" aria-hidden />
+                <p className="font-mono-tech text-[8px] tracking-[0.16em] text-muted-foreground sm:text-[9px] sm:tracking-[0.2em]">
+                  {item.label}
+                </p>
+                <p className={`mt-0.5 font-display text-base font-black sm:text-xl ${item.color}`}>{item.value}</p>
+                <div className="mx-auto mt-1.5 h-px w-0 bg-gradient-to-r from-primary to-accent transition-all duration-500 group-hover:w-full" />
+              </div>
+            ))}
+          </div>
+
+          {/* ── Live Waveform ── */}
+          <div className="animate-rise mt-6 w-full max-w-3xl">
+            <div className="mb-1 flex items-center justify-between font-mono-tech text-[8px] tracking-[0.2em] text-muted-foreground sm:text-[10px]">
+              <span className="flex items-center gap-1.5">
+                <span className="size-1.5 rounded-full bg-primary" />
+                RF SPECTRUM — LIVE
+              </span>
+              <span className="font-bold text-primary">2.4 GHz</span>
+            </div>
+            <HudBrackets>
+              <div className="relative h-10 overflow-hidden border border-primary/15 bg-black/30 sm:h-14 md:h-16">
+                <LiveWaveform />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--background),transparent_15%,transparent_85%,var(--background))]" />
+              </div>
+            </HudBrackets>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }
