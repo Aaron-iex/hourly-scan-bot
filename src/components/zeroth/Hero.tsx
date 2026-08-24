@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Calendar, ChevronRight, Clock, Flame, Radio, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import heroBoy from "@/assets/hero-boy.png";
 import heroPlate from "@/assets/hero-cataclysm.jpg";
 import { IntroSequence } from "@/components/zeroth/IntroSequence";
 
@@ -211,7 +212,7 @@ function LiveWaveform() {
 
 /* ═══════════════════════════════════════════════════════
    HERO COMPONENT
-   Clean Cinematic Layout • One Word Makeathon • Integrated Clock
+   Boy Center Stage • One Word Makeathon • Clock In Header
    ═══════════════════════════════════════════════════════ */
 export function Hero({ onRegister }: { onRegister: () => void }) {
   const [clock, setClock] = useState<string | null>(null);
@@ -274,7 +275,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
         <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-background via-background/60 to-transparent pointer-events-none -z-10" />
 
         {/* ════════ MAIN CONTENT CONTAINER ════════ */}
-        <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-3 sm:px-6 lg:px-8 sm:py-6 text-center">
+        <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-3 sm:px-6 lg:px-8 sm:py-6">
 
           {/* ── 1. TOP: DEFCON Badge ── */}
           <div className="inline-flex items-center gap-2 border border-primary/50 bg-primary/15 px-3.5 py-1.5 clip-tactical mb-2.5 shadow-[0_0_15px_rgba(224,76,17,0.2)]">
@@ -289,7 +290,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
 
           {/* ── 2. TOP: College Branding Header with Integrated Countdown Clock ── */}
-          <div className="w-full max-w-5xl rounded-lg bg-black/45 backdrop-blur-sm border border-white/5 p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="w-full max-w-5xl rounded-lg bg-black/45 backdrop-blur-sm border border-white/5 p-3 sm:p-4 mb-3 sm:mb-4">
             <div className="flex flex-row items-center justify-between gap-3 sm:gap-6">
               {/* College Logo */}
               <div className="shrink-0">
@@ -327,7 +328,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               </div>
             </div>
 
-            {/* ── Integrated Countdown Clock ── */}
+            {/* ── Integrated Countdown Clock In Between / Below College Header ── */}
             <div className="mt-3 pt-2.5 border-t border-white/10 flex flex-col items-center justify-center">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Clock className="size-3 text-primary animate-pulse" />
@@ -348,30 +349,104 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
 
           {/* ═══════════════════════════════════════════════════════
-              3. MAIN EVENT TITLE & MISSION
+              3. CENTER STAGE: 3-COLUMN HERO (BOY CENTERPIECE - NO HOVER)
+              Left MAKEATHON (One Word) | Center Boy Cutout | Right ZEROTH HOUR
              ═══════════════════════════════════════════════════════ */}
-          <div className="relative my-3 sm:my-5 max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 mb-2 font-mono-tech text-xs tracking-[0.25em] text-primary font-bold uppercase">
-              <Flame className="size-3.5 text-primary animate-pulse" />
-              <span>5-HOUR HARDWARE SPRINT</span>
+          <div className="relative w-full my-2 sm:my-3">
+
+            {/* Desktop 3-Column Grid */}
+            <div className="hidden md:grid md:grid-cols-[1.1fr_auto_1.1fr] items-center justify-center gap-4 lg:gap-8 max-w-6xl mx-auto">
+
+              {/* Left Column: MAKEATHON (One Single Word) */}
+              <div className="text-right flex flex-col items-end justify-center pr-2">
+                <div className="inline-flex items-center gap-2 mb-2 font-mono-tech text-xs tracking-[0.25em] text-primary font-bold uppercase border-r-2 border-primary pr-3">
+                  <Flame className="size-3.5 text-primary" />
+                  <span>5-HOUR HARDWARE SPRINT</span>
+                </div>
+                <h1 className="font-display font-black text-4xl lg:text-6xl xl:text-7xl uppercase tracking-tighter text-foreground leading-none select-none">
+                  MAKEATHON
+                </h1>
+                <p className="mt-2.5 max-w-xs text-xs font-mono-tech tracking-wide text-muted-foreground leading-relaxed">
+                  EMBEDDED · DSP · RF · VLSI · INNOVATION
+                </p>
+                <div className="mt-3.5 flex items-center gap-2 text-[10px] font-mono-tech text-accent font-semibold tracking-wider bg-accent/10 border border-accent/30 px-3 py-1 clip-tactical">
+                  <Zap className="size-3 text-accent" />
+                  <span>₹22K CASH PRIZE CACHE</span>
+                </div>
+              </div>
+
+              {/* Center Stage: The Boy Cutout (Clean & Static, No Hover) */}
+              <div className="relative flex flex-col items-center justify-center px-2">
+                {/* Subtle Radial Floor Glow */}
+                <div className="absolute bottom-2 inset-x-0 h-28 bg-[radial-gradient(ellipse_at_center,rgba(224,76,17,0.45)_0%,transparent_70%)] pointer-events-none -z-10" />
+
+                {/* The Static Cutout Image */}
+                <div className="relative z-10 select-none">
+                  <img
+                    src={heroBoy}
+                    alt="Makeathon Operative"
+                    className="h-[300px] lg:h-[400px] xl:h-[440px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)]"
+                  />
+                </div>
+
+                {/* Stage Pedestal Line */}
+                <div className="mt-[-6px] h-1 w-44 lg:w-56 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70" />
+              </div>
+
+              {/* Right Column: ZEROTH HOUR */}
+              <div className="text-left flex flex-col items-start justify-center pl-2">
+                <div className="inline-flex items-center gap-2 mb-2 font-mono-tech text-xs tracking-[0.25em] text-accent font-bold uppercase border-l-2 border-accent pl-3">
+                  <Shield className="size-3.5 text-accent" />
+                  <span>PLANETARY DEFENCE</span>
+                </div>
+                <h1 className="font-display font-black text-4xl lg:text-6xl xl:text-7xl uppercase tracking-tighter text-foreground leading-none select-none">
+                  ZEROTH <span className="text-alert-gradient">HOUR</span>
+                </h1>
+                <p className="mt-2.5 max-w-xs text-xs font-mono-tech tracking-wide text-muted-foreground leading-relaxed">
+                  HARDWARE DEFENCE UNDER DEFCON 1 PRESSURE
+                </p>
+                <div className="mt-3.5 flex items-center gap-2 text-[10px] font-mono-tech text-primary font-semibold tracking-wider bg-primary/10 border border-primary/30 px-3 py-1 clip-tactical">
+                  <Clock className="size-3 text-primary" />
+                  <span>SEPTEMBER 11, 2026</span>
+                </div>
+              </div>
+
             </div>
 
-            <h1 className="font-display font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl uppercase tracking-tighter text-foreground leading-[0.9] select-none">
-              MAKEATHON
-            </h1>
+            {/* Mobile Stacked Layout (Clean separation, zero text on boy) */}
+            <div className="flex md:hidden flex-col items-center text-center">
+              {/* Top Title: MAKEATHON (One Word) */}
+              <div className="w-full">
+                <span className="font-mono-tech text-[9px] tracking-[0.25em] text-primary font-bold uppercase">
+                  // 5-HOUR HARDWARE SPRINT
+                </span>
+                <h1 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tighter text-foreground leading-none mt-0.5">
+                  MAKEATHON
+                </h1>
+              </div>
 
-            <div className="mt-2 flex items-center justify-center gap-2">
-              <span className="font-mono-tech text-[10px] sm:text-xs tracking-[0.3em] text-accent font-bold uppercase">
-                PROJECT
-              </span>
-              <h2 className="font-display font-black text-2xl sm:text-4xl md:text-5xl uppercase tracking-tight text-alert-gradient leading-none">
-                ZEROTH HOUR
-              </h2>
+              {/* Center: Boy Cutout (Static, No Hover) */}
+              <div className="relative my-2">
+                <div className="absolute bottom-0 inset-x-0 h-20 bg-[radial-gradient(ellipse_at_center,rgba(224,76,17,0.4)_0%,transparent_70%)] pointer-events-none -z-10" />
+                <img
+                  src={heroBoy}
+                  alt="Makeathon Operative"
+                  className="h-[220px] sm:h-[260px] w-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.85)] mx-auto"
+                />
+                <div className="mt-[-4px] h-0.5 w-32 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70 mx-auto" />
+              </div>
+
+              {/* Bottom Title: PROJECT ZEROTH HOUR */}
+              <div className="w-full">
+                <span className="font-mono-tech text-[9px] tracking-[0.25em] text-accent font-bold uppercase">
+                  PROJECT
+                </span>
+                <h2 className="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight text-alert-gradient leading-none">
+                  ZEROTH HOUR
+                </h2>
+              </div>
             </div>
 
-            <p className="mt-3 max-w-xl mx-auto text-xs sm:text-sm font-mono-tech tracking-wide text-muted-foreground leading-relaxed">
-              EMBEDDED · DSP · RF · VLSI · OPEN INNOVATION // HARDWARE DEFENCE
-            </p>
           </div>
 
           {/* ═══════════════════════════════════════════════════════
