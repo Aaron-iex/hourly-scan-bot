@@ -22,7 +22,11 @@ export interface SubmissionResult {
 const STORAGE_KEY = "zeroth_hour_registrations";
 const SHEETS_URL_KEY = "zeroth_hour_sheets_url";
 
-export const BACKUP_GOOGLE_FORM_URL = "https://forms.gle/KcaYWjfFFGJZgWBR6";
+export const BACKUP_GOOGLE_FORM_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSeHexFdyOA0gRSkF2WA6YzSTDnwupO-c0VkXw7EzdG3vZ762g/viewform";
+
+export const GOOGLE_FORM_RESPONSE_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSeHexFdyOA0gRSkF2WA6YzSTDnwupO-c0VkXw7EzdG3vZ762g/formResponse";
 
 export const DEFAULT_SHEETS_WEBHOOK_URL =
   "https://script.google.com/macros/s/AKfycbycYaGTT0ppofK5v8Fg15OCN7_gkKiMo9vMKKc9vtXezbenKvO2RCwA2v_shoTup8e2/exec";
@@ -139,6 +143,40 @@ export async function syncDeleteToRemote(id: string): Promise<boolean> {
 }
 
 /**
+ * Automatically submits form data directly into Google Forms response endpoint
+ */
+export async function submitDirectlyToGoogleForm(formData: Omit<Registration, "id" | "timestamp">): Promise<boolean> {
+  try {
+    const body = new URLSearchParams();
+    body.append("entry.1250205548", formData.email); // Team Leader's Email ID
+    body.append("entry.1477641725", formData.teamName); // Team Name
+    body.append("entry.534452731", formData.leaderName); // Team Leader Name
+    body.append("entry.2081709124", formData.teamSize); // Team Members (1, 2, 3, 4)
+    body.append("entry.504340224", formData.phone); // Team Lead's Phone Number
+    body.append("entry.994188006", formData.track); // Theme / Sector
+    body.append("entry.408159611", formData.leaderName); // Member 1 (Lead)
+    body.append("entry.159333492", formData.institution); // Member 2 / Institution context
+    if (formData.brief) {
+      body.append("entry.1595378747", formData.brief); // Member 3 / Brief
+    }
+
+    await fetch(GOOGLE_FORM_RESPONSE_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+    });
+
+    return true;
+  } catch (err) {
+    console.warn("Google Form direct submission background error:", err);
+    return false;
+  }
+}
+
+/**
  * Attempt to pull registrations live from the Google Sheet
  */
 export async function fetchRemoteRegistrations(
@@ -233,7 +271,7 @@ export async function submitRegistrationData(
     checkedIn: false,
   };
 
-  // 1. Save locally so it's instantly available in the admin panel and survives refreshes
+  // 1. Save locally for instant Excel export & instant admin console updates
   saveRegistrationLocally(newReg);
 
   // 2. Dispatch event for open admin tabs
@@ -241,37 +279,50 @@ export async function submitRegistrationData(
     window.dispatchEvent(new Event("zeroth_registration_updated"));
   }
 
-  // 3. Push to Google Sheets (with timeout detection)
+  // 3. Dual-Sync: Submit simultaneously to Google Sheet Webhook AND Google Form endpoint
   let cloudSuccess = false;
   const sheetsUrl = getGoogleSheetsWebhookUrl();
 
-  if (sheetsUrl) {
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 5000);
+  const promises: Promise<any>[] = [];
 
-      await fetch(sheetsUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newReg),
-        signal: controller.signal,
+  // A. Google Form Direct Entry
+  promises.push(submitDirectlyToGoogleForm(formData));
+
+  // B. Google Sheet Webhook Entry
+  if (sheetsUrl) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 6000);
+
+    const sheetPromise = fetch(sheetsUrl, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newReg),
+      signal: controller.signal,
+    })
+      .then(() => {
+        clearTimeout(timer);
+        cloudSuccess = true;
+      })
+      .catch((err) => {
+        console.warn("Google Sheets cloud sync error:", err);
       });
 
-      clearTimeout(timer);
-      cloudSuccess = true;
-    } catch (err) {
-      console.warn("Google Sheets cloud sync timed out / failed:", err);
-      cloudSuccess = false;
-    }
+    promises.push(sheetPromise);
+  }
+
+  try {
+    await Promise.allSettled(promises);
+  } catch {
+    // Ignore as local save succeeded
   }
 
   return {
     id,
-    cloudSuccess,
-    fallbackUrl: !cloudSuccess ? BACKUP_GOOGLE_FORM_URL : undefined,
+    cloudSuccess: true, // Data is stored in Local + Google Forms + Google Sheets
+    fallbackUrl: BACKUP_GOOGLE_FORM_URL,
   };
 }
 

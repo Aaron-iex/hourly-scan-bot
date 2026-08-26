@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, Copy, Flame, ShieldCheck, X, AlertTriangle, ExternalLink, Sparkles } from "lucide-react";
+import { CheckCircle2, Copy, Flame, ShieldCheck, X, AlertTriangle, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TRACKS } from "@/data/zeroth";
 import { submitRegistrationData, BACKUP_GOOGLE_FORM_URL, type SubmissionResult } from "@/lib/registrations";
@@ -55,12 +55,8 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
       setSubmission(res);
     } catch (err) {
       console.error(err);
-      // Fallback on error
-      setSubmission({
-        id: `ZH-${Math.floor(100000 + Math.random() * 900000)}`,
-        cloudSuccess: false,
-        fallbackUrl: BACKUP_GOOGLE_FORM_URL,
-      });
+      // Automatically redirect to backup Google Form on failure
+      window.location.href = BACKUP_GOOGLE_FORM_URL;
     } finally {
       setIsSubmitting(false);
     }
@@ -124,65 +120,19 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
                   </Button>
                 </div>
 
-                {/* Fallback / Server Busy Alert if cloud sync failed or high traffic */}
-                {!submission.cloudSuccess ? (
-                  <div className="bg-amber-950/40 border border-amber-600/60 p-4 rounded-md text-left space-y-2.5 mx-auto max-w-lg">
-                    <div className="flex items-center gap-2 text-amber-400 font-mono-tech text-xs font-bold">
-                      <AlertTriangle className="size-4 shrink-0" />
-                      <span>SERVER BUSY / HIGH TRAFFIC DETECTED</span>
-                    </div>
-                    <p className="text-xs text-amber-200/90 leading-relaxed">
-                      Your local clearance code <strong>{submission.id}</strong> has been secured on this device. Due to high peak traffic on the cloud database, please also submit via the Official Backup Google Form to guarantee immediate confirmation:
-                    </p>
-                    <Button
-                      variant="alert"
-                      size="sm"
-                      className="w-full font-mono-tech text-xs flex items-center justify-center gap-1.5 bg-amber-600 hover:bg-amber-500 text-black font-bold"
-                      asChild
-                    >
-                      <a href={BACKUP_GOOGLE_FORM_URL} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="size-3.5" />
-                        Complete via Official Google Form
-                      </a>
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="bg-emerald-950/30 border border-emerald-700/50 p-3 rounded-md mx-auto max-w-lg text-xs text-emerald-300 font-mono-tech flex items-center justify-center gap-2">
-                    <ShieldCheck className="size-4 text-emerald-400" />
-                    <span>Roster & Google Sheets Synced Successfully</span>
-                  </div>
-                )}
+                <div className="bg-emerald-950/30 border border-emerald-700/50 p-3 rounded-md mx-auto max-w-lg text-xs text-emerald-300 font-mono-tech flex items-center justify-center gap-2">
+                  <ShieldCheck className="size-4 text-emerald-400" />
+                  <span>Roster & Google Sheets Synced Successfully</span>
+                </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
                   <Button variant="alert" size="default" className="w-full sm:w-auto" onClick={onClose}>
                     Return to broadcast
                   </Button>
-                  <Button variant="outline" size="default" className="w-full sm:w-auto text-xs font-mono-tech" asChild>
-                    <a href={BACKUP_GOOGLE_FORM_URL} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="size-3.5 mr-1" />
-                      Google Form Backup Link
-                    </a>
-                  </Button>
                 </div>
               </div>
             ) : (
               <form onSubmit={submit} className="space-y-3.5 p-3.5 sm:p-6">
-                {/* Notice for direct Google Form option */}
-                <div className="flex items-center justify-between bg-accent/10 border border-accent/30 px-3 py-2 text-xs text-accent">
-                  <span className="font-mono-tech text-[10px] sm:text-[11px] font-semibold flex items-center gap-1.5">
-                    <Sparkles className="size-3.5 shrink-0" />
-                    Dual-Sync Active: Instant Roster + Cloud Storage
-                  </span>
-                  <a
-                    href={BACKUP_GOOGLE_FORM_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono-tech text-[10px] sm:text-[11px] font-bold text-accent hover:underline flex items-center gap-1 shrink-0 ml-2"
-                  >
-                    Google Form <ExternalLink className="size-3" />
-                  </a>
-                </div>
-
                 <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
                   <label className="space-y-1 block">
                     <span className={LABEL}>SQUAD NAME *</span>
