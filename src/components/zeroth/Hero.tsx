@@ -12,18 +12,20 @@ const DISASTER_SEQUENCE = [
   { text: "▣ INITIATING ZEROTH HOUR PROTOCOL", color: "text-primary" },
 ];
 
+const INTRO_SESSION_KEY = "zh_intro_played_session_v3";
+
 function CinematicIntro({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState(0); // 0-4 = disaster lines, 5 = fade out
   const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
     if (phase < DISASTER_SEQUENCE.length) {
-      const id = setTimeout(() => setPhase((p) => p + 1), 650);
+      const id = setTimeout(() => setPhase((p) => p + 1), 600);
       return () => clearTimeout(id);
     } else {
       // start fade out
       setOpacity(0);
-      const id = setTimeout(onComplete, 800);
+      const id = setTimeout(onComplete, 700);
       return () => clearTimeout(id);
     }
   }, [phase, onComplete]);
@@ -52,7 +54,7 @@ function CinematicIntro({ onComplete }: { onComplete: () => void }) {
           <div
             key={i}
             className={`font-mono-tech text-xs sm:text-sm tracking-[0.2em] uppercase transition-all duration-300 ${
-              i < phase ? `${item.color} opacity-100 translate-y-0` : "opacity-0 translate-y-4"
+              i < phase ? `${item.color} opacity-100 translate-y-0 font-bold` : "opacity-0 translate-y-4"
             }`}
           >
             {item.text}
@@ -81,7 +83,7 @@ function EmberCanvas() {
     resize();
     window.addEventListener("resize", resize, { passive: true });
     type Ember = { x: number; y: number; vx: number; vy: number; r: number; alpha: number; hue: number; decay: number };
-    const embers: Ember[] = Array.from({ length: 60 }, () => ({
+    const embers: Ember[] = Array.from({ length: 50 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.35,
@@ -151,51 +153,29 @@ function RadarSweep() {
   );
 }
 
-/* ─── Typewriter Effect ─── */
-function Typewriter({ text, speed = 28, className }: { text: string; speed?: number; className?: string }) {
-  const [displayed, setDisplayed] = useState("");
-  const [cursor, setCursor] = useState(true);
-  useEffect(() => {
-    let i = 0;
-    const id = setInterval(() => {
-      if (i < text.length) { setDisplayed(text.slice(0, i + 1)); i++; }
-      else clearInterval(id);
-    }, speed);
-    return () => clearInterval(id);
-  }, [text, speed]);
-  useEffect(() => {
-    const id = setInterval(() => setCursor((c) => !c), 530);
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <span className={className}>
-      {displayed}
-      <span className={`inline-block w-[2px] h-[1em] bg-primary ml-0.5 align-text-bottom ${cursor ? "opacity-100" : "opacity-0"}`} />
-    </span>
-  );
-}
-
-/* ─── Split-Flap Countdown Digit ─── */
+/* ─── Split-Flap Countdown Digit (Compact Size) ─── */
 function FlipDigit({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col items-center gap-0.5 sm:gap-1">
-      <div className="relative flex gap-[1px] sm:gap-[2px]">
+    <div className="flex flex-col items-center gap-0.5">
+      <div className="relative flex gap-[2px]">
         {value.split("").map((char, i) => (
           <div
             key={i}
-            className="relative size-7 sm:size-11 md:size-13 flex items-center justify-center
-                       bg-black/40 backdrop-blur-sm
-                       border border-primary/25"
+            className="relative size-6 sm:size-8 md:size-10 flex items-center justify-center
+                       bg-black/70 backdrop-blur-md
+                       border border-primary/35 shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
             style={{ clipPath: "inset(0 round 2px)" }}
           >
-            <div className="absolute inset-x-0 top-1/2 h-px bg-primary/15" />
-            <span className="font-display text-base sm:text-2xl md:text-3xl font-black text-foreground tabular-nums drop-shadow-[0_0_8px_rgba(224,76,17,0.5)]">
+            <div className="absolute inset-x-0 top-1/2 h-px bg-white/10" />
+            <span className="font-display text-sm sm:text-lg md:text-xl font-black text-foreground tabular-nums drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               {char}
             </span>
           </div>
         ))}
       </div>
-      <span className="font-mono-tech text-[7px] sm:text-[9px] tracking-[0.18em] text-muted-foreground uppercase">{label}</span>
+      <span className="font-mono-tech text-[6px] sm:text-[8px] tracking-[0.16em] text-muted-foreground uppercase font-semibold">
+        {label}
+      </span>
     </div>
   );
 }
@@ -234,7 +214,7 @@ function LiveWaveform() {
       const t = Date.now() * 0.002;
       // primary wave
       ctx.beginPath();
-      ctx.strokeStyle = "rgba(224,76,17,0.6)";
+      ctx.strokeStyle = "rgba(224,76,17,0.7)";
       ctx.lineWidth = 2;
       for (let x = 0; x < w; x++) {
         const noise = Math.sin(x * 0.04 + t) * 8 + Math.sin(x * 0.015 + t * 1.3) * 14 + Math.random() * 2;
@@ -245,7 +225,7 @@ function LiveWaveform() {
       ctx.stroke();
       // accent glow wave
       ctx.beginPath();
-      ctx.strokeStyle = "rgba(255,200,0,0.25)";
+      ctx.strokeStyle = "rgba(255,200,0,0.3)";
       ctx.lineWidth = 1.5;
       for (let x = 0; x < w; x++) {
         const noise = Math.sin(x * 0.03 + t * 0.7) * 6 + Math.cos(x * 0.02 + t * 1.1) * 10;
@@ -255,7 +235,7 @@ function LiveWaveform() {
       ctx.stroke();
       // scan line
       const scanX = ((t * 50) % w);
-      ctx.fillStyle = "rgba(224,76,17,0.15)";
+      ctx.fillStyle = "rgba(224,76,17,0.2)";
       ctx.fillRect(scanX - 1, 0, 3, h);
       rafId = requestAnimationFrame(draw);
     };
@@ -306,8 +286,22 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     return () => clearInterval(id);
   }, []);
 
-  const [introDone, setIntroComplete] = useState(false);
-  const handleIntroDone = useCallback(() => setIntroComplete(true), []);
+  // Check if intro has already run in this session so it won't repeat when switching tabs
+  const [introDone, setIntroComplete] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!sessionStorage.getItem(INTRO_SESSION_KEY);
+    }
+    return false;
+  });
+
+  const handleIntroDone = useCallback(() => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(INTRO_SESSION_KEY, "true");
+      } catch {}
+    }
+    setIntroComplete(true);
+  }, []);
 
   return (
     <>
@@ -344,7 +338,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               </div>
             </div>
             <div className="flex-1 min-w-0 text-center">
-              <h2 className="font-display text-sm sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight sm:tracking-wide text-foreground leading-tight neon-text">
+              <h2 className="font-display text-sm sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight sm:tracking-wide text-foreground leading-tight">
                 JAYA ENGINEERING COLLEGE
               </h2>
               <p className="mt-1 font-mono-tech text-[7px] sm:text-xs md:text-sm text-muted-foreground font-medium">
@@ -362,7 +356,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
 
           <div className="mt-3 pt-2 space-y-2">
-            <p className="font-mono-tech text-[10px] sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.2em] uppercase text-primary font-black neon-text">
+            <p className="font-mono-tech text-[10px] sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.2em] uppercase text-primary font-black">
               DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
             </p>
             <span className="inline-block border border-accent/50 bg-accent/15 px-4 py-1 clip-tactical font-mono-tech text-[10px] sm:text-xs tracking-[0.3em] uppercase text-accent font-bold">
@@ -371,54 +365,54 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </div>
         </div>
 
-        {/* ── Main Event Title with Radar ── */}
+        {/* ── Main Event Title with Radar (Clean, No Box Frame) ── */}
         <div className="relative mt-6 sm:mt-8">
           <RadarSweep />
-          <HudBrackets className="px-6 py-4 sm:px-12 sm:py-6">
+          <div className="px-4 py-2 sm:px-8 sm:py-4">
             <h1 className="animate-rise font-display uppercase">
-              <span className="block text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-foreground tracking-tighter glitch-text"
+              <span className="block text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-foreground tracking-tighter"
                     style={{ textShadow: "0 0 40px rgba(255,255,255,0.2), 0 0 80px rgba(224,76,17,0.15)" }}>
                 MAKEATHON
               </span>
-              <span className="mt-2 block text-lg sm:text-3xl md:text-4xl lg:text-5xl font-extrabold animate-flicker shimmer-text tracking-wide">
+              <span className="mt-2 block text-lg sm:text-3xl md:text-4xl lg:text-5xl font-extrabold shimmer-text tracking-wide">
                 PROJECT ZEROTH HOUR
               </span>
             </h1>
-          </HudBrackets>
+          </div>
           {/* Floating crosshair */}
           <Crosshair className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 size-6 sm:size-8 text-primary/40 animate-float" style={{ animationDelay: "0.5s" }} />
         </div>
 
         {/* ── Breathing gap — BG image visible ── */}
-        <div className="mt-6 sm:mt-8" />
+        <div className="mt-4 sm:mt-6" />
 
-        {/* ── Split-Flap Countdown (transparent — BG visible) ── */}
-        <HudBrackets className="animate-rise mt-5 sm:mt-6 px-3 py-3 sm:px-8 sm:py-5 border border-primary/20 bg-black/20 backdrop-blur-[2px]">
-          <div className="flex items-center gap-1.5 mb-2 sm:mb-3 justify-center">
+        {/* ── Compact Split-Flap Countdown (Clean, No Box Frame) ── */}
+        <div className="animate-rise mt-3 sm:mt-4 px-3 py-2">
+          <div className="flex items-center gap-1.5 mb-1.5 justify-center">
             <Shield className="size-3 sm:size-3.5 text-primary" />
-            <span className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.22em] text-primary font-bold uppercase">
+            <span className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.22em] text-primary font-bold uppercase">
               Time to Zero Hour
             </span>
           </div>
-          <div className="flex items-start gap-1.5 sm:gap-3 justify-center">
+          <div className="flex items-start gap-1 sm:gap-2 justify-center">
             <FlipDigit value={cd.d} label="Days" />
-            <span className="font-display text-base sm:text-2xl font-black text-primary mt-1 sm:mt-2 animate-flicker">:</span>
+            <span className="font-display text-sm sm:text-lg font-black text-primary mt-0.5 sm:mt-1 animate-flicker">:</span>
             <FlipDigit value={cd.h} label="Hrs" />
-            <span className="font-display text-base sm:text-2xl font-black text-primary mt-1 sm:mt-2 animate-flicker">:</span>
+            <span className="font-display text-sm sm:text-lg font-black text-primary mt-0.5 sm:mt-1 animate-flicker">:</span>
             <FlipDigit value={cd.m} label="Min" />
-            <span className="font-display text-base sm:text-2xl font-black text-primary mt-1 sm:mt-2 animate-flicker">:</span>
+            <span className="font-display text-sm sm:text-lg font-black text-primary mt-0.5 sm:mt-1 animate-flicker">:</span>
             <FlipDigit value={cd.s} label="Sec" />
           </div>
-        </HudBrackets>
+        </div>
 
-        {/* ── Date & Venue ── */}
-        <div className="animate-rise mt-5 flex w-full max-w-md items-center gap-3 border border-accent/60 bg-accent/10 px-4 py-2.5 clip-tactical text-left group hover:bg-accent/15 transition-colors">
+        {/* ── Date & Venue (High Opacity, High Readability) ── */}
+        <div className="animate-rise mt-4 flex w-full max-w-md items-center gap-3 border border-accent/70 bg-black/80 backdrop-blur-md px-4 py-2.5 clip-tactical text-left group hover:bg-black/90 transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
           <Calendar className="size-5 shrink-0 text-accent group-hover:animate-bounce" aria-hidden />
           <div>
             <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
               SEPT 11 // 5-HOUR MAKEATHON
             </p>
-            <p className="font-mono-tech text-[10px] text-muted-foreground">
+            <p className="font-mono-tech text-[10px] sm:text-[11px] text-white/90 font-medium">
               Venue: Jaya Auditorium · Registration queue open
             </p>
           </div>
@@ -441,30 +435,30 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           </Button>
         </div>
 
-        {/* ── Prize + Registration Cards ── */}
+        {/* ── Prize + Registration Cards (High Opacity, High Readability) ── */}
         <div className="animate-rise mt-4 sm:mt-5 flex w-full max-w-lg flex-row gap-2 sm:gap-3 justify-center">
-          <HudBrackets className="flex flex-1 flex-col items-center justify-center gap-0.5 sm:gap-1 bg-black/20 backdrop-blur-[2px] px-2 py-2.5 sm:px-3 sm:py-3.5 group hover:bg-primary/12 transition-colors border border-primary/15">
-            <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent">PRIZE CACHE</p>
-            <p className="font-display text-xl sm:text-3xl font-black text-foreground neon-text">₹22K</p>
-            <p className="font-mono-tech text-[7px] sm:text-[9px] text-muted-foreground text-center">+ MERCH & CERTS</p>
-          </HudBrackets>
-          <HudBrackets className="flex flex-1 flex-col items-center justify-center gap-0.5 sm:gap-1 bg-black/20 backdrop-blur-[2px] px-2 py-2.5 sm:px-3 sm:py-3.5 group hover:bg-accent/12 transition-colors border border-accent/15">
-            <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent">REGISTRATION</p>
-            <p className="font-display text-xl sm:text-3xl font-black text-foreground neon-text-accent">₹200</p>
-            <p className="font-mono-tech text-[7px] sm:text-[9px] text-muted-foreground text-center">FOOD & WI-FI INCLUDED</p>
-          </HudBrackets>
+          <div className="flex flex-1 flex-col items-center justify-center gap-1 bg-black/80 backdrop-blur-md px-3 py-3 rounded border border-primary/50 group hover:border-primary transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
+            <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent font-bold">PRIZE CACHE</p>
+            <p className="font-display text-xl sm:text-3xl font-black text-foreground">₹22K</p>
+            <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">+ MERCH & CERTS</p>
+          </div>
+          <div className="flex flex-1 flex-col items-center justify-center gap-1 bg-black/80 backdrop-blur-md px-3 py-3 rounded border border-accent/50 group hover:border-accent transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
+            <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent font-bold">REGISTRATION</p>
+            <p className="font-display text-xl sm:text-3xl font-black text-foreground">₹200</p>
+            <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">FOOD & WI-FI INCLUDED</p>
+          </div>
         </div>
 
         {/* ── Live Tactical Readouts ── */}
-        <div className="animate-rise mt-6 sm:mt-8 grid w-full grid-cols-3 gap-3 max-w-lg">
+        <div className="animate-rise mt-5 sm:mt-7 grid w-full grid-cols-3 gap-3 max-w-lg">
           {[
-            { label: "THREAT LEVEL", value: "CRITICAL", color: "text-primary neon-text", icon: Zap },
+            { label: "THREAT LEVEL", value: "CRITICAL", color: "text-primary", icon: Zap },
             { label: "OPERATIVES", value: `${operatives}+`, color: "text-foreground", icon: Shield },
             { label: "ECE TRACKS", value: "05", color: "text-alert-gradient", icon: Crosshair },
           ].map((item, i) => (
-            <div key={i} className="group panel-tactical p-3 sm:p-4 text-center transition-all duration-300 hover:-translate-y-1">
+            <div key={i} className="group panel-tactical p-3 sm:p-4 text-center transition-all duration-300 hover:-translate-y-1 bg-black/75">
               <item.icon className="size-4 text-primary mx-auto mb-1.5 transition-transform group-hover:scale-125 group-hover:rotate-12" aria-hidden />
-              <p className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.2em] text-muted-foreground">{item.label}</p>
+              <p className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.2em] text-muted-foreground font-semibold">{item.label}</p>
               <p className={`font-display text-lg sm:text-xl font-black mt-0.5 ${item.color}`}>{item.value}</p>
               <div className="mt-1.5 h-px w-0 group-hover:w-full bg-gradient-to-r from-primary to-accent transition-all duration-500 mx-auto" />
             </div>
@@ -473,15 +467,15 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
 
         {/* ── Live Waveform ── */}
         <div className="animate-rise mt-5 sm:mt-6 w-full max-w-3xl">
-          <div className="mb-1 flex items-center justify-between font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-muted-foreground">
+          <div className="mb-1 flex items-center justify-between font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-muted-foreground font-medium">
             <span className="flex items-center gap-1.5">
               <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-              RF SPECTRUM — LIVE
+              RF SPECTRUM — LIVE SCAN
             </span>
-            <span className="text-primary font-bold">2.4 GHz</span>
+            <span className="text-primary font-bold">2.4 GHz ACTIVE</span>
           </div>
           <HudBrackets>
-            <div className="relative h-10 sm:h-14 md:h-16 bg-black/25 backdrop-blur-[1px] overflow-hidden border border-primary/15">
+            <div className="relative h-10 sm:h-14 md:h-16 bg-black/70 backdrop-blur-md overflow-hidden border border-primary/25 shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
               <LiveWaveform />
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--background),transparent_15%,transparent_85%,var(--background))]" />
             </div>
