@@ -333,8 +333,8 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
         <div className="animate-rise w-full max-w-5xl px-1 sm:px-4">
           <div className="flex flex-row items-center justify-center gap-3 sm:gap-6">
             <div className="shrink-0">
-              <div className="size-14 sm:size-20 md:size-24 rounded-full overflow-hidden border-2 border-primary/50 bg-black/70 shadow-[0_0_20px_rgba(224,76,17,0.35)] flex items-center justify-center transition-transform duration-300 hover:scale-110 animate-float">
-                <img src="/images/jec-emblem.png" alt="Jaya Educational Trust Emblem" className="size-full object-cover scale-105" />
+              <div className="size-14 sm:size-20 md:size-24 rounded-full overflow-hidden border-2 border-primary/60 bg-white shadow-[0_0_20px_rgba(224,76,17,0.4)] flex items-center justify-center p-0.5 transition-transform duration-300 hover:scale-110 animate-float">
+                <img src="/images/jec-emblem.png" alt="Jaya Educational Trust Emblem" className="size-full object-contain" />
               </div>
             </div>
             <div className="flex-1 min-w-0 text-center">
