@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, Copy, Flame, ShieldCheck, X, AlertTriangle, ExternalLink } from "lucide-react";
+import { CheckCircle2, Copy, Flame, ShieldCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TRACKS } from "@/data/zeroth";
 import { submitRegistrationData, BACKUP_GOOGLE_FORM_URL, type SubmissionResult } from "@/lib/registrations";
@@ -55,7 +55,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
       setSubmission(res);
     } catch (err) {
       console.error(err);
-      // Automatically redirect to backup Google Form on failure
+      // Fallback redirection on error
       window.location.href = BACKUP_GOOGLE_FORM_URL;
     } finally {
       setIsSubmitting(false);
@@ -118,11 +118,6 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
                     <Copy className="size-3.5" aria-hidden />
                     {copied ? "Copied to clipboard!" : "Copy clearance code"}
                   </Button>
-                </div>
-
-                <div className="bg-emerald-950/30 border border-emerald-700/50 p-3 rounded-md mx-auto max-w-lg text-xs text-emerald-300 font-mono-tech flex items-center justify-center gap-2">
-                  <ShieldCheck className="size-4 text-emerald-400" />
-                  <span>Roster & Google Sheets Synced Successfully</span>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">

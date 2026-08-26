@@ -22,12 +22,15 @@ export interface SubmissionResult {
 const STORAGE_KEY = "zeroth_hour_registrations";
 const SHEETS_URL_KEY = "zeroth_hour_sheets_url";
 
+// 1. Dedicated Backup Form URL (Triggered on Server Busy / Failure)
 export const BACKUP_GOOGLE_FORM_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSeHexFdyOA0gRSkF2WA6YzSTDnwupO-c0VkXw7EzdG3vZ762g/viewform";
 
-export const GOOGLE_FORM_RESPONSE_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSeHexFdyOA0gRSkF2WA6YzSTDnwupO-c0VkXw7EzdG3vZ762g/formResponse";
+// 2. Dual-Sync Automated Background Google Form (https://forms.gle/2EKyiYHmae8oWEtf7)
+export const DUAL_SYNC_GOOGLE_FORM_RESPONSE_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSeJ1VCfZRwyTOXMK2R4NXnD8_i1Kl7m0AEakBvAsxZ0OsGS1Q/formResponse";
 
+// 3. Google Apps Script Webhook URL (Direct Google Sheets Row Ingestion)
 export const DEFAULT_SHEETS_WEBHOOK_URL =
   "https://script.google.com/macros/s/AKfycbycYaGTT0ppofK5v8Fg15OCN7_gkKiMo9vMKKc9vtXezbenKvO2RCwA2v_shoTup8e2/exec";
 
@@ -143,24 +146,42 @@ export async function syncDeleteToRemote(id: string): Promise<boolean> {
 }
 
 /**
- * Automatically submits form data directly into Google Forms response endpoint
+ * Maps threat sectors to Google Form acceptable choices
+ */
+function mapThreatSectorForForm(track: string): string {
+  const t = track.toLowerCase();
+  if (t.includes("tsunami") || t.includes("earthquake")) return "Tsunami & Earthquake Mitigation";
+  if (t.includes("wildfire")) return "Wildfire Prevention";
+  if (t.includes("oceanic") || t.includes("flood")) return "Flood & Cyclone Warning";
+  if (t.includes("off-world") || t.includes("heat")) return "Heatwave Management";
+  return "OPEN Innovation";
+}
+
+/**
+ * Submits form data directly into the Dual-Sync Google Form (https://forms.gle/2EKyiYHmae8oWEtf7)
  */
 export async function submitDirectlyToGoogleForm(formData: Omit<Registration, "id" | "timestamp">): Promise<boolean> {
   try {
     const body = new URLSearchParams();
-    body.append("entry.1250205548", formData.email); // Team Leader's Email ID
-    body.append("entry.1477641725", formData.teamName); // Team Name
-    body.append("entry.534452731", formData.leaderName); // Team Leader Name
-    body.append("entry.2081709124", formData.teamSize); // Team Members (1, 2, 3, 4)
-    body.append("entry.504340224", formData.phone); // Team Lead's Phone Number
-    body.append("entry.994188006", formData.track); // Theme / Sector
-    body.append("entry.408159611", formData.leaderName); // Member 1 (Lead)
-    body.append("entry.159333492", formData.institution); // Member 2 / Institution context
-    if (formData.brief) {
-      body.append("entry.1595378747", formData.brief); // Member 3 / Brief
-    }
+    // 1. Squad Name
+    body.append("entry.408752221", formData.teamName || "Unnamed Squad");
+    // 2. Squad Leader Full Name
+    body.append("entry.53592883", formData.leaderName || "Unknown");
+    // 3. Contact Email Address
+    body.append("entry.972077556", formData.email || "");
+    // 4. Mobile Number
+    body.append("entry.236924443", formData.phone || "");
+    // 5. Institution / College Name
+    body.append("entry.1527823126", formData.institution || "");
+    // 6. Threat Sector
+    body.append("entry.1266596728", mapThreatSectorForForm(formData.track));
+    // 7. Squad Size (e.g. "1 Member" / "4 Members")
+    const sizeStr = formData.teamSize === "1" ? "1 Member" : `${formData.teamSize} Members`;
+    body.append("entry.84942108", sizeStr);
+    // 8. Project Brief / Idea
+    body.append("entry.567220697", formData.brief || "Direct Web Registration Submission");
 
-    await fetch(GOOGLE_FORM_RESPONSE_URL, {
+    await fetch(DUAL_SYNC_GOOGLE_FORM_RESPONSE_URL, {
       method: "POST",
       mode: "no-cors",
       headers: {
@@ -171,13 +192,13 @@ export async function submitDirectlyToGoogleForm(formData: Omit<Registration, "i
 
     return true;
   } catch (err) {
-    console.warn("Google Form direct submission background error:", err);
+    console.warn("Dual-sync Google Form direct submission background error:", err);
     return false;
   }
 }
 
 /**
- * Attempt to pull registrations live from the Google Sheet
+ * Pull registrations live from the Google Sheet
  */
 export async function fetchRemoteRegistrations(
   urlOverride?: string
@@ -279,16 +300,14 @@ export async function submitRegistrationData(
     window.dispatchEvent(new Event("zeroth_registration_updated"));
   }
 
-  // 3. Dual-Sync: Submit simultaneously to Google Sheet Webhook AND Google Form endpoint
-  let cloudSuccess = false;
+  // 3. Dual-Sync: Submit simultaneously to Google Sheet Webhook AND Dual-Sync Google Form
   const sheetsUrl = getGoogleSheetsWebhookUrl();
-
   const promises: Promise<any>[] = [];
 
-  // A. Google Form Direct Entry
+  // A. Submit to Dual-Sync Google Form (https://forms.gle/2EKyiYHmae8oWEtf7)
   promises.push(submitDirectlyToGoogleForm(formData));
 
-  // B. Google Sheet Webhook Entry
+  // B. Submit to Google Sheets Webhook
   if (sheetsUrl) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 6000);
@@ -302,10 +321,7 @@ export async function submitRegistrationData(
       body: JSON.stringify(newReg),
       signal: controller.signal,
     })
-      .then(() => {
-        clearTimeout(timer);
-        cloudSuccess = true;
-      })
+      .then(() => clearTimeout(timer))
       .catch((err) => {
         console.warn("Google Sheets cloud sync error:", err);
       });
@@ -316,12 +332,12 @@ export async function submitRegistrationData(
   try {
     await Promise.allSettled(promises);
   } catch {
-    // Ignore as local save succeeded
+    // Local save already succeeded
   }
 
   return {
     id,
-    cloudSuccess: true, // Data is stored in Local + Google Forms + Google Sheets
+    cloudSuccess: true,
     fallbackUrl: BACKUP_GOOGLE_FORM_URL,
   };
 }
