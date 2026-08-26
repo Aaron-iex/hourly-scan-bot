@@ -9,6 +9,9 @@ import {
   getGoogleSheetsWebhookUrl,
   setGoogleSheetsWebhookUrl,
   fetchRemoteRegistrations,
+  syncCheckInToRemote,
+  syncDeleteToRemote,
+  BACKUP_GOOGLE_FORM_URL,
   type Registration,
 } from '@/lib/registrations';
 import { TRACKS } from '@/data/zeroth';
@@ -152,18 +155,28 @@ export function AdminDashboard() {
   };
 
   const handleToggleCheckIn = (reg: Registration) => {
-    const updated = { ...reg, checkedIn: !reg.checkedIn };
+    const nextCheckIn = !reg.checkedIn;
+    const updated = { ...reg, checkedIn: nextCheckIn };
+    // 1. Optimistic instant local update
     saveRegistrationLocally(updated);
     loadData();
+    if (selectedSquad?.id === reg.id) {
+      setSelectedSquad(updated);
+    }
+    // 2. Sync in background to Google Sheets
+    syncCheckInToRemote(reg.id, nextCheckIn);
   };
 
   const handleDeleteSquad = (id: string, teamName: string) => {
-    if (window.confirm(`Are you sure you want to delete squad "${teamName}" (${id})?`)) {
+    if (window.confirm(`Are you sure you want to delete squad "${teamName}" (${id})? This will remove it locally and from Google Sheets.`)) {
+      // 1. Instant local deletion
       deleteRegistrationLocally(id);
       loadData();
       if (selectedSquad?.id === id) {
         setSelectedSquad(null);
       }
+      // 2. Sync deletion to Google Sheets
+      syncDeleteToRemote(id);
     }
   };
 
@@ -397,9 +410,10 @@ export function AdminDashboard() {
               size="sm"
               onClick={() => setShowSettingsModal(true)}
               className="h-9 font-mono-tech text-xs border-neutral-800 hover:bg-neutral-900 text-neutral-300"
-              title="Google Sheets & Settings"
+              title="Google Sheets & Forms Integration"
             >
-              <LinkIcon className="size-3.5" />
+              <LinkIcon className="size-3.5 mr-1 text-accent" />
+              <span className="hidden sm:inline">Google Sync</span>
             </Button>
 
             <Button
@@ -454,22 +468,27 @@ export function AdminDashboard() {
               {metrics.checkedInCount} <span className="text-sm font-normal text-neutral-500 font-sans">/ {metrics.totalSquads}</span>
             </p>
             <p className="text-[11px] text-neutral-500 mt-1 font-mono-tech">
-              {metrics.totalSquads > 0 ? Math.round((metrics.checkedInCount / metrics.totalSquads) * 100) : 0}% on-site attendance
+              {metrics.totalSquads > 0 ? Math.round((metrics.checkedInCount / metrics.totalSquads) * 100) : 0}% attendance verified
             </p>
           </div>
 
           <div className="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-4 sm:p-5 relative overflow-hidden">
             <div className="flex items-center justify-between">
-              <span className="font-mono-tech text-[11px] text-neutral-400 tracking-wider font-semibold">CLOUD SYNC</span>
+              <span className="font-mono-tech text-[11px] text-neutral-400 tracking-wider font-semibold">CLOUD SYNC & BACKUP</span>
               <Database className="size-5 text-neutral-400" />
             </div>
             <p className="font-mono-tech text-sm font-bold text-white mt-2 flex items-center gap-1.5">
               <span className="size-2 rounded-full bg-emerald-400" />
-              Connected
+              Sheet & Form Active
             </p>
-            <p className="text-[11px] text-neutral-500 mt-1 font-mono-tech truncate">
-              {lastSyncTime ? `Last sync: ${lastSyncTime}` : "Auto-synced on load"}
-            </p>
+            <a
+              href={BACKUP_GOOGLE_FORM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-accent hover:underline mt-1 font-mono-tech flex items-center gap-1 truncate block"
+            >
+              Open Google Form Backup <ExternalLink className="size-2.5 inline" />
+            </a>
           </div>
         </div>
 
@@ -578,6 +597,10 @@ export function AdminDashboard() {
               <span className="text-xs font-mono-tech text-neutral-400">
                 ({filteredRegistrations.length} of {registrations.length} squads)
               </span>
+            </div>
+            <div className="text-xs font-mono-tech text-neutral-400 flex items-center gap-2">
+              <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Real-time Live Sync</span>
             </div>
           </div>
 
@@ -709,6 +732,7 @@ export function AdminDashboard() {
                               ? "bg-emerald-950/80 border border-emerald-600/60 text-emerald-300 shadow-sm shadow-emerald-900/30"
                               : "bg-neutral-800/80 border border-neutral-700 text-neutral-400 hover:text-white"
                           }`}
+                          title="Toggle Check-In (Updates both local & Google Sheets)"
                         >
                           <span className={`size-1.5 rounded-full ${r.checkedIn ? "bg-emerald-400" : "bg-neutral-500"}`} />
                           {r.checkedIn ? "CHECKED IN" : "PENDING"}
@@ -729,7 +753,7 @@ export function AdminDashboard() {
                           <button
                             onClick={() => handleDeleteSquad(r.id, r.teamName)}
                             className="p-1.5 text-neutral-500 hover:text-red-400 hover:bg-red-950/30 rounded transition-colors"
-                            title="Delete Squad"
+                            title="Delete Squad from roster & Google Sheets"
                           >
                             <Trash2 className="size-3.5" />
                           </button>
@@ -984,20 +1008,20 @@ export function AdminDashboard() {
         </div>
       )}
 
-      {/* ── Google Sheets Settings Modal ── */}
+      {/* ── Google Sheets & Form Integration Modal ── */}
       {showSettingsModal && (
         <div
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setShowSettingsModal(false)}
         >
           <div
-            className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+            className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
               <div>
                 <span className="font-mono-tech text-[10px] tracking-widest text-primary font-bold">INTEGRATION HUB</span>
-                <h3 className="font-display text-lg font-bold text-white">Google Sheets Real-time Sync</h3>
+                <h3 className="font-display text-lg font-bold text-white">Google Sheets & Forms Real-time Sync</h3>
               </div>
               <button onClick={() => setShowSettingsModal(false)} className="text-neutral-400 hover:text-white">
                 <X className="size-5" />
@@ -1005,6 +1029,22 @@ export function AdminDashboard() {
             </div>
 
             <div className="space-y-4 text-xs">
+              {/* Direct Form Link Alert */}
+              <div className="bg-accent/10 border border-accent/30 p-3.5 rounded-lg flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-mono-tech font-bold text-accent text-xs">OFFICIAL BACKUP GOOGLE FORM</p>
+                  <p className="text-neutral-300 text-[11px] mt-0.5">
+                    If cloud sync is slow during high traffic, users are automatically directed here:
+                  </p>
+                </div>
+                <Button variant="tactical" size="sm" className="shrink-0" asChild>
+                  <a href={BACKUP_GOOGLE_FORM_URL} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="size-3.5 mr-1" /> Open Form
+                  </a>
+                </Button>
+              </div>
+
+              {/* Webhook URL configuration */}
               <div className="space-y-1.5">
                 <label className="font-mono-tech text-[10px] text-neutral-400 uppercase font-semibold">
                   GOOGLE APPS SCRIPT WEB APP URL
@@ -1032,34 +1072,68 @@ export function AdminDashboard() {
 
               <div className="bg-neutral-950/80 p-4 rounded-lg border border-neutral-800 space-y-3">
                 <p className="font-mono-tech font-bold text-accent text-xs">
-                  ⚡ Complete Google Apps Script (Supports 2-Way Sync)
+                  ⚡ Complete Google Apps Script (Supports Inserts, Check-in Sync & Deletions)
                 </p>
                 <p className="text-neutral-400 leading-relaxed">
-                  Paste the code below in your Google Sheet's <strong>Extensions &gt; Apps Script</strong> and deploy as a Web App (Access: <em>Anyone</em>). It handles both instant registration writes and admin live pulling:
+                  Paste the code below in your Google Sheet's <strong>Extensions &gt; Apps Script</strong> and deploy as a Web App (Access: <em>Anyone</em>). It handles registration writes, check-in updates, deletions, and live data retrieval:
                 </p>
-                <pre className="bg-black p-3 rounded font-mono-tech text-[11px] overflow-x-auto text-emerald-400 border border-neutral-800 leading-relaxed">
+                <pre className="bg-black p-3 rounded font-mono-tech text-[11px] overflow-x-auto text-emerald-400 border border-neutral-800 leading-relaxed max-h-60 overflow-y-auto">
 {`function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["ID", "Team Name", "Leader Name", "Email", "Phone", "Institution", "Track", "Team Size", "Mission Brief", "Status", "Checked In", "Timestamp"]);
-  }
   var data = JSON.parse(e.postData.contents);
-  sheet.appendRow([
-    data.id,
-    data.teamName,
-    data.leaderName,
-    data.email,
-    data.phone || "",
-    data.institution,
-    data.track,
-    data.teamSize,
-    data.brief || "",
-    data.status || "confirmed",
-    data.checkedIn ? "YES" : "NO",
-    data.timestamp
-  ]);
-  return ContentService.createTextOutput(JSON.stringify({ result: "success" }))
-    .setMimeType(ContentService.MimeType.JSON);
+  var lock = LockService.getScriptLock();
+  lock.tryLock(10000);
+
+  try {
+    // 1. Update Check-in
+    if (data.action === "updateCheckIn") {
+      var values = sheet.getDataRange().getValues();
+      for (var i = 1; i < values.length; i++) {
+        if (String(values[i][0]) === String(data.id)) {
+          sheet.getRange(i + 1, 11).setValue(data.checkedIn ? "YES" : "NO");
+          break;
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ result: "success" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 2. Delete row
+    if (data.action === "delete") {
+      var values = sheet.getDataRange().getValues();
+      for (var i = 1; i < values.length; i++) {
+        if (String(values[i][0]) === String(data.id)) {
+          sheet.deleteRow(i + 1);
+          break;
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ result: "success" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 3. New Registration
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["Pass ID", "Team Name", "Leader Name", "Email", "Mobile Number", "Institution", "Threat Sector", "Squad Size", "Mission Brief", "Registered At", "Checked In"]);
+    }
+    sheet.appendRow([
+      data.id || "",
+      data.teamName || "",
+      data.leaderName || "",
+      data.email || "",
+      data.phone || "",
+      data.institution || "",
+      data.track || "",
+      data.teamSize || "4",
+      data.brief || "",
+      data.timestamp ? new Date(data.timestamp).toLocaleString("en-GB") : new Date().toLocaleString("en-GB"),
+      data.checkedIn ? "YES" : "NO"
+    ]);
+
+    return ContentService.createTextOutput(JSON.stringify({ result: "success", id: data.id }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function doGet(e) {
@@ -1071,19 +1145,19 @@ function doGet(e) {
   var result = [];
   for (var i = 1; i < values.length; i++) {
     var row = values[i];
+    if (!row[0]) continue;
     result.push({
       id: String(row[0]),
-      teamName: String(row[1]),
-      leaderName: String(row[2]),
-      email: String(row[3]),
-      phone: String(row[4]),
-      institution: String(row[5]),
-      track: String(row[6]),
-      teamSize: String(row[7]),
-      brief: String(row[8]),
-      status: String(row[9] || "confirmed"),
-      checkedIn: String(row[10]).toUpperCase() === "YES",
-      timestamp: String(row[11])
+      teamName: String(row[1] || ""),
+      leaderName: String(row[2] || ""),
+      email: String(row[3] || ""),
+      phone: String(row[4] || ""),
+      institution: String(row[5] || ""),
+      track: String(row[6] || ""),
+      teamSize: String(row[7] || "4"),
+      brief: String(row[8] || ""),
+      timestamp: String(row[9] || ""),
+      checkedIn: String(row[10] || "").toUpperCase() === "YES"
     });
   }
   return ContentService.createTextOutput(JSON.stringify(result))

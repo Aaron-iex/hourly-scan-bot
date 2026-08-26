@@ -13,11 +13,19 @@ export interface Registration {
   status?: "confirmed" | "pending" | "waitlist";
 }
 
+export interface SubmissionResult {
+  id: string;
+  cloudSuccess: boolean;
+  fallbackUrl?: string;
+}
+
 const STORAGE_KEY = "zeroth_hour_registrations";
 const SHEETS_URL_KEY = "zeroth_hour_sheets_url";
 
+export const BACKUP_GOOGLE_FORM_URL = "https://forms.gle/KcaYWjfFFGJZgWBR6";
+
 export const DEFAULT_SHEETS_WEBHOOK_URL =
-  "https://script.google.com/macros/s/AKfycbzmATni1uDuMzaifaXAvFyqukZV2CFxTjfAJRSzO4bn6GoBnvOvAeZcaQe56finseNy/exec";
+  "https://script.google.com/macros/s/AKfycbycYaGTT0ppofK5v8Fg15OCN7_gkKiMo9vMKKc9vtXezbenKvO2RCwA2v_shoTup8e2/exec";
 
 export function getStoredRegistrations(): Registration[] {
   if (typeof window === "undefined") return [];
@@ -70,20 +78,89 @@ export function setGoogleSheetsWebhookUrl(url: string): void {
 }
 
 /**
+ * Syncs check-in status to Google Sheets
+ */
+export async function syncCheckInToRemote(id: string, checkedIn: boolean): Promise<boolean> {
+  const url = getGoogleSheetsWebhookUrl();
+  if (!url) return false;
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 6000);
+
+    await fetch(url, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "updateCheckIn",
+        id,
+        checkedIn,
+      }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timer);
+    return true;
+  } catch (err) {
+    console.warn("Could not sync check-in to Google Sheets:", err);
+    return false;
+  }
+}
+
+/**
+ * Syncs deletion to Google Sheets
+ */
+export async function syncDeleteToRemote(id: string): Promise<boolean> {
+  const url = getGoogleSheetsWebhookUrl();
+  if (!url) return false;
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 6000);
+
+    await fetch(url, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "delete",
+        id,
+      }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timer);
+    return true;
+  } catch (err) {
+    console.warn("Could not sync deletion to Google Sheets:", err);
+    return false;
+  }
+}
+
+/**
  * Attempt to pull registrations live from the Google Sheet
  */
-export async function fetchRemoteRegistrations(urlOverride?: string): Promise<{ success: boolean; data: Registration[]; message?: string }> {
+export async function fetchRemoteRegistrations(
+  urlOverride?: string
+): Promise<{ success: boolean; data: Registration[]; message?: string }> {
   const url = (urlOverride || getGoogleSheetsWebhookUrl()).trim();
   if (!url) {
     return { success: false, data: [], message: "No Google Sheets webhook URL configured." };
   }
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     const res = await fetch(`${url}${url.includes("?") ? "&" : "?"}_t=${Date.now()}`, {
       method: "GET",
       headers: { Accept: "application/json" },
       cache: "no-store",
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (!res.ok) {
       throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
@@ -92,17 +169,21 @@ export async function fetchRemoteRegistrations(urlOverride?: string): Promise<{ 
     const json = await res.json();
     if (Array.isArray(json)) {
       const parsed: Registration[] = json.map((item: any) => ({
-        id: String(item.id || item.ID || `ZH-${Math.floor(100000 + Math.random() * 900000)}`),
+        id: String(item.id || item.ID || item["Pass ID"] || `ZH-${Math.floor(100000 + Math.random() * 900000)}`),
         teamName: String(item.teamName || item["Team Name"] || "Unnamed Squad"),
         leaderName: String(item.leaderName || item["Leader Name"] || "Unknown"),
         email: String(item.email || item.Email || ""),
-        phone: String(item.phone || item.Phone || ""),
+        phone: String(item.phone || item.Phone || item["Mobile Number"] || ""),
         institution: String(item.institution || item.Institution || item["Institution / College"] || ""),
-        track: String(item.track || item.Track || item.Sector || "General"),
-        teamSize: String(item.teamSize || item["Team Size"] || "4"),
+        track: String(item.track || item.Track || item["Threat Sector"] || "General"),
+        teamSize: String(item.teamSize || item["Team Size"] || item["Squad Size"] || "4"),
         brief: item.brief || item.Brief || item["Mission Brief"] || "",
-        timestamp: item.timestamp || item.Timestamp || new Date().toISOString(),
-        checkedIn: Boolean(item.checkedIn || item.CheckedIn),
+        timestamp: item.timestamp || item.Timestamp || item["Registered At"] || new Date().toISOString(),
+        checkedIn: Boolean(
+          item.checkedIn ||
+            item.CheckedIn ||
+            String(item["Checked In"] || "").toUpperCase() === "YES"
+        ),
         status: item.status || "confirmed",
       }));
 
@@ -111,7 +192,7 @@ export async function fetchRemoteRegistrations(urlOverride?: string): Promise<{ 
       const map = new Map<string, Registration>();
       // Put remote first
       parsed.forEach((r) => map.set(r.id, r));
-      // Overwrite/add with local so fresh offline submissions aren't erased
+      // Overwrite/add with local so fresh submissions aren't erased
       local.forEach((r) => {
         if (!map.has(r.id)) {
           map.set(r.id, r);
@@ -132,12 +213,14 @@ export async function fetchRemoteRegistrations(urlOverride?: string): Promise<{ 
     return {
       success: false,
       data: getStoredRegistrations(),
-      message: err instanceof Error ? err.message : "Fetch failed",
+      message: err instanceof Error ? err.message : "Fetch timed out or failed",
     };
   }
 }
 
-export async function submitRegistrationData(formData: Omit<Registration, "id" | "timestamp">): Promise<string> {
+export async function submitRegistrationData(
+  formData: Omit<Registration, "id" | "timestamp">
+): Promise<SubmissionResult> {
   const uniqueNum = Math.floor(100000 + Math.random() * 900000);
   const id = `ZH-${uniqueNum}`;
   const timestamp = new Date().toISOString();
@@ -150,18 +233,23 @@ export async function submitRegistrationData(formData: Omit<Registration, "id" |
     checkedIn: false,
   };
 
-  // 1. Save locally so it's instantly available and survives refreshes
+  // 1. Save locally so it's instantly available in the admin panel and survives refreshes
   saveRegistrationLocally(newReg);
 
-  // 2. Dispatch event for open tabs
+  // 2. Dispatch event for open admin tabs
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("zeroth_registration_updated"));
   }
 
-  // 3. If Google Sheets Webhook is configured, push to Google Sheets
+  // 3. Push to Google Sheets (with timeout detection)
+  let cloudSuccess = false;
   const sheetsUrl = getGoogleSheetsWebhookUrl();
+
   if (sheetsUrl) {
     try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 5000);
+
       await fetch(sheetsUrl, {
         method: "POST",
         mode: "no-cors",
@@ -169,13 +257,22 @@ export async function submitRegistrationData(formData: Omit<Registration, "id" |
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newReg),
+        signal: controller.signal,
       });
+
+      clearTimeout(timer);
+      cloudSuccess = true;
     } catch (err) {
-      console.warn("Google Sheets sync failed, but data was stored locally:", err);
+      console.warn("Google Sheets cloud sync timed out / failed:", err);
+      cloudSuccess = false;
     }
   }
 
-  return id;
+  return {
+    id,
+    cloudSuccess,
+    fallbackUrl: !cloudSuccess ? BACKUP_GOOGLE_FORM_URL : undefined,
+  };
 }
 
 export function exportRegistrationsToCsv(registrations: Registration[]): void {
@@ -184,18 +281,17 @@ export function exportRegistrationsToCsv(registrations: Registration[]): void {
   }
 
   const headers = [
-    "ID",
+    "Pass ID",
     "Team Name",
     "Leader Name",
     "Email",
-    "Phone",
+    "Mobile Number",
     "Institution",
-    "Track",
-    "Team Size",
+    "Threat Sector",
+    "Squad Size",
     "Mission Brief",
-    "Status",
+    "Registered At",
     "Checked In",
-    "Timestamp",
   ];
 
   const rows = registrations.map((r) => [
@@ -208,9 +304,8 @@ export function exportRegistrationsToCsv(registrations: Registration[]): void {
     `"${(r.track || "").replace(/"/g, '""')}"`,
     r.teamSize,
     `"${(r.brief || "").replace(/"/g, '""')}"`,
-    r.status || "confirmed",
+    r.timestamp ? new Date(r.timestamp).toLocaleString("en-GB") : new Date().toLocaleString("en-GB"),
     r.checkedIn ? "YES" : "NO",
-    r.timestamp,
   ]);
 
   const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
