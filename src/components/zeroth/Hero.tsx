@@ -333,8 +333,8 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
         <div className="animate-rise w-full max-w-5xl px-1 sm:px-4">
           <div className="flex flex-row items-center justify-center gap-3 sm:gap-6">
             <div className="shrink-0">
-              <div className="size-16 sm:size-22 md:size-28 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_18px_rgba(224,76,17,0.45)] animate-float">
-                <img src="/images/jec-emblem.png" alt="Jaya Educational Trust Emblem" className="size-full object-contain" />
+              <div className="size-16 sm:size-24 md:size-32 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_20px_rgba(255,200,0,0.4)] animate-float">
+                <img src="/images/jec-emblem.png?v=20260826" alt="Jaya Educational Trust Emblem" className="size-full object-contain filter drop-shadow-md" />
               </div>
             </div>
             <div className="flex-1 min-w-0 text-center">
@@ -349,8 +349,8 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               </p>
             </div>
             <div className="shrink-0">
-              <div className="size-16 sm:size-22 md:size-28 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_18px_rgba(255,200,0,0.45)] animate-float" style={{ animationDelay: "1s" }}>
-                <img src="/images/jec-31years.png" alt="31 Years of Excellence" className="size-full object-contain" />
+              <div className="size-16 sm:size-24 md:size-32 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_20px_rgba(255,200,0,0.4)] animate-float" style={{ animationDelay: "1s" }}>
+                <img src="/images/jec-31years.png?v=20260826" alt="31 Years of Excellence" className="size-full object-contain filter drop-shadow-md" />
               </div>
             </div>
           </div>
