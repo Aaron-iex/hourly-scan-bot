@@ -271,7 +271,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
   }, []);
 
   useEffect(() => {
-    const target = new Date("2026-09-11T09:30:00").getTime();
+    const target = new Date("2026-09-17T09:30:00").getTime();
     const update = () => {
       const dist = Math.max(0, target - Date.now());
       setCd({
@@ -410,7 +410,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           <Calendar className="size-5 shrink-0 text-accent group-hover:animate-bounce" aria-hidden />
           <div>
             <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
-              SEPT 11 // 5-HOUR MAKEATHON
+              SEPT 17 // 5-HOUR MAKEATHON
             </p>
             <p className="font-mono-tech text-[10px] sm:text-[11px] text-white/90 font-medium">
               Venue: Jaya Auditorium · Registration queue open

@@ -156,7 +156,7 @@ export const MENTORS = [
 export const FAQS = [
   {
     q: "When is the makeathon?",
-    a: "Confirmed for Sept 11 — a 5-hour makeathon. The detailed timeline will be released to registered squads before lockdown.",
+    a: "Confirmed for Sept 17 — a 5-hour makeathon. The detailed timeline will be released to registered squads before lockdown.",
   },
   {
     q: "Who is allowed to enlist?",

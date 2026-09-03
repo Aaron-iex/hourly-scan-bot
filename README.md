@@ -8,7 +8,7 @@ A 5-hour high-intensity planetary defence and hardware prototype makeathon acros
 ---
 
 ## ⚡ Event Details
-- **Date:** September 11
+- **Date:** September 17
 - **Venue:** Jaya Auditorium
 - **Format:** 1–4 Members per Squad
 - **Overall Prize Cache:** ₹22,000 INR

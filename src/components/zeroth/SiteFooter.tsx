@@ -54,7 +54,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 font-mono-tech text-xs text-muted-foreground">
             <li>+91-6381198548</li>
             <li>PRESS: mylabathulaaaronnissi@gmail.com</li>
-            <li>STATUS: DEFCON 1 — SEPT 11 · 5-HOUR SPRINT</li>
+            <li>STATUS: DEFCON 1 — SEPT 17 · 5-HOUR SPRINT</li>
           </ul>
         </div>
       </div>
