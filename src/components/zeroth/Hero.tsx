@@ -3,16 +3,14 @@ import { Calendar, ChevronRight, Clock, Flame, Crosshair, Radio, Shield, Zap, Al
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-cataclysm.jpg";
 
-/* ─── Cinematic Opening Sequence ─── */
+/* ─── Cinematic Opening Sequence (Mobile & Desktop Responsive) ─── */
 const DISASTER_SEQUENCE = [
   { text: "⚠ SEISMIC BREACH DETECTED", color: "text-red-500" },
   { text: "◈ CORE MELTDOWN IMMINENT", color: "text-orange-400" },
   { text: "◉ RF BLACKOUT — ALL BANDS", color: "text-yellow-400" },
   { text: "△ GLOBAL COMMS FAILURE", color: "text-red-400" },
-  { text: "▣ INITIATING ZEROTH HOUR PROTOCOL", color: "text-primary" },
+  { text: "▣ INITIATING ZEROTH HOUR PROTOCOL", color: "text-primary font-bold" },
 ];
-
-const INTRO_SESSION_KEY = "zh_intro_played_session_v3";
 
 function CinematicIntro({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState(0); // 0-4 = disaster lines, 5 = fade out
@@ -23,7 +21,6 @@ function CinematicIntro({ onComplete }: { onComplete: () => void }) {
       const id = setTimeout(() => setPhase((p) => p + 1), 600);
       return () => clearTimeout(id);
     } else {
-      // start fade out
       setOpacity(0);
       const id = setTimeout(onComplete, 700);
       return () => clearTimeout(id);
@@ -32,29 +29,28 @@ function CinematicIntro({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black pointer-events-none transition-opacity duration-700"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 backdrop-blur-md px-3 py-6 pointer-events-none transition-opacity duration-700 overflow-hidden"
       style={{ opacity }}
     >
-      {/* Scanline overlay */}
-      <div className="absolute inset-0 scanlines opacity-60" />
-      {/* Grid */}
-      <div className="absolute inset-0 grid-tactical opacity-15" />
+      {/* Scanline & Grid Overlays */}
+      <div className="absolute inset-0 scanlines opacity-60 pointer-events-none" />
+      <div className="absolute inset-0 grid-tactical opacity-15 pointer-events-none" />
 
-      {/* Central warning icon */}
-      <div className="relative mb-6">
+      {/* Central Warning Icon */}
+      <div className="relative mb-4 sm:mb-6 shrink-0">
         <AlertTriangle className="size-10 sm:size-14 text-primary animate-pulse" />
         <div className="absolute inset-0 animate-ping">
           <AlertTriangle className="size-10 sm:size-14 text-primary opacity-30" />
         </div>
       </div>
 
-      {/* Disaster lines */}
-      <div className="flex flex-col items-center gap-2 sm:gap-3">
+      {/* Responsive Disaster Sequence Lines */}
+      <div className="flex flex-col items-center gap-2 sm:gap-3 w-full max-w-[92vw] sm:max-w-xl text-center">
         {DISASTER_SEQUENCE.map((item, i) => (
           <div
             key={i}
-            className={`font-mono-tech text-xs sm:text-sm tracking-[0.2em] uppercase transition-all duration-300 ${
-              i < phase ? `${item.color} opacity-100 translate-y-0 font-bold` : "opacity-0 translate-y-4"
+            className={`font-mono-tech text-[11px] sm:text-xs md:text-sm tracking-[0.12em] sm:tracking-[0.2em] uppercase transition-all duration-300 ${
+              i < phase ? `${item.color} opacity-100 translate-y-0` : "opacity-0 translate-y-3"
             }`}
           >
             {item.text}
@@ -62,7 +58,7 @@ function CinematicIntro({ onComplete }: { onComplete: () => void }) {
         ))}
       </div>
 
-      {/* Bottom flash bar */}
+      {/* Bottom Pulse Bar */}
       {phase >= 3 && (
         <div className="absolute bottom-0 inset-x-0 h-1 bg-primary animate-pulse" />
       )}
@@ -82,21 +78,21 @@ function EmberCanvas() {
     const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
     resize();
     window.addEventListener("resize", resize, { passive: true });
-    type Ember = { x: number; y: number; vx: number; vy: number; r: number; alpha: number; hue: number; decay: number };
-    const embers: Ember[] = Array.from({ length: 50 }, () => ({
+    type Ember = { x: number; y: number; vx: number; vy: number; r: number; alpha: number; hue: number };
+    const embers: Ember[] = Array.from({ length: 40 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.35,
       vy: -(Math.random() * 0.6 + 0.12),
-      r: Math.random() * 2.2 + 0.4,
-      alpha: Math.random() * 0.55 + 0.08,
-      hue: Math.random() > 0.6 ? 35 : Math.random() > 0.3 ? 55 : 15,
-      decay: Math.random() * 0.002 + 0.001,
+      r: Math.random() * 1.6 + 0.5,
+      alpha: Math.random() * 0.5 + 0.2,
+      hue: Math.random() > 0.4 ? 20 : 40,
     }));
+
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       embers.forEach((e) => {
-        e.x += e.vx + Math.sin(Date.now() * 0.001 + e.y) * 0.08;
+        e.x += e.vx;
         e.y += e.vy;
         e.alpha += (Math.random() - 0.5) * 0.015;
         e.alpha = Math.max(0.03, Math.min(0.6, e.alpha));
@@ -121,7 +117,7 @@ function EmberCanvas() {
   return <canvas ref={canvasRef} className="absolute inset-0 -z-10 size-full pointer-events-none" aria-hidden />;
 }
 
-/* ─── Animated SVG Radar Sweep behind title ─── */
+/* ─── Animated SVG Radar Sweep ─── */
 function RadarSweep() {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10" aria-hidden>
@@ -140,113 +136,32 @@ function RadarSweep() {
           </defs>
           <path d="M200,200 L200,20 A180,180,0,0,1,356,116 Z" fill="url(#sweep-grad)" opacity="0.4" />
         </g>
-        {[
-          { cx: 260, cy: 130 }, { cx: 145, cy: 270 }, { cx: 310, cy: 220 },
-          { cx: 120, cy: 140 }, { cx: 250, cy: 290 },
-        ].map((d, i) => (
-          <circle key={i} cx={d.cx} cy={d.cy} r="2.5" fill="var(--accent)" opacity="0.7">
-            <animate attributeName="opacity" values="0.7;0.2;0.7" dur={`${2 + i * 0.5}s`} repeatCount="indefinite" />
-          </circle>
-        ))}
       </svg>
     </div>
   );
 }
 
-/* ─── Split-Flap Countdown Digit (Compact Size) ─── */
+/* ─── Split-Flap Countdown Digit ─── */
 function FlipDigit({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col items-center gap-0.5">
       <div className="relative flex gap-[2px]">
-        {value.split("").map((char, i) => (
+        {value.split("").map((digit, i) => (
           <div
             key={i}
-            className="relative size-6 sm:size-8 md:size-10 flex items-center justify-center
-                       bg-black/70 backdrop-blur-md
-                       border border-primary/35 shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
-            style={{ clipPath: "inset(0 round 2px)" }}
+            className="relative flex h-10 w-7 sm:h-14 sm:w-10 items-center justify-center border border-primary/50 bg-black/90 font-display text-sm sm:text-2xl font-black text-foreground shadow-md"
           >
-            <div className="absolute inset-x-0 top-1/2 h-px bg-white/10" />
-            <span className="font-display text-sm sm:text-lg md:text-xl font-black text-foreground tabular-nums drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-              {char}
-            </span>
+            <span className="relative z-10">{digit}</span>
+            <div className="absolute inset-x-0 top-1/2 h-[1px] bg-primary/40" />
           </div>
         ))}
       </div>
-      <span className="font-mono-tech text-[6px] sm:text-[8px] tracking-[0.16em] text-muted-foreground uppercase font-semibold">
-        {label}
-      </span>
+      <span className="font-mono-tech text-[8px] sm:text-[10px] uppercase text-muted-foreground tracking-widest">{label}</span>
     </div>
   );
 }
 
-/* ─── HUD Corner Brackets ─── */
-function HudBrackets({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={`relative ${className}`}>
-      {/* TL */}
-      <div className="absolute -top-1.5 -left-1.5 size-4 border-t-2 border-l-2 border-primary/50 pointer-events-none" />
-      {/* TR */}
-      <div className="absolute -top-1.5 -right-1.5 size-4 border-t-2 border-r-2 border-primary/50 pointer-events-none" />
-      {/* BL */}
-      <div className="absolute -bottom-1.5 -left-1.5 size-4 border-b-2 border-l-2 border-accent/50 pointer-events-none" />
-      {/* BR */}
-      <div className="absolute -bottom-1.5 -right-1.5 size-4 border-b-2 border-r-2 border-accent/50 pointer-events-none" />
-      {children}
-    </div>
-  );
-}
-
-/* ─── Animated Waveform ─── */
-function LiveWaveform() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let rafId: number;
-    const resize = () => { canvas.width = canvas.offsetWidth * 2; canvas.height = canvas.offsetHeight * 2; };
-    resize();
-    const draw = () => {
-      const w = canvas.width, h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-      const t = Date.now() * 0.002;
-      // primary wave
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(224,76,17,0.7)";
-      ctx.lineWidth = 2;
-      for (let x = 0; x < w; x++) {
-        const noise = Math.sin(x * 0.04 + t) * 8 + Math.sin(x * 0.015 + t * 1.3) * 14 + Math.random() * 2;
-        const y = h / 2 + noise + (x > w * 0.3 && x < w * 0.4 ? Math.sin(x * 0.1) * 25 : 0)
-                + (x > w * 0.6 && x < w * 0.75 ? Math.cos(x * 0.08 + t) * 20 : 0);
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      // accent glow wave
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(255,200,0,0.3)";
-      ctx.lineWidth = 1.5;
-      for (let x = 0; x < w; x++) {
-        const noise = Math.sin(x * 0.03 + t * 0.7) * 6 + Math.cos(x * 0.02 + t * 1.1) * 10;
-        const y = h / 2 + noise;
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      // scan line
-      const scanX = ((t * 50) % w);
-      ctx.fillStyle = "rgba(224,76,17,0.2)";
-      ctx.fillRect(scanX - 1, 0, 3, h);
-      rafId = requestAnimationFrame(draw);
-    };
-    draw();
-    window.addEventListener("resize", resize, { passive: true });
-    return () => { cancelAnimationFrame(rafId); window.removeEventListener("resize", resize); };
-  }, []);
-  return <canvas ref={canvasRef} className="size-full" aria-hidden />;
-}
-
-/* ─── HERO ─── */
+/* ─── HERO MAIN ─── */
 let hasPlayedIntroThisAppLaunch = false;
 
 export function Hero({ onRegister }: { onRegister: () => void }) {
@@ -288,8 +203,6 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     return () => clearInterval(id);
   }, []);
 
-  // In-memory flag: resets to false on every page reload/refresh or new tab open,
-  // but stays true while navigating between routes within the React application.
   const [introDone, setIntroComplete] = useState(() => hasPlayedIntroThisAppLaunch);
 
   const handleIntroDone = useCallback(() => {
@@ -299,184 +212,171 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
 
   return (
     <>
-    {!introDone && <CinematicIntro onComplete={handleIntroDone} />}
-    <section id="top" className="relative isolate overflow-hidden scanlines">
-      {/* BG Layers — keep image visible */}
-      <img src={heroImage} alt="" width={1920} height={1088}
-        className="absolute inset-0 -z-20 size-full object-cover object-[center_30%] opacity-60 brightness-[0.85] contrast-110 saturate-[1.15]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_40%,transparent_25%,var(--background)_90%)]" />
-      <div className="absolute inset-0 -z-10 grid-tactical opacity-30" />
-      <EmberCanvas />
-      <div className="absolute bottom-0 inset-x-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent pointer-events-none -z-10" />
+      {!introDone && <CinematicIntro onComplete={handleIntroDone} />}
+      <section id="top" className="relative isolate overflow-hidden scanlines">
+        {/* BG Layers */}
+        <img
+          src={heroImage}
+          alt=""
+          width={1920}
+          height={1088}
+          className="absolute inset-0 -z-20 size-full object-cover object-[center_30%] opacity-60 brightness-[0.85] contrast-110 saturate-[1.15]"
+        />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_40%,transparent_25%,var(--background)_90%)]" />
+        <div className="absolute inset-0 -z-10 grid-tactical opacity-30" />
+        <EmberCanvas />
+        <div className="absolute bottom-0 inset-x-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent pointer-events-none -z-10" />
 
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-2 py-2 text-center sm:px-6 lg:px-8 sm:py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center px-2 py-3 text-center sm:px-6 lg:px-8 sm:py-8">
 
-        {/* ── DEFCON Badge ── */}
-        <div className="animate-rise inline-flex items-center gap-2.5 border border-primary/60 bg-primary/15 px-4 py-1.5 clip-tactical mb-3 animate-pulse-glow">
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
-            <span className="relative inline-flex size-2 rounded-full bg-primary" />
-          </span>
-          <Radio className="size-3 text-primary animate-pulse" />
-          <span className="font-mono-tech text-[10px] tracking-[0.25em] text-accent font-bold">
-            DEFCON 1 PROTOCOL {clock ? `// ${clock}` : ""}
-          </span>
-        </div>
+          {/* ── DEFCON Badge ── */}
+          <div className="animate-rise inline-flex items-center gap-2 border border-primary/60 bg-primary/15 px-3 py-1 sm:px-4 sm:py-1.5 clip-tactical mb-2.5 sm:mb-3">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
+              <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            </span>
+            <Radio className="size-3 text-primary animate-pulse" />
+            <span className="font-mono-tech text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.25em] text-accent font-bold">
+              DEFCON 1 PROTOCOL {clock ? `// ${clock}` : ""}
+            </span>
+          </div>
 
-        {/* ── College Header ── */}
-        <div className="animate-rise w-full max-w-5xl px-1 sm:px-4">
-          <div className="flex flex-row items-center justify-center gap-3 sm:gap-6">
-            <div className="shrink-0">
-              <div className="size-16 sm:size-24 md:size-32 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_20px_rgba(255,200,0,0.4)] animate-float">
-                <img src="/images/jec-emblem.png?v=20260826" alt="Jaya Educational Trust Emblem" className="size-full object-contain filter drop-shadow-md" />
+          {/* ── College Header (Responsive Mobile Layout) ── */}
+          <div className="animate-rise w-full max-w-5xl px-1 sm:px-4">
+            <div className="flex flex-row items-center justify-between sm:justify-center gap-2 sm:gap-6">
+              <div className="shrink-0">
+                <div className="size-12 sm:size-24 md:size-28 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_15px_rgba(255,200,0,0.4)] animate-float">
+                  <img
+                    src="/images/jec-emblem.png?v=20260826"
+                    alt="Jaya Educational Trust Emblem"
+                    className="size-full object-contain filter drop-shadow-md"
+                  />
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-0 text-center px-1">
+                <h2 className="font-display text-xs sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight sm:tracking-wide text-foreground leading-tight">
+                  JAYA ENGINEERING COLLEGE
+                </h2>
+                <p className="mt-0.5 font-mono-tech text-[7px] sm:text-xs md:text-sm text-muted-foreground font-medium">
+                  Accredited by NAAC & NBA | Approved by AICTE | Affiliated to Anna University
+                </p>
+                <p className="mt-0.5 font-mono-tech text-[7px] sm:text-[11px] text-accent font-bold tracking-wide">
+                  📍 CTH Road, Thiruninravur, Chennai — 602024
+                </p>
+              </div>
+
+              <div className="shrink-0">
+                <div className="size-12 sm:size-24 md:size-28 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_15px_rgba(255,200,0,0.4)] animate-float" style={{ animationDelay: "1s" }}>
+                  <img
+                    src="/images/jec-31years.png?v=20260826"
+                    alt="31 Years of Excellence"
+                    className="size-full object-contain filter drop-shadow-md"
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex-1 min-w-0 text-center">
-              <h2 className="font-display text-sm sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight sm:tracking-wide text-foreground leading-tight">
-                JAYA ENGINEERING COLLEGE
-              </h2>
-              <p className="mt-1 font-mono-tech text-[7px] sm:text-xs md:text-sm text-muted-foreground font-medium">
-                Accredited by NAAC & NBA | Approved by AICTE | Affiliated to Anna University
+
+            <div className="mt-2.5 sm:mt-3 pt-1 sm:pt-2 space-y-1.5 sm:space-y-2">
+              <p className="font-mono-tech text-[9px] sm:text-sm md:text-base tracking-[0.12em] sm:tracking-[0.2em] uppercase text-primary font-black">
+                DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
               </p>
-              <p className="mt-0.5 font-mono-tech text-[7px] sm:text-[11px] text-accent font-bold tracking-wide">
-                📍 CTH Road, Thiruninravur, Chennai — 602024
+              <span className="inline-block border border-accent/50 bg-accent/15 px-3 py-0.5 sm:px-4 sm:py-1 clip-tactical font-mono-tech text-[9px] sm:text-xs tracking-[0.25em] uppercase text-accent font-bold">
+                // PRESENTS
+              </span>
+            </div>
+          </div>
+
+          {/* ── Main Event Title ── */}
+          <div className="relative mt-4 sm:mt-8">
+            <RadarSweep />
+            <div className="px-2 py-1 sm:px-8 sm:py-4">
+              <h1 className="animate-rise font-display uppercase">
+                <span className="block text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-foreground tracking-tighter"
+                      style={{ textShadow: "0 0 30px rgba(255,255,255,0.2), 0 0 60px rgba(224,76,17,0.15)" }}>
+                  MAKEATHON
+                </span>
+                <span className="mt-1 block text-base sm:text-3xl md:text-4xl lg:text-5xl font-extrabold shimmer-text tracking-wide">
+                  PROJECT ZEROTH HOUR
+                </span>
+              </h1>
+            </div>
+            <Crosshair className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 size-5 sm:size-8 text-primary/40 animate-float" />
+          </div>
+
+          {/* ── Split-Flap Countdown ── */}
+          <div className="animate-rise mt-3 sm:mt-4 px-2 py-1">
+            <div className="flex items-center gap-1.5 mb-1.5 justify-center">
+              <Shield className="size-3 sm:size-3.5 text-primary" />
+              <span className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.2em] text-primary font-bold uppercase">
+                Time to Zero Hour
+              </span>
+            </div>
+            <div className="flex items-start gap-1 sm:gap-2 justify-center">
+              <FlipDigit value={cd.d} label="Days" />
+              <span className="font-display text-xs sm:text-lg font-black text-primary mt-1 animate-flicker">:</span>
+              <FlipDigit value={cd.h} label="Hrs" />
+              <span className="font-display text-xs sm:text-lg font-black text-primary mt-1 animate-flicker">:</span>
+              <FlipDigit value={cd.m} label="Min" />
+              <span className="font-display text-xs sm:text-lg font-black text-primary mt-1 animate-flicker">:</span>
+              <FlipDigit value={cd.s} label="Sec" />
+            </div>
+          </div>
+
+          {/* ── Date & Venue ── */}
+          <div className="animate-rise mt-3.5 sm:mt-4 flex w-full max-w-md items-center gap-2.5 sm:gap-3 border border-accent/70 bg-black/80 backdrop-blur-md px-3 py-2 sm:px-4 sm:py-2.5 clip-tactical text-left shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
+            <Calendar className="size-4 sm:size-5 shrink-0 text-accent" aria-hidden />
+            <div>
+              <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
+                SEPT 17 // 5-HOUR MAKEATHON
+              </p>
+              <p className="font-mono-tech text-[9px] sm:text-[11px] text-white/90 font-medium">
+                Venue: Jaya Auditorium · Registration queue open
               </p>
             </div>
-            <div className="shrink-0">
-              <div className="size-16 sm:size-24 md:size-32 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_20px_rgba(255,200,0,0.4)] animate-float" style={{ animationDelay: "1s" }}>
-                <img src="/images/jec-31years.png?v=20260826" alt="31 Years of Excellence" className="size-full object-contain filter drop-shadow-md" />
-              </div>
+          </div>
+
+          {/* ── CTA Buttons ── */}
+          <div className="animate-rise mt-4 sm:mt-5 flex flex-col gap-2 sm:flex-row w-full sm:w-auto">
+            <Button
+              variant="alert"
+              size="default"
+              onClick={onRegister}
+              className="w-full sm:w-auto h-12 sm:h-11 font-bold touch-manipulation group relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
+            >
+              <Flame className="size-4" aria-hidden />
+              Enlist your squad
+              <ChevronRight className="size-4" aria-hidden />
+            </Button>
+            <Button
+              variant="tactical"
+              size="default"
+              asChild
+              className="w-full sm:w-auto h-12 sm:h-11 font-bold touch-manipulation group transition-all duration-300 hover:scale-[1.02]"
+            >
+              <a href="#roadmap">
+                <Clock className="size-4" aria-hidden />
+                View build schedule
+              </a>
+            </Button>
+          </div>
+
+          {/* ── Prize & Fee Info ── */}
+          <div className="animate-rise mt-3.5 sm:mt-5 flex w-full max-w-lg flex-row gap-2 sm:gap-3 justify-center">
+            <div className="flex flex-1 flex-col items-center justify-center gap-0.5 bg-black/85 backdrop-blur-md px-2.5 py-2.5 rounded border border-primary/50">
+              <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.18em] text-accent font-bold">PRIZE CACHE</p>
+              <p className="font-display text-lg sm:text-3xl font-black text-foreground">₹22K</p>
+              <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">+ MERCH & CERTS</p>
+            </div>
+            <div className="flex flex-1 flex-col items-center justify-center gap-0.5 bg-black/85 backdrop-blur-md px-2.5 py-2.5 rounded border border-accent/50">
+              <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.18em] text-accent font-bold">REGISTRATION</p>
+              <p className="font-display text-lg sm:text-3xl font-black text-foreground">₹200</p>
+              <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">FOOD & WI-FI INCLUDED</p>
             </div>
           </div>
 
-          <div className="mt-3 pt-2 space-y-2">
-            <p className="font-mono-tech text-[10px] sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.2em] uppercase text-primary font-black">
-              DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
-            </p>
-            <span className="inline-block border border-accent/50 bg-accent/15 px-4 py-1 clip-tactical font-mono-tech text-[10px] sm:text-xs tracking-[0.3em] uppercase text-accent font-bold">
-              // PRESENTS
-            </span>
-          </div>
         </div>
-
-        {/* ── Main Event Title with Radar (Clean, No Box Frame) ── */}
-        <div className="relative mt-6 sm:mt-8">
-          <RadarSweep />
-          <div className="px-4 py-2 sm:px-8 sm:py-4">
-            <h1 className="animate-rise font-display uppercase">
-              <span className="block text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-foreground tracking-tighter"
-                    style={{ textShadow: "0 0 40px rgba(255,255,255,0.2), 0 0 80px rgba(224,76,17,0.15)" }}>
-                MAKEATHON
-              </span>
-              <span className="mt-2 block text-lg sm:text-3xl md:text-4xl lg:text-5xl font-extrabold shimmer-text tracking-wide">
-                PROJECT ZEROTH HOUR
-              </span>
-            </h1>
-          </div>
-          {/* Floating crosshair */}
-          <Crosshair className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 size-6 sm:size-8 text-primary/40 animate-float" style={{ animationDelay: "0.5s" }} />
-        </div>
-
-        {/* ── Breathing gap — BG image visible ── */}
-        <div className="mt-4 sm:mt-6" />
-
-        {/* ── Compact Split-Flap Countdown (Clean, No Box Frame) ── */}
-        <div className="animate-rise mt-3 sm:mt-4 px-3 py-2">
-          <div className="flex items-center gap-1.5 mb-1.5 justify-center">
-            <Shield className="size-3 sm:size-3.5 text-primary" />
-            <span className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.22em] text-primary font-bold uppercase">
-              Time to Zero Hour
-            </span>
-          </div>
-          <div className="flex items-start gap-1 sm:gap-2 justify-center">
-            <FlipDigit value={cd.d} label="Days" />
-            <span className="font-display text-sm sm:text-lg font-black text-primary mt-0.5 sm:mt-1 animate-flicker">:</span>
-            <FlipDigit value={cd.h} label="Hrs" />
-            <span className="font-display text-sm sm:text-lg font-black text-primary mt-0.5 sm:mt-1 animate-flicker">:</span>
-            <FlipDigit value={cd.m} label="Min" />
-            <span className="font-display text-sm sm:text-lg font-black text-primary mt-0.5 sm:mt-1 animate-flicker">:</span>
-            <FlipDigit value={cd.s} label="Sec" />
-          </div>
-        </div>
-
-        {/* ── Date & Venue (High Opacity, High Readability) ── */}
-        <div className="animate-rise mt-4 flex w-full max-w-md items-center gap-3 border border-accent/70 bg-black/80 backdrop-blur-md px-4 py-2.5 clip-tactical text-left group hover:bg-black/90 transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
-          <Calendar className="size-5 shrink-0 text-accent group-hover:animate-bounce" aria-hidden />
-          <div>
-            <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
-              SEPT 17 // 5-HOUR MAKEATHON
-            </p>
-            <p className="font-mono-tech text-[10px] sm:text-[11px] text-white/90 font-medium">
-              Venue: Jaya Auditorium · Registration queue open
-            </p>
-          </div>
-        </div>
-
-        {/* ── CTA Buttons ── */}
-        <div className="animate-rise mt-5 flex flex-col gap-2.5 sm:flex-row w-full sm:w-auto">
-          <Button variant="alert" size="default" onClick={onRegister}
-            className="w-full sm:w-auto group relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_35px_rgba(224,76,17,0.6)] hover:scale-[1.02]">
-            <Flame className="size-4 transition-transform group-hover:rotate-12 group-hover:scale-110" aria-hidden />
-            Enlist your squad
-            <ChevronRight className="size-4 transition-transform group-hover:translate-x-1.5" aria-hidden />
-          </Button>
-          <Button variant="tactical" size="default" asChild
-            className="w-full sm:w-auto group transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:scale-[1.02]">
-            <a href="#roadmap">
-              <Clock className="size-4 transition-transform group-hover:rotate-[-15deg]" aria-hidden />
-              View build schedule
-            </a>
-          </Button>
-        </div>
-
-        {/* ── Prize + Registration Cards (High Opacity, High Readability) ── */}
-        <div className="animate-rise mt-4 sm:mt-5 flex w-full max-w-lg flex-row gap-2 sm:gap-3 justify-center">
-          <div className="flex flex-1 flex-col items-center justify-center gap-1 bg-black/80 backdrop-blur-md px-3 py-3 rounded border border-primary/50 group hover:border-primary transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
-            <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent font-bold">PRIZE CACHE</p>
-            <p className="font-display text-xl sm:text-3xl font-black text-foreground">₹22K</p>
-            <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">+ MERCH & CERTS</p>
-          </div>
-          <div className="flex flex-1 flex-col items-center justify-center gap-1 bg-black/80 backdrop-blur-md px-3 py-3 rounded border border-accent/50 group hover:border-accent transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
-            <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-accent font-bold">REGISTRATION</p>
-            <p className="font-display text-xl sm:text-3xl font-black text-foreground">₹200</p>
-            <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">FOOD & WI-FI INCLUDED</p>
-          </div>
-        </div>
-
-        {/* ── Live Tactical Readouts ── */}
-        <div className="animate-rise mt-5 sm:mt-7 grid w-full grid-cols-3 gap-3 max-w-lg">
-          {[
-            { label: "THREAT LEVEL", value: "CRITICAL", color: "text-primary", icon: Zap },
-            { label: "OPERATIVES", value: `${operatives}+`, color: "text-foreground", icon: Shield },
-            { label: "ECE TRACKS", value: "05", color: "text-alert-gradient", icon: Crosshair },
-          ].map((item, i) => (
-            <div key={i} className="group panel-tactical p-3 sm:p-4 text-center transition-all duration-300 hover:-translate-y-1 bg-black/75">
-              <item.icon className="size-4 text-primary mx-auto mb-1.5 transition-transform group-hover:scale-125 group-hover:rotate-12" aria-hidden />
-              <p className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.2em] text-muted-foreground font-semibold">{item.label}</p>
-              <p className={`font-display text-lg sm:text-xl font-black mt-0.5 ${item.color}`}>{item.value}</p>
-              <div className="mt-1.5 h-px w-0 group-hover:w-full bg-gradient-to-r from-primary to-accent transition-all duration-500 mx-auto" />
-            </div>
-          ))}
-        </div>
-
-        {/* ── Live Waveform ── */}
-        <div className="animate-rise mt-5 sm:mt-6 w-full max-w-3xl">
-          <div className="mb-1 flex items-center justify-between font-mono-tech text-[8px] sm:text-[10px] tracking-[0.2em] text-muted-foreground font-medium">
-            <span className="flex items-center gap-1.5">
-              <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-              RF SPECTRUM — LIVE SCAN
-            </span>
-            <span className="text-primary font-bold">2.4 GHz ACTIVE</span>
-          </div>
-          <HudBrackets>
-            <div className="relative h-10 sm:h-14 md:h-16 bg-black/70 backdrop-blur-md overflow-hidden border border-primary/25 shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
-              <LiveWaveform />
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--background),transparent_15%,transparent_85%,var(--background))]" />
-            </div>
-          </HudBrackets>
-        </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }
