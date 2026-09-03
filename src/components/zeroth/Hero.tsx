@@ -247,6 +247,8 @@ function LiveWaveform() {
 }
 
 /* ─── HERO ─── */
+let hasPlayedIntroThisAppLaunch = false;
+
 export function Hero({ onRegister }: { onRegister: () => void }) {
   const [clock, setClock] = useState<string | null>(null);
   const [operatives, setOperatives] = useState(0);
@@ -286,20 +288,12 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     return () => clearInterval(id);
   }, []);
 
-  // Check if intro has already run in this session so it won't repeat when switching tabs
-  const [introDone, setIntroComplete] = useState(() => {
-    if (typeof window !== "undefined") {
-      return !!sessionStorage.getItem(INTRO_SESSION_KEY);
-    }
-    return false;
-  });
+  // In-memory flag: resets to false on every page reload/refresh or new tab open,
+  // but stays true while navigating between routes within the React application.
+  const [introDone, setIntroComplete] = useState(() => hasPlayedIntroThisAppLaunch);
 
   const handleIntroDone = useCallback(() => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem(INTRO_SESSION_KEY, "true");
-      } catch {}
-    }
+    hasPlayedIntroThisAppLaunch = true;
     setIntroComplete(true);
   }, []);
 
