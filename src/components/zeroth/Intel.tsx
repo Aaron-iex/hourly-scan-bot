@@ -126,14 +126,14 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
 
         <dl className="grid grid-cols-2 gap-4">
           {STATS.map((s) => (
-            <div key={s.label} className="panel-tactical p-5">
-              <dt className="font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground">
+            <div key={s.label} className="panel-tactical p-4 sm:p-5 border border-primary/30 bg-primary/5">
+              <dt className="font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-bold">
                 {s.label}
               </dt>
-              <dd className="mt-2 font-display text-3xl font-black text-alert-gradient">
-                {s.value}
+              <dd className="mt-2 font-display text-2xl sm:text-3xl font-black text-alert-gradient">
+                {s.value || s.val}
               </dd>
-              <p className="mt-1 text-xs text-muted-foreground">{s.desc}</p>
+              {s.desc && <p className="mt-1 font-mono-tech text-[10px] text-accent/90">{s.desc}</p>}
             </div>
           ))}
         </dl>

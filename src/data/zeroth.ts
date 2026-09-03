@@ -70,10 +70,10 @@ export const TRACKS: Track[] = [
 ];
 
 export const STATS = [
-  { label: "PRIZE CACHE", val: "₹22K INR" },
-  { label: "SPRINT DURATION", val: "5 HOURS" },
-  { label: "THREAT SECTORS", val: "5 TRACKS" },
-  { label: "CLEARANCE RATE", val: "LIMITED" },
+  { label: "PRIZE CACHE", value: "₹22K INR", val: "₹22K INR", desc: "Top 3 Squads Rewarded" },
+  { label: "SPRINT DURATION", value: "5 HOURS", val: "5 HOURS", desc: "High-Intensity Build" },
+  { label: "THREAT SECTORS", value: "5 TRACKS", val: "5 TRACKS", desc: "Open & Focused Domains" },
+  { label: "CLEARANCE RATE", value: "OPEN TO ALL", val: "OPEN TO ALL", desc: "All Colleges & Streams" },
 ];
 
 export type Stage = "prep" | "hacking" | "pitch";
