@@ -2,63 +2,78 @@ export type Track = {
   id: string;
   code: string;
   title: string;
+  category: "PREDICTION" | "PREVENTION" | "MITIGATION" | "OPEN INNOVATION";
   icon: "waves" | "flame" | "rocket" | "anchor" | "zap";
   threat: string;
   brief: string;
+  featured?: boolean;
   stack: string[];
 };
 
 export const TRACKS: Track[] = [
   {
-    id: "seismic",
+    id: "prediction",
     code: "SECTOR 01",
-    title: "Tsunami & Earthquake Mitigation",
+    title: "Disaster Prediction & Early Warning",
+    category: "PREDICTION",
     icon: "waves",
-    threat: "RICHTER 8.9",
+    threat: "PREDICTION TECH",
     brief:
-      "Build and innovate technology to help protect communities, forecast seismic disruptions, and coordinate immediate responses to tsunamis and earthquakes.",
+      "Build early-warning systems, seismic sensor alarms, flood prediction models, weather monitoring IoT, or real-time alert apps to notify citizens before disasters hit.",
     stack: [],
   },
   {
-    id: "wildfire",
+    id: "prevention",
     code: "SECTOR 02",
-    title: "Wildfire Suppression Tech",
+    title: "Hazard Prevention & Safety Tech",
+    category: "PREVENTION",
     icon: "flame",
-    threat: "HEAT INDEX 61°C",
+    threat: "PREVENTION TECH",
     brief:
-      "Unprecedented heatwaves ignite mega-blazes worldwide. Ship autonomous drone-swarm retardant coordination, satellite infrared trajectory models, or live evacuation routing for trapped citizens.",
+      "Design smart hazard detection tools, gas/fire automated shutoff circuits, thermal monitoring nodes, or preventive safety systems that stop disasters before they escalate.",
     stack: [],
   },
   {
-    id: "offworld",
+    id: "mitigation",
     code: "SECTOR 03",
-    title: "Off-World Habitat (Mars / Moon)",
-    icon: "rocket",
-    threat: "ATMOS COLLAPSE",
+    title: "Emergency Mitigation & Rescue Tech",
+    category: "MITIGATION",
+    icon: "anchor",
+    threat: "MITIGATION TECH",
     brief:
-      "When Earth's atmosphere fails, humanity looks outward. Create habitat life-support telemetry, solar-flare radiation monitors, regolith 3D-printing controllers, or Martian oxygen generation networks.",
+      "Develop offline SOS radio transmitters, emergency mesh networks, smart medical triage assistants, or post-impact resource distribution apps for fast disaster recovery.",
     stack: [],
   },
   {
-    id: "oceanic",
+    id: "habitat",
     code: "SECTOR 04",
-    title: "Oceanic Civilizations",
-    icon: "anchor",
-    threat: "SEA LEVEL +4.2M",
+    title: "Environmental & Habitat Protection",
+    category: "PREVENTION",
+    icon: "rocket",
+    threat: "PROTECTION TECH",
     brief:
-      "Rising seas swallow coastal megacities. Design submerged modular habitats, deep-current energy harvesting arrays, acoustic underwater data protocols, or marine food-security systems.",
+      "Create climate telemetry monitors, water-level safety devices, solar/renewable back-up power nodes, or smart environmental controllers for vulnerable habitats.",
     stack: [],
   },
   {
     id: "open",
-    code: "SECTOR 05",
-    title: "Open Innovation (Doomsday Tech)",
+    code: "SECTOR 05 // FEATURED",
+    title: "Open Innovation (Any Tech Project)",
+    category: "OPEN INNOVATION",
     icon: "zap",
-    threat: "UNCLASSIFIED",
+    featured: true,
+    threat: "ANY PROJECT ALLOWED",
     brief:
-      "No rules, pure survival ingenuity. Off-grid P2P radio messaging, EMP surge defence, automated triage medkits, or post-collapse resource distribution algorithms.",
+      "★ MOST POPULAR — Bring your own idea! Open for any hardware prototype, software app, IoT system, AI model, or engineering innovation. Zero restrictions!",
     stack: [],
   },
+];
+
+export const STATS = [
+  { label: "PRIZE CACHE", val: "₹22K INR" },
+  { label: "SPRINT DURATION", val: "5 HOURS" },
+  { label: "THREAT SECTORS", val: "5 TRACKS" },
+  { label: "CLEARANCE RATE", val: "LIMITED" },
 ];
 
 export type Stage = "prep" | "hacking" | "pitch";
@@ -91,7 +106,7 @@ export const TIMELINE: TimelineEvent[] = [
     location: "Jaya Auditorium",
     stage: "hacking",
     description:
-      "5-hour intense continuous sprint begins. Squads start prototyping hardware, firmware, and planetary defense solutions.",
+      "5-hour intense continuous sprint begins. Squads start prototyping hardware, firmware, and student engineering solutions.",
     status: "SPRINT ACTIVE",
   },
   {
@@ -101,55 +116,28 @@ export const TIMELINE: TimelineEvent[] = [
     location: "Jaya Auditorium",
     stage: "hacking",
     description:
-      "Milestone evaluation by faculty mentors and refreshment lunch break for all operatives.",
-    status: "MID-EVALUATION & LUNCH",
+      "Mentors visit tables for prototype reviews, technical feedback, and troubleshooting support.",
+    status: "MENTOR ROUND ACTIVE",
   },
   {
-    phase: "STAGE 3 // FREEZE",
+    phase: "STAGE 2 // FINAL SPRINT",
+    time: "03:30 PM",
+    title: "Project Freeze & Code Lockdown",
+    location: "Jaya Auditorium",
+    stage: "hacking",
+    description:
+      "Stop work command. Prototypes and presentations locked for jury evaluation.",
+    status: "CODE LOCKDOWN",
+  },
+  {
+    phase: "STAGE 3 // EVALUATION",
     time: "04:00 PM",
-    title: "Finish of 5-Hour Makeathon & Final Project Lock",
+    title: "Jury Demonstrations & Award Ceremony",
     location: "Jaya Auditorium",
     stage: "pitch",
     description:
-      "5 hours of sprint concluded. Final hardware demo submissions and project evaluation by the jury.",
-    status: "SUBMISSION LOCKDOWN",
-  },
-  {
-    phase: "STAGE 3 // AWARDS",
-    time: "04:30 PM",
-    title: "Announcement of Winners & Valedictory Ceremony",
-    location: "Jaya Auditorium",
-    stage: "pitch",
-    description:
-      "Grand announcement of overall champions (1st ₹10k, 2nd ₹7k, 3rd ₹5k), certificate distribution, and closing ceremony.",
-    status: "PRIZE CACHE DISTRIBUTION",
-  },
-];
-
-export const MENTORS = [
-  {
-    name: "Dr. A. Saravanan",
-    role: "Head of Department, ECE",
-    org: "Faculty Mentor",
-    specialty: "Signal Processing & VLSI",
-  },
-  {
-    name: "Faculty Coordinator I",
-    role: "Faculty Coordinator",
-    org: "Department of ECE",
-    specialty: "Embedded Systems",
-  },
-  {
-    name: "Faculty Coordinator II",
-    role: "Faculty Coordinator",
-    org: "Department of ECE",
-    specialty: "RF & Wireless",
-  },
-  {
-    name: "Student Event Head",
-    role: "Event Head",
-    org: "Student Coordinator",
-    specialty: "Overall Operations",
+      "3-minute live prototype demonstrations before jury, followed by announcement of winners and prize distribution.",
+    status: "JURY DEMOS ACTIVE",
   },
 ];
 
@@ -160,25 +148,14 @@ export const FAQS = [
   },
   {
     q: "Who is allowed to enlist?",
-    a: "Students, independent engineers, designers, and researchers worldwide. Participation is 200 INR per team.",
+    a: "Students from all engineering disciplines, polytechnic colleges, and universities. Registration is ₹200 INR per team.",
   },
   {
     q: "How large can a squad be?",
-    a: "Between 1 and 4 members. Solo applicants are welcome to participate as well.",
+    a: "Between 1 and 4 members per squad. Solo participants are also welcome!",
   },
   {
-    q: "Do I need hardware to compete?",
-    a: "No. Software-only submissions compete on equal footing. Hardware teams get a dedicated lab bench and component budget.",
+    q: "Can I bring my own project or idea (Open Innovation)?",
+    a: "Yes! Sector 05 (Open Innovation) allows any software app, hardware prototype, IoT project, or AI model. All creative ideas are welcome.",
   },
-  {
-    q: "What is actually judged?",
-    a: "Engineering depth, hardware-software integration, resilience under the mid-point constraint injection, and clarity of the final pitch.",
-  },
-];
-
-export const STATS = [
-  { label: "PRIZE CACHE", value: "22,000 INR", desc: "1st 10k · 2nd 7k · 3rd 5k overall" },
-  { label: "OPERATIVES", value: "500+", desc: "Engineers, designers, researchers" },
-  { label: "SPRINT WINDOW", value: "5 HOURS", desc: "Continuous build" },
-  { label: "THREAT SECTORS", value: "05", desc: "Planetary defence tracks" },
 ];
