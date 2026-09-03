@@ -45,10 +45,11 @@ export function SiteNav({
   }, [open]);
 
   const handleTab = (tab: "home" | "events" | "about") => {
-    onTabChange(tab);
+    // Close mobile menu first
     setOpen(false);
-    // Smooth scroll to top with a slight delay so mobile menu closes first
+    // Defer tab change to next frame so mobile menu close animation completes
     requestAnimationFrame(() => {
+      onTabChange(tab);
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   };
@@ -83,7 +84,7 @@ export function SiteNav({
             <button
               key={l.id}
               onClick={() => handleTab(l.id)}
-              className={`relative px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] transition-colors group ${
+              className={`relative px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] transition-colors group touch-manipulation ${
                 activeTab === l.id ? "text-accent" : "text-muted-foreground hover:text-accent"
               }`}
               aria-current={activeTab === l.id ? "page" : undefined}
@@ -106,7 +107,7 @@ export function SiteNav({
             REGISTER
           </Button>
           <button
-            className="grid size-9 place-items-center border border-border text-foreground clip-tactical"
+            className="grid size-10 place-items-center border border-border text-foreground clip-tactical touch-manipulation"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
           >
@@ -122,7 +123,7 @@ export function SiteNav({
               key={l.id}
               onClick={() => handleTab(l.id)}
               style={{ animationDelay: `${i * 0.05}s` }}
-              className={`animate-slide-x flex w-full items-center justify-between border-b border-border/60 py-3.5 text-left font-mono-tech text-xs uppercase tracking-[0.2em] transition-colors ${
+              className={`animate-slide-x flex w-full items-center justify-between border-b border-border/60 py-4 min-h-[48px] text-left font-mono-tech text-xs uppercase tracking-[0.2em] transition-colors touch-manipulation ${
                 activeTab === l.id ? "text-accent" : "text-muted-foreground hover:text-accent"
               }`}
             >

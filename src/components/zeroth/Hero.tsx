@@ -79,7 +79,8 @@ function EmberCanvas() {
     resize();
     window.addEventListener("resize", resize, { passive: true });
     type Ember = { x: number; y: number; vx: number; vy: number; r: number; alpha: number; hue: number };
-    const embers: Ember[] = Array.from({ length: 40 }, () => ({
+    const isMobile = canvas.width < 640;
+    const embers: Ember[] = Array.from({ length: isMobile ? 18 : 40 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.35,

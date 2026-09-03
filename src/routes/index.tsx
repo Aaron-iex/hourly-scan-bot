@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { EmergencyTicker } from "@/components/zeroth/EmergencyTicker";
 import { SiteNav } from "@/components/zeroth/SiteNav";
 import { Hero } from "@/components/zeroth/Hero";
@@ -14,6 +14,16 @@ import { SabotageQuiz } from "@/components/zeroth/SabotageQuiz";
 const TITLE = "Zeroth Hour — 5-Hour Planetary Defence Makeathon";
 const DESCRIPTION =
   "Jaya Engineering College Department of ECE presents Makeathon: Project Zeroth Hour. Join 500+ engineers for a 5-hour makeathon across five fronts of planetary defence. 22,000 INR overall prize cache.";
+
+type Tab = "home" | "events" | "about";
+const VALID_TABS: Tab[] = ["home", "events", "about"];
+
+/** Read tab from URL hash (e.g. #events → "events"). Falls back to "home". */
+function getTabFromHash(): Tab {
+  if (typeof window === "undefined") return "home";
+  const raw = window.location.hash.replace("#", "").toLowerCase();
+  return VALID_TABS.includes(raw as Tab) ? (raw as Tab) : "home";
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,12 +42,39 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [open, setOpen] = useState(false);
   const [track, setTrack] = useState("");
-  const [tab, setTab] = useState<"home" | "events" | "about">("home");
 
-  const openRegister = (selected = "") => {
+  /* ── Hash-synced tab state ──
+   * Tab navigation is reflected in the URL hash so mobile back button
+   * switches tabs dynamically instead of triggering a full page reload. */
+  const [tab, setTabRaw] = useState<Tab>(getTabFromHash);
+
+  /** Push a new history entry when the user actively navigates to a tab. */
+  const setTab = useCallback((next: Tab) => {
+    setTabRaw(next);
+    const hash = next === "home" ? "" : `#${next}`;
+    // Only push if the hash actually changed to avoid duplicate entries
+    if (window.location.hash !== (hash || "#")) {
+      window.history.pushState(null, "", hash || window.location.pathname);
+    }
+  }, []);
+
+  /** Listen for the browser back/forward button (popstate) to update tab state. */
+  useEffect(() => {
+    const onPop = () => {
+      setTabRaw(getTabFromHash());
+      // Scroll to top when navigating back between tabs
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  const openRegister = useCallback((selected = "") => {
     setTrack(selected);
     setOpen(true);
-  };
+  }, []);
+
+  const closeRegister = useCallback(() => setOpen(false), []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,7 +100,7 @@ function Index() {
         {tab === "about" && <Intel />}
       </main>
       <SiteFooter />
-      <RegisterDialog open={open} onClose={() => setOpen(false)} initialTrack={track} />
+      <RegisterDialog open={open} onClose={closeRegister} initialTrack={track} />
     </div>
   );
 }

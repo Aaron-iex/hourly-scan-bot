@@ -29,17 +29,16 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <nav>
+      <nav>
           <h4 className="font-mono-tech text-[11px] tracking-[0.22em] text-accent">NAVIGATION</h4>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             {[
-              ["#briefing", "Mission briefing"],
-              ["#sectors", "Threat sectors"],
-              ["#roadmap", "Evacuation roadmap"],
-              ["#intel", "Mentors & FAQ"],
+              ["#", "Home"],
+              ["#events", "Event schedule"],
+              ["#about", "Mission briefing & FAQ"],
             ].map(([href, label]) => (
               <li key={href}>
-                <a href={href} className="transition-colors hover:text-accent">
+                <a href={href} className="transition-colors hover:text-accent touch-manipulation">
                   {label}
                 </a>
               </li>
