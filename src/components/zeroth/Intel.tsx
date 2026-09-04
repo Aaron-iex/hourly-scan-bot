@@ -82,7 +82,7 @@ const STUDENT_COORDINATORS: Member[] = [
   },
   {
     name: "Sai Rahul",
-    role: "Media Head",
+    role: "Event Co-Ordinator",
     org: "Student Coordinator",
     specialty: "Broadcast & Communications",
     initials: "SR",
