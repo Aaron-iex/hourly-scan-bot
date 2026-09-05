@@ -4,6 +4,30 @@ import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-cataclysm.jpg";
 import { browserCompat } from "@/lib/browser-compat";
 import { loadState, saveState, STORAGE_KEYS } from "@/lib/state-persistence";
+import { motion, AnimatePresence } from "framer-motion";
+
+// openmotion.design inspired transitions
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+const fadeUpBlur = {
+  hidden: { opacity: 0, y: 30, filter: "blur(12px)" },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    filter: "blur(0px)", 
+    transition: { type: "spring", stiffness: 200, damping: 20 } 
+  },
+};
 
 /* ─── Cinematic Opening Sequence (Mobile & Desktop Responsive) ─── */
 const DISASTER_SEQUENCE = [
@@ -255,10 +279,10 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
         <div className="absolute bottom-0 inset-x-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent pointer-events-none -z-10" />
 
         {/* Hero Interactive Content Layer */}
-        <div className="mx-auto flex max-w-6xl flex-col items-center px-2 py-3 text-center sm:px-6 lg:px-8 sm:py-8">
+        <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="mx-auto flex max-w-6xl flex-col items-center px-2 py-3 text-center sm:px-6 lg:px-8 sm:py-8">
 
           {/* ── DEFCON Badge ── */}
-          <div className="animate-rise inline-flex items-center gap-2 border border-primary/60 bg-primary/15 px-3 py-1 sm:px-4 sm:py-1.5 clip-tactical mb-2.5 sm:mb-3">
+          <motion.div variants={fadeUpBlur} className="inline-flex items-center gap-2 border border-primary/60 bg-primary/15 px-3 py-1 sm:px-4 sm:py-1.5 clip-tactical mb-2.5 sm:mb-3">
             <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
               <span className="relative inline-flex size-2 rounded-full bg-primary" />
@@ -267,10 +291,10 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             <span className="font-mono-tech text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.25em] text-accent font-bold">
               DEFCON 1 PROTOCOL {clock ? `// ${clock}` : ""}
             </span>
-          </div>
+          </motion.div>
 
           {/* ── College Header (Responsive Mobile Layout) ── */}
-          <div className="animate-rise w-full max-w-5xl px-1 sm:px-4">
+          <motion.div variants={fadeUpBlur} className="w-full max-w-5xl px-1 sm:px-4">
             <div className="flex flex-row items-center justify-between sm:justify-center gap-2 sm:gap-6">
               <div className="shrink-0">
                 <div className="size-12 sm:size-24 md:size-28 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_15px_rgba(255,200,0,0.4)] animate-float">
@@ -313,13 +337,13 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
                 // PRESENTS
               </span>
             </div>
-          </div>
+          </motion.div>
 
           {/* ── Main Event Title ── */}
           <div className="relative mt-4 sm:mt-8">
             <RadarSweep />
             <div className="px-2 py-1 sm:px-8 sm:py-4">
-              <h1 className="animate-rise font-display uppercase">
+              <motion.h1 variants={fadeUpBlur} className="font-display uppercase">
                 <span className="block text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-foreground tracking-tighter"
                       style={{ textShadow: "0 0 30px rgba(255,255,255,0.2), 0 0 60px rgba(224,76,17,0.15)" }}>
                   MAKEATHON
@@ -327,44 +351,15 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
                 <span className="mt-1 block text-base sm:text-3xl md:text-4xl lg:text-5xl font-extrabold shimmer-text tracking-wide">
                   PROJECT ZEROTH HOUR
                 </span>
-              </h1>
+              </motion.h1>
             </div>
             <Crosshair className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 size-5 sm:size-8 text-primary/40 animate-float" />
           </div>
 
-          {/* ── Motto: CRISIS→SENSE→THINK→ADAPT→SURVIVE ── */}
-          <div className="motto-container animate-rise mt-3 sm:mt-4" aria-label="CRISIS SENSE THINK ADAPT SURVIVE">
-            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '0ms' }}>
-              CRISIS
-            </span>
-            <span className="animate-motto-reveal font-mono-tech text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.08em] sm:tracking-[0.12em] font-semibold text-primary/70" aria-hidden style={{ animationDelay: '120ms' }}>
-              →
-            </span>
-            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '240ms' }}>
-              SENSE
-            </span>
-            <span className="animate-motto-reveal font-mono-tech text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.08em] sm:tracking-[0.12em] font-semibold text-primary/70" aria-hidden style={{ animationDelay: '360ms' }}>
-              →
-            </span>
-            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '480ms' }}>
-              THINK
-            </span>
-            <span className="animate-motto-reveal font-mono-tech text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.08em] sm:tracking-[0.12em] font-semibold text-primary/70" aria-hidden style={{ animationDelay: '600ms' }}>
-              →
-            </span>
-            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '720ms' }}>
-              ADAPT
-            </span>
-            <span className="animate-motto-reveal font-mono-tech text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.08em] sm:tracking-[0.12em] font-semibold text-primary/70" aria-hidden style={{ animationDelay: '840ms' }}>
-              →
-            </span>
-            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '960ms' }}>
-              SURVIVE
-            </span>
-          </div>
+          
 
           {/* ── Split-Flap Countdown ── */}
-          <div className="animate-rise mt-3 sm:mt-4 px-2 py-1">
+          <motion.div variants={fadeUpBlur} className="mt-32 sm:mt-64 px-2 py-1">
             <div className="flex items-center gap-1.5 mb-1.5 justify-center">
               <Shield className="size-3 sm:size-3.5 text-primary" />
               <span className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.2em] text-primary font-bold uppercase">
@@ -380,10 +375,12 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               <span className="font-display text-xs sm:text-lg font-black text-primary mt-1 animate-flicker">:</span>
               <FlipDigit value={cd.s} label="Sec" />
             </div>
-          </div>
+          </motion.div>
+
+          
 
           {/* ── Date & Venue (Updated Date: SEPT 23) ── */}
-          <div className="animate-rise mt-3.5 sm:mt-4 flex w-full max-w-md items-center gap-2.5 sm:gap-3 border border-accent/70 bg-black/80 backdrop-blur-md px-3 py-2 sm:px-4 sm:py-2.5 clip-tactical text-left shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
+          <motion.div variants={fadeUpBlur} className="mt-3.5 sm:mt-4 flex w-full max-w-md items-center gap-2.5 sm:gap-3 border border-accent/70 bg-black/80 backdrop-blur-md px-3 py-2 sm:px-4 sm:py-2.5 clip-tactical text-left shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
             <Calendar className="size-4 sm:size-5 shrink-0 text-accent" aria-hidden />
             <div>
               <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
@@ -393,10 +390,10 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
                 Venue: Jaya Auditorium · Registration queue open
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* ── CTA Buttons ── */}
-          <div className="animate-rise mt-4 sm:mt-5 flex flex-col gap-2 sm:flex-row w-full sm:w-auto">
+          <motion.div variants={fadeUpBlur} className="mt-4 sm:mt-5 flex flex-col gap-2 sm:flex-row w-full sm:w-auto">
             <Button
               variant="alert"
               size="default"
@@ -418,10 +415,10 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
                 View build schedule
               </a>
             </Button>
-          </div>
+          </motion.div>
 
           {/* ── Prize & Fee Info ── */}
-          <div className="animate-rise mt-3.5 sm:mt-5 flex w-full max-w-lg flex-row gap-2 sm:gap-3 justify-center">
+          <motion.div variants={fadeUpBlur} className="mt-3.5 sm:mt-5 flex w-full max-w-lg flex-row gap-2 sm:gap-3 justify-center">
             <div className="flex flex-1 flex-col items-center justify-center gap-0.5 bg-black/85 backdrop-blur-md px-2.5 py-2.5 rounded border border-primary/50">
               <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.18em] text-accent font-bold">PRIZE CACHE</p>
               <p className="font-display text-lg sm:text-3xl font-black text-foreground">₹22K</p>
@@ -432,9 +429,9 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               <p className="font-display text-lg sm:text-3xl font-black text-foreground">₹200</p>
               <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">FOOD & WI-FI INCLUDED</p>
             </div>
-          </div>
+          </motion.div>
 
-        </div>
+        </motion.div>
       </section>
     </>
   );

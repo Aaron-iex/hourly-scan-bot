@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, ShieldAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 const TABS: { id: "home" | "events" | "about"; label: string }[] = [
   { id: "home", label: "Home" },
@@ -87,17 +88,13 @@ export function SiteNav({
             <button
               key={l.id}
               onClick={() => handleTab(l.id)}
-              className={`relative px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] transition-colors group touch-manipulation ${
-                activeTab === l.id ? "text-accent" : "text-muted-foreground hover:text-accent"
+              className={`group relative flex items-center px-3 py-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] transition-colors touch-manipulation before:pointer-events-none before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-accent before:content-[''] before:origin-right before:scale-x-0 before:transition-transform before:duration-300 before:ease-[cubic-bezier(0.4,0,0.2,1)] hover:before:origin-left hover:before:scale-x-100 ${
+                activeTab === l.id ? "text-accent before:scale-x-100 before:origin-left" : "text-muted-foreground hover:text-accent"
               }`}
               aria-current={activeTab === l.id ? "page" : undefined}
             >
               {l.label}
-              <span
-                className={`absolute bottom-0 left-0 h-px bg-accent transition-all duration-300 ${
-                  activeTab === l.id ? "w-full" : "w-0 group-hover:w-full"
-                }`}
-              />
+              
             </button>
           ))}
           <Button variant="alert" size="default" className="ml-3" onClick={onRegister}>
@@ -119,8 +116,15 @@ export function SiteNav({
         </div>
       </nav>
 
+      <AnimatePresence>
       {open && (
-        <div className="border-t border-border bg-background/98 px-4 pb-5 pt-2 backdrop-blur-xl md:hidden animate-rise">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="border-t border-border bg-background/98 px-4 pb-5 pt-2 backdrop-blur-xl md:hidden"
+        >
           {TABS.map((l, i) => (
             <button
               key={l.id}
@@ -144,8 +148,9 @@ export function SiteNav({
           >
             Register squad
           </Button>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </header>
   );
 }
