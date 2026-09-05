@@ -203,87 +203,114 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
         </p>
       </motion.div>
 
-      {/* ── OVERALL PRIZE CACHE (MOBILE-OPTIMIZED TACTICAL PODS) ── */}
-      <div className="relative mt-8 overflow-hidden border-2 border-accent/60 bg-gradient-to-br from-black/95 via-card/95 to-black/95 p-5 sm:p-7 clip-tactical shadow-[0_0_35px_rgba(255,200,0,0.2)]">
-        <div className="absolute inset-0 grid-tactical opacity-20 pointer-events-none" />
-        
-        {/* Banner Header */}
-        <div className="relative flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-accent/30 pb-4 text-center sm:text-left">
+      {/* ── PLANETARY DEFENCE PRIZE BOUNTY (TACTICAL HUD TELEMETRY) ── */}
+      <motion.div 
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ type: "spring", stiffness: 180, damping: 22 }}
+        className="relative mt-8 sm:mt-10 overflow-hidden border border-primary/40 bg-black/90 backdrop-blur-xl clip-tactical shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
+      >
+        <div className="absolute inset-0 grid-tactical opacity-15 pointer-events-none" />
+
+        {/* Telemetry Header Bar */}
+        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-border/80 bg-primary/10 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2.5">
-            <div className="grid size-10 place-items-center border border-accent bg-accent/20 text-accent clip-tactical shrink-0 shadow-[0_0_15px_rgba(255,200,0,0.4)]">
-              <Trophy className="size-5 animate-pulse" aria-hidden />
-            </div>
-            <div>
-              <span className="font-mono-tech text-[10px] sm:text-xs tracking-[0.25em] text-accent font-bold uppercase block">
-                Planetary Defense Bounty
-              </span>
-              <h3 className="font-display text-xl sm:text-2xl font-black uppercase text-foreground">
-                Overall Prize Cache: <span className="text-alert-gradient">₹22,000 INR</span>
-              </h3>
-            </div>
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-accent" />
+            </span>
+            <span className="font-mono-tech text-[10px] sm:text-xs tracking-[0.2em] text-accent uppercase font-bold">
+              BOUNTY PROTOCOL // OVERALL PURSE: ₹22,000 INR
+            </span>
           </div>
-          <span className="font-mono-tech text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest px-3 py-1 border border-border/80 bg-black/60">
-            Open To All Departments & Colleges
+          <span className="font-mono-tech text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-widest px-2.5 py-0.5 border border-border/60 bg-black/60 self-start sm:self-auto">
+            OPEN TO ALL DEPARTMENTS & COLLEGES
           </span>
         </div>
 
-        {/* 3 Prize Pods: 1st, 2nd, 3rd */}
-        <div className="relative mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-          {/* 1st Prize */}
-          <div className="panel-tactical p-4 sm:p-5 border-2 border-amber-400/80 bg-amber-950/25 shadow-[0_0_20px_rgba(245,158,11,0.25)] flex flex-col justify-between text-center relative overflow-hidden group hover:scale-[1.02] transition-transform">
-            <div className="absolute top-0 right-0 bg-amber-400 text-black font-mono-tech font-black text-[9px] px-2.5 py-0.5 tracking-wider uppercase">
-              Champion
-            </div>
-            <div>
+        {/* 3-Tier Podium Deck */}
+        <div className="relative grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/60">
+          {/* 1st Prize - Champion */}
+          <div className="relative p-5 sm:p-6 bg-gradient-to-b from-amber-500/10 via-transparent to-transparent flex flex-col justify-between group transition-colors hover:bg-amber-500/15">
+            <div className="flex items-center justify-between gap-2">
               <span className="font-mono-tech text-[10px] tracking-[0.2em] font-bold text-amber-400 uppercase">
+                RANK 01 // CHAMPION
+              </span>
+              <span className="border border-amber-400/60 bg-amber-400/20 text-amber-300 font-mono-tech text-[9px] font-bold px-2 py-0.5 clip-tactical">
                 1ST PRIZE
               </span>
-              <p className="mt-1.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-amber-300 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+            </div>
+            <div className="my-3">
+              <div className="font-display text-3xl sm:text-4xl font-black text-amber-300 tracking-tight drop-shadow-[0_0_15px_rgba(245,158,11,0.4)]">
                 ₹10,000
+              </div>
+              <p className="mt-1 font-mono-tech text-xs text-amber-200/90 font-medium">
+                Cash Bounty · Winner Trophy
               </p>
             </div>
-            <p className="mt-2 text-[10px] sm:text-xs font-mono-tech text-amber-200/80 font-medium">
-              + Winner Trophy, Merch & Certificates
+            <p className="pt-2 border-t border-amber-500/20 text-[11px] font-mono-tech text-muted-foreground">
+              + Exclusive Makeathon Merch & Hardcopy Certificates
             </p>
           </div>
 
-          {/* 2nd Prize */}
-          <div className="panel-tactical p-4 sm:p-5 border border-sky-400/70 bg-sky-950/20 shadow-[0_0_15px_rgba(56,182,255,0.2)] flex flex-col justify-between text-center relative overflow-hidden group hover:scale-[1.02] transition-transform">
-            <div className="absolute top-0 right-0 bg-sky-400 text-black font-mono-tech font-black text-[9px] px-2.5 py-0.5 tracking-wider uppercase">
-              Runner-up
-            </div>
-            <div>
+          {/* 2nd Prize - Runner-Up */}
+          <div className="relative p-5 sm:p-6 bg-gradient-to-b from-sky-500/10 via-transparent to-transparent flex flex-col justify-between group transition-colors hover:bg-sky-500/15">
+            <div className="flex items-center justify-between gap-2">
               <span className="font-mono-tech text-[10px] tracking-[0.2em] font-bold text-sky-400 uppercase">
+                RANK 02 // RUNNER-UP
+              </span>
+              <span className="border border-sky-400/60 bg-sky-400/20 text-sky-300 font-mono-tech text-[9px] font-bold px-2 py-0.5 clip-tactical">
                 2ND PRIZE
               </span>
-              <p className="mt-1.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-sky-300 drop-shadow-[0_0_15px_rgba(56,182,255,0.4)]">
+            </div>
+            <div className="my-3">
+              <div className="font-display text-3xl sm:text-4xl font-black text-sky-300 tracking-tight drop-shadow-[0_0_15px_rgba(56,182,255,0.35)]">
                 ₹7,000
+              </div>
+              <p className="mt-1 font-mono-tech text-xs text-sky-200/90 font-medium">
+                Cash Bounty · Excellence Shield
               </p>
             </div>
-            <p className="mt-2 text-[10px] sm:text-xs font-mono-tech text-sky-200/80 font-medium">
-              + Excellence Shield & Certificates
+            <p className="pt-2 border-t border-sky-500/20 text-[11px] font-mono-tech text-muted-foreground">
+              + Official Merit Certificates & Recognition
             </p>
           </div>
 
-          {/* 3rd Prize */}
-          <div className="panel-tactical p-4 sm:p-5 border border-orange-400/70 bg-orange-950/20 shadow-[0_0_15px_rgba(249,115,22,0.2)] flex flex-col justify-between text-center relative overflow-hidden group hover:scale-[1.02] transition-transform">
-            <div className="absolute top-0 right-0 bg-orange-400 text-black font-mono-tech font-black text-[9px] px-2.5 py-0.5 tracking-wider uppercase">
-              2nd Runner-up
-            </div>
-            <div>
+          {/* 3rd Prize - 2nd Runner-Up */}
+          <div className="relative p-5 sm:p-6 bg-gradient-to-b from-orange-500/10 via-transparent to-transparent flex flex-col justify-between group transition-colors hover:bg-orange-500/15">
+            <div className="flex items-center justify-between gap-2">
               <span className="font-mono-tech text-[10px] tracking-[0.2em] font-bold text-orange-400 uppercase">
+                RANK 03 // 2ND RUNNER-UP
+              </span>
+              <span className="border border-orange-400/60 bg-orange-400/20 text-orange-300 font-mono-tech text-[9px] font-bold px-2 py-0.5 clip-tactical">
                 3RD PRIZE
               </span>
-              <p className="mt-1.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-orange-300 drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+            </div>
+            <div className="my-3">
+              <div className="font-display text-3xl sm:text-4xl font-black text-orange-300 tracking-tight drop-shadow-[0_0_15px_rgba(249,115,22,0.35)]">
                 ₹5,000
+              </div>
+              <p className="mt-1 font-mono-tech text-xs text-orange-200/90 font-medium">
+                Cash Bounty · Merit Shield
               </p>
             </div>
-            <p className="mt-2 text-[10px] sm:text-xs font-mono-tech text-orange-200/80 font-medium">
-              + Merit Shield & Certificates
+            <p className="pt-2 border-t border-orange-500/20 text-[11px] font-mono-tech text-muted-foreground">
+              + Official Merit Certificates & Recognition
             </p>
           </div>
         </div>
-      </div>
+
+        {/* Telemetry Footer Strip */}
+        <div className="border-t border-border/80 bg-black/75 px-4 py-2.5 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <p className="font-mono-tech text-[10px] sm:text-[11px] text-muted-foreground">
+            ⚡ <span className="text-foreground font-semibold">All registered squads receive:</span> Participation Certificates, Lunch & High-Speed Lab Wi-Fi.
+          </p>
+          <span className="font-mono-tech text-[10px] sm:text-[11px] text-accent font-bold">
+            ₹200 SQUAD FEE // PAY AT CHECK-IN
+          </span>
+        </div>
+      </motion.div>
 
       {/* Track Cards */}
       <motion.div 
@@ -377,7 +404,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                 className="relative mt-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 border-t pt-4 transition-colors duration-300"
                 style={{ borderColor: `color-mix(in oklab, ${color.border} 40%, var(--border))` }}
               >
-                {/* View Details Button (Highly Noticeable Styled Button) */}
+                {/* View Details Button */}
                 <Button
                   variant="tactical"
                   size="default"
@@ -385,11 +412,11 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                     e.stopPropagation();
                     handleSelectTrack(track);
                   }}
-                  className="w-full sm:w-auto flex-1 min-h-[44px] px-3.5 font-mono-tech text-xs tracking-[0.14em] font-bold text-primary border-2 border-primary/70 bg-primary/15 hover:bg-primary hover:text-white shadow-[0_0_15px_rgba(224,76,17,0.25)] transition-all touch-manipulation group/btn"
+                  className="w-full sm:w-auto flex-1 min-h-[44px] px-3 font-mono-tech text-xs tracking-[0.12em] font-bold border border-border/80 bg-background/80 hover:bg-primary/15 hover:border-primary text-foreground hover:text-primary transition-all touch-manipulation cursor-pointer group/btn"
                   aria-label={`View crisis details for ${track.title}`}
                 >
-                  <Activity className="size-4 shrink-0 text-primary group-hover/btn:text-white transition-colors" />
-                  <span>View Details</span>
+                  <Activity className="size-3.5 shrink-0 text-muted-foreground group-hover/btn:text-primary transition-colors" />
+                  <span>View Intel</span>
                 </Button>
 
                 {/* Register Button */}
@@ -400,11 +427,11 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                     e.stopPropagation();
                     onRegister(track.title);
                   }}
-                  className="w-full sm:w-auto flex-1 min-h-[44px] px-3.5 font-mono-tech text-xs tracking-[0.14em] font-bold touch-manipulation"
+                  className="w-full sm:w-auto flex-1 min-h-[44px] px-3.5 font-mono-tech text-xs tracking-[0.12em] font-bold touch-manipulation cursor-pointer group/reg"
                   aria-label={`Register for ${track.title}`}
                 >
-                  <span>Register</span>
-                  <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  <span>Enlist</span>
+                  <ChevronRight className="size-4 transition-transform duration-300 group-hover/reg:translate-x-1" />
                 </Button>
               </div>
             </motion.article>

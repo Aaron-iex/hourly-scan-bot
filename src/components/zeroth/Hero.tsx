@@ -265,24 +265,24 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     <>
       {!introDone && <CinematicIntro onComplete={handleIntroDone} />}
       <section id="top" className="relative isolate overflow-hidden scanlines">
-        {/* Crisp Classic Hero Cataclysm Background Layers */}
+        {/* Background Cataclysm Image */}
         <img
           src={heroImage}
           alt="Planetary Defence Cataclysm"
           width={1920}
           height={1088}
-          className="absolute inset-0 -z-20 size-full object-cover object-[center_30%] opacity-60 brightness-[0.85] contrast-110 saturate-[1.15]"
+          className="absolute inset-0 -z-20 size-full object-cover object-[center_24%] opacity-85 sm:opacity-90 brightness-[0.96] contrast-110 saturate-[1.15]"
         />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_40%,transparent_25%,var(--background)_90%)]" />
-        <div className="absolute inset-0 -z-10 grid-tactical opacity-30 pointer-events-none" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_36%,transparent_45%,rgba(5,7,12,0.65)_75%,var(--background)_98%)]" />
+        <div className="absolute inset-0 -z-10 grid-tactical opacity-25 pointer-events-none" />
         <EmberCanvas />
         <div className="absolute bottom-0 inset-x-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent pointer-events-none -z-10" />
 
         {/* Hero Interactive Content Layer */}
-        <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="mx-auto flex max-w-6xl flex-col items-center px-2 py-3 text-center sm:px-6 lg:px-8 sm:py-8">
+        <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="mx-auto flex max-w-5xl flex-col items-center px-2 py-2 text-center sm:px-6 lg:px-8 sm:py-5">
 
           {/* ── DEFCON Badge ── */}
-          <motion.div variants={fadeUpBlur} className="inline-flex items-center gap-2 border border-primary/60 bg-primary/15 px-3 py-1 sm:px-4 sm:py-1.5 clip-tactical mb-2.5 sm:mb-3">
+          <motion.div variants={fadeUpBlur} className="inline-flex items-center gap-2 border border-primary/60 bg-primary/15 px-3 py-1 sm:px-4 sm:py-1 clip-tactical mb-2">
             <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
               <span className="relative inline-flex size-2 rounded-full bg-primary" />
@@ -293,11 +293,11 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             </span>
           </motion.div>
 
-          {/* ── College Header (Responsive Mobile Layout) ── */}
-          <motion.div variants={fadeUpBlur} className="w-full max-w-5xl px-1 sm:px-4">
-            <div className="flex flex-row items-center justify-between sm:justify-center gap-2 sm:gap-6">
+          {/* ── College Header (Streamlined Tactical Top Bar) ── */}
+          <motion.div variants={fadeUpBlur} className="w-full max-w-4xl px-1 sm:px-4">
+            <div className="flex flex-row items-center justify-center gap-3 sm:gap-6">
               <div className="shrink-0">
-                <div className="size-12 sm:size-24 md:size-28 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_15px_rgba(255,200,0,0.4)] animate-float">
+                <div className="size-10 sm:size-16 md:size-20 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_15px_rgba(255,200,0,0.4)] animate-float">
                   <img
                     src="/images/jec-emblem.png?v=20260826"
                     alt="Jaya Educational Trust Emblem"
@@ -307,19 +307,19 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               </div>
 
               <div className="flex-1 min-w-0 text-center px-1">
-                <h2 className="font-display text-xs sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight sm:tracking-wide text-foreground leading-tight">
+                <h2 className="font-display text-xs sm:text-lg md:text-xl font-black uppercase tracking-tight sm:tracking-wide text-foreground leading-tight">
                   JAYA ENGINEERING COLLEGE
                 </h2>
-                <p className="mt-0.5 font-mono-tech text-[7px] sm:text-xs md:text-sm text-muted-foreground font-medium">
+                <p className="mt-0.5 font-mono-tech text-[7px] sm:text-[10px] text-muted-foreground font-medium">
                   Accredited by NAAC & NBA | Approved by AICTE | Affiliated to Anna University
                 </p>
-                <p className="mt-0.5 font-mono-tech text-[7px] sm:text-[11px] text-accent font-bold tracking-wide">
-                  📍 CTH Road, Thiruninravur, Chennai — 602024
+                <p className="mt-0.5 font-mono-tech text-[8px] sm:text-[11px] tracking-[0.12em] uppercase text-primary font-black">
+                  DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
                 </p>
               </div>
 
               <div className="shrink-0">
-                <div className="size-12 sm:size-24 md:size-28 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_15px_rgba(255,200,0,0.4)] animate-float" style={{ animationDelay: "1s" }}>
+                <div className="size-10 sm:size-16 md:size-20 flex items-center justify-center transition-transform duration-300 hover:scale-110 drop-shadow-[0_0_15px_rgba(255,200,0,0.4)] animate-float" style={{ animationDelay: "1s" }}>
                   <img
                     src="/images/jec-31years.png?v=20260826"
                     alt="31 Years of Excellence"
@@ -329,26 +329,23 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               </div>
             </div>
 
-            <div className="mt-2.5 sm:mt-3 pt-1 sm:pt-2 space-y-1.5 sm:space-y-2">
-              <p className="font-mono-tech text-[9px] sm:text-sm md:text-base tracking-[0.12em] sm:tracking-[0.2em] uppercase text-primary font-black">
-                DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING
-              </p>
-              <span className="inline-block border border-accent/50 bg-accent/15 px-3 py-0.5 sm:px-4 sm:py-1 clip-tactical font-mono-tech text-[9px] sm:text-xs tracking-[0.25em] uppercase text-accent font-bold">
+            <div className="mt-1.5 text-center">
+              <span className="inline-block border border-accent/50 bg-accent/15 px-3 py-0.5 clip-tactical font-mono-tech text-[8px] sm:text-[10px] tracking-[0.25em] uppercase text-accent font-bold">
                 // PRESENTS
               </span>
             </div>
           </motion.div>
 
           {/* ── Main Event Title ── */}
-          <div className="relative mt-4 sm:mt-8">
+          <div className="relative mt-2 sm:mt-4">
             <RadarSweep />
-            <div className="px-2 py-1 sm:px-8 sm:py-4">
+            <div className="px-2 py-1 sm:px-6 sm:py-2">
               <motion.h1 variants={fadeUpBlur} className="font-display uppercase">
-                <span className="block text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-foreground tracking-tighter"
+                <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground tracking-tighter"
                       style={{ textShadow: "0 0 30px rgba(255,255,255,0.2), 0 0 60px rgba(224,76,17,0.15)" }}>
                   MAKEATHON
                 </span>
-                <span className="mt-1 block text-base sm:text-3xl md:text-4xl lg:text-5xl font-extrabold shimmer-text tracking-wide">
+                <span className="mt-0.5 block text-sm sm:text-2xl md:text-3xl lg:text-4xl font-extrabold shimmer-text tracking-wider">
                   PROJECT ZEROTH HOUR
                 </span>
               </motion.h1>
@@ -356,11 +353,9 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             <Crosshair className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 size-5 sm:size-8 text-primary/40 animate-float" />
           </div>
 
-          
-
-          {/* ── Split-Flap Countdown ── */}
-          <motion.div variants={fadeUpBlur} className="mt-12 sm:mt-20 px-2 py-1">
-            <div className="flex items-center gap-1.5 mb-1.5 justify-center">
+          {/* ── Split-Flap Countdown in Translucent Tactical Visor ── */}
+          <motion.div variants={fadeUpBlur} className="mt-6 sm:mt-10 px-3 py-2 border border-primary/40 bg-black/75 backdrop-blur-md clip-tactical shadow-[0_4px_24px_rgba(0,0,0,0.7)]">
+            <div className="flex items-center gap-1.5 mb-1 justify-center">
               <Shield className="size-3 sm:size-3.5 text-primary" />
               <span className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.2em] text-primary font-bold uppercase">
                 Time to Zero Hour
@@ -377,28 +372,21 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             </div>
           </motion.div>
 
-          
-
-          {/* ── Date & Venue (Updated Date: SEPT 23) ── */}
-          <motion.div variants={fadeUpBlur} className="mt-3.5 sm:mt-4 flex w-full max-w-md items-center gap-2.5 sm:gap-3 border border-accent/70 bg-black/80 backdrop-blur-md px-3 py-2 sm:px-4 sm:py-2.5 clip-tactical text-left shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
-            <Calendar className="size-4 sm:size-5 shrink-0 text-accent" aria-hidden />
-            <div>
-              <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
-                SEPT 23 // 5-HOUR MAKEATHON
-              </p>
-              <p className="font-mono-tech text-[9px] sm:text-[11px] text-white/90 font-medium">
-                Venue: Jaya Auditorium · Registration queue open
-              </p>
-            </div>
+          {/* ── Date & Venue ── */}
+          <motion.div variants={fadeUpBlur} className="mt-2.5 sm:mt-3 flex items-center gap-2 border border-accent/60 bg-black/80 backdrop-blur-md px-3.5 py-1.5 sm:px-5 sm:py-2 clip-tactical text-center shadow-[0_2px_15px_rgba(0,0,0,0.5)]">
+            <Calendar className="size-3.5 sm:size-4 shrink-0 text-accent" aria-hidden />
+            <p className="font-display text-[11px] sm:text-xs font-bold uppercase tracking-[0.14em] text-accent">
+              SEPT 23 // 5-HOUR MAKEATHON · JAYA AUDITORIUM
+            </p>
           </motion.div>
 
           {/* ── CTA Buttons ── */}
-          <motion.div variants={fadeUpBlur} className="mt-4 sm:mt-5 flex flex-col gap-2 sm:flex-row w-full sm:w-auto">
+          <motion.div variants={fadeUpBlur} className="mt-3.5 sm:mt-4 flex flex-col gap-2 sm:flex-row w-full sm:w-auto">
             <Button
               variant="alert"
               size="default"
               onClick={onRegister}
-              className="w-full sm:w-auto h-12 sm:h-11 font-bold touch-manipulation group relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
+              className="w-full sm:w-auto h-11 sm:h-10 font-bold touch-manipulation group relative overflow-hidden transition-all duration-300 hover:scale-[1.02] cursor-pointer"
             >
               <Flame className="size-4" aria-hidden />
               Enlist your squad
@@ -408,27 +396,23 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
               variant="tactical"
               size="default"
               asChild
-              className="w-full sm:w-auto h-12 sm:h-11 font-bold touch-manipulation group transition-all duration-300 hover:scale-[1.02]"
+              className="w-full sm:w-auto h-11 sm:h-10 font-bold touch-manipulation group transition-all duration-300 hover:scale-[1.02] cursor-pointer"
             >
-              <a href="#roadmap">
-                <Clock className="size-4" aria-hidden />
-                View build schedule
+              <a href="#sectors">
+                <Shield className="size-4" aria-hidden />
+                View Crisis Sectors
               </a>
             </Button>
           </motion.div>
 
-          {/* ── Prize & Fee Info ── */}
-          <motion.div variants={fadeUpBlur} className="mt-3.5 sm:mt-5 flex w-full max-w-lg flex-row gap-2 sm:gap-3 justify-center">
-            <div className="flex flex-1 flex-col items-center justify-center gap-0.5 bg-black/85 backdrop-blur-md px-2.5 py-2.5 rounded border border-primary/50">
-              <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.18em] text-accent font-bold">PRIZE CACHE</p>
-              <p className="font-display text-lg sm:text-3xl font-black text-foreground">₹22K</p>
-              <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">+ MERCH & CERTS</p>
-            </div>
-            <div className="flex flex-1 flex-col items-center justify-center gap-0.5 bg-black/85 backdrop-blur-md px-2.5 py-2.5 rounded border border-accent/50">
-              <p className="font-mono-tech text-[8px] sm:text-[10px] tracking-[0.18em] text-accent font-bold">REGISTRATION</p>
-              <p className="font-display text-lg sm:text-3xl font-black text-foreground">₹200</p>
-              <p className="font-mono-tech text-[8px] sm:text-[10px] text-white/90 font-semibold text-center">FOOD & WI-FI INCLUDED</p>
-            </div>
+          {/* ── Telemetry Quick Specs Pill ── */}
+          <motion.div variants={fadeUpBlur} className="mt-2.5 sm:mt-3 flex flex-wrap items-center justify-center gap-2 font-mono-tech text-[9px] sm:text-[10px] text-muted-foreground">
+            <span className="border border-border/80 bg-black/60 px-2.5 py-1">
+              🏆 <strong className="text-foreground">₹22,000</strong> PRIZE CACHE
+            </span>
+            <span className="border border-border/80 bg-black/60 px-2.5 py-1">
+              🎟️ <strong className="text-foreground">₹200</strong> / SQUAD (FOOD & WI-FI INCL)
+            </span>
           </motion.div>
 
         </motion.div>
