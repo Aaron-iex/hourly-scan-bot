@@ -51,8 +51,8 @@ export function SiteFooter() {
             EMERGENCY CONTACT
           </h4>
           <ul className="mt-4 space-y-2 font-mono-tech text-xs text-muted-foreground">
-            <li>+91-6381198548</li>
-            <li>PRESS: mylabathulaaaronnissi@gmail.com</li>
+            <li><a href="tel:+916381198548" className="transition-colors hover:text-accent inline-flex items-center min-h-[44px] touch-manipulation">+91-6381198548</a></li>
+            <li><a href="mailto:mylabathulaaaronnissi@gmail.com" className="transition-colors hover:text-accent inline-flex items-center min-h-[44px] touch-manipulation break-all">PRESS: mylabathulaaaronnissi@gmail.com</a></li>
             <li>STATUS: DEFCON 1 — SEPT 23 · 5-HOUR SPRINT</li>
           </ul>
         </div>

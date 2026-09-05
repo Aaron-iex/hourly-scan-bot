@@ -379,3 +379,55 @@
   50%       { opacity: 0.55; filter: hue-rotate(25deg); }
 }
 @utility animate-atmosphere-pulse { animation: atmosphere-pulse 45s ease-in-out infinite; }
+
+/* ── MOBILE PERFORMANCE OPTIMIZATIONS ── */
+
+/* Lazy-render off-screen sections for faster initial paint */
+@layer base {
+  section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+
+  /* Don't apply to hero — it's always above the fold */
+  section:first-of-type {
+    content-visibility: visible;
+  }
+}
+
+/* Smoother touch scrolling for modals */
+@utility smooth-scroll-touch {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* Prevent layout shift from scrollbar appearance */
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+}
+
+/* Optimize font rendering on mobile */
+@layer base {
+  @media (max-width: 640px) {
+    body {
+      text-rendering: optimizeSpeed;
+    }
+
+    /* Reduce heavy shadows on mobile for better perf */
+    .panel-tactical {
+      box-shadow: none;
+    }
+  }
+}
+
+/* Improve focus styles for keyboard/touch navigation */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}

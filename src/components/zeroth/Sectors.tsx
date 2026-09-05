@@ -243,7 +243,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
       </div>
 
       {/* Track Cards */}
-      <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 sm:mt-8 grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
         {TRACKS.map((track, idx) => {
           const Icon = ICONS[track.icon];
           const color = TRACK_COLORS[idx % TRACK_COLORS.length]!;
@@ -373,7 +373,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
         >
           <div
             ref={modalRef}
-            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-background border-2 border-primary p-5 sm:p-8 clip-tactical shadow-[0_0_50px_rgba(224,76,17,0.4)]"
+            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-background border-2 border-primary p-4 sm:p-8 clip-tactical shadow-[0_0_50px_rgba(224,76,17,0.4)] overscroll-contain"
           >
             {/* Close Button */}
             <button

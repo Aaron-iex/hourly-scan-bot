@@ -101,7 +101,8 @@ function EmberCanvas() {
     };
 
     const isMobile = canvas.width < 640;
-    const count = isMobile ? 18 : 40;
+    const isVerySmall = canvas.width < 375;
+    const count = isVerySmall ? 10 : isMobile ? 16 : 40;
 
     const particles: Particle[] = Array.from({ length: count }, () => ({
       x: Math.random() * canvas.width,

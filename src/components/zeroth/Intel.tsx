@@ -194,7 +194,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                         src={HOD.image}
                         alt={HOD.name}
                         style={{ objectPosition: HOD.imagePos || "center center" }}
-                        className="size-full object-cover"
+                        loading="lazy" className="size-full object-cover"
                       />
                     </div>
                   ) : (
@@ -276,7 +276,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                             src={m.image}
                             alt={m.name}
                             style={{ objectPosition: m.imagePos || "center center" }}
-                            className="size-full object-cover"
+                            loading="lazy" className="size-full object-cover"
                           />
                         </div>
                       ) : (

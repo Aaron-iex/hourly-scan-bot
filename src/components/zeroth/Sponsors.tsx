@@ -24,7 +24,7 @@ export function Sponsors() {
               <img
                 src={sponsor.image}
                 alt={`${sponsor.name} logo`}
-                className="h-20 sm:h-24 w-auto object-contain transition-all duration-300"
+                loading="lazy" className="h-20 sm:h-24 w-auto object-contain transition-all duration-300"
               />
             </div>
           ))}

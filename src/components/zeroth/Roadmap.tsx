@@ -61,7 +61,7 @@ export function Roadmap({
           <div className="mx-auto mt-4 flex max-w-xl items-center justify-center gap-2.5 border border-accent/50 bg-accent/12 px-5 py-2.5 clip-tactical">
             <MapPin className="size-4 text-accent shrink-0" />
             <span className="font-mono-tech text-[10px] sm:text-[11px] tracking-[0.18em] text-accent font-bold uppercase">
-              JAYA AUDITORIUM | SEPT 17 · 5-HR MAKEATHON
+              JAYA AUDITORIUM | SEPT 23 · 5-HR MAKEATHON
             </span>
           </div>
         </div>
