@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Anchor, Flame, Rocket, Waves, Zap, type LucideIcon, ChevronRight, Trophy, X, AlertTriangle, ShieldCheck, Cpu, Activity, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TRACKS, type Track } from "@/data/zeroth";
@@ -23,31 +24,66 @@ const TRACK_COLORS = [
 
 export function Sectors({ onRegister }: { onRegister: (track: string) => void }) {
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
+  const [mounted, setMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const scrollPositionRef = useRef<number>(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   /* ── Open Track with URL Hash for Mobile Back Button Safety ── */
   const handleSelectTrack = useCallback((track: Track) => {
+    if (typeof window !== "undefined") {
+      scrollPositionRef.current = window.scrollY;
+    }
     setSelectedTrack(track);
     if (typeof window !== "undefined" && !window.location.hash.startsWith("#crisis-")) {
       window.history.pushState({ modal: `crisis-${track.id}` }, "", `#crisis-${track.id}`);
     }
   }, []);
 
-  /* ── Close Track Modal (Syncs with Browser History) ── */
+  /* ── Close Track Modal (Syncs with Browser History & Preserves Scroll) ── */
   const handleCloseModal = useCallback(() => {
+    setSelectedTrack(null);
+    const prevScroll = scrollPositionRef.current;
     if (typeof window !== "undefined" && window.location.hash.startsWith("#crisis-")) {
-      window.history.back();
-    } else {
-      setSelectedTrack(null);
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+    if (typeof window !== "undefined" && prevScroll > 0) {
+      requestAnimationFrame(() => {
+        if (Math.abs(window.scrollY - prevScroll) > 50) {
+          window.scrollTo({ top: prevScroll, behavior: "instant" as ScrollBehavior });
+        }
+      });
     }
   }, []);
 
   /* ── Popstate Listener: Close modal on mobile back button without reloading ── */
   useEffect(() => {
+    // Check initial hash on mount
+    if (typeof window !== "undefined" && window.location.hash.startsWith("#crisis-")) {
+      const crisisId = window.location.hash.replace("#crisis-", "");
+      const matched = TRACKS.find((t) => t.id === crisisId);
+      if (matched) setSelectedTrack(matched);
+    }
+
     const onPopState = () => {
       if (!window.location.hash.startsWith("#crisis-")) {
         setSelectedTrack(null);
+        const prevScroll = scrollPositionRef.current;
+        if (typeof window !== "undefined" && prevScroll > 0) {
+          requestAnimationFrame(() => {
+            if (Math.abs(window.scrollY - prevScroll) > 50) {
+              window.scrollTo({ top: prevScroll, behavior: "instant" as ScrollBehavior });
+            }
+          });
+        }
       } else {
         // If navigated forward to a crisis hash
         const crisisId = window.location.hash.replace("#crisis-", "");
@@ -376,121 +412,129 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
         })}
       </motion.div>
 
-      {/* ── EXPANDABLE CRISIS DETAIL MODAL ── */}
-      {selectedTrack && (
+      {/* ── EXPANDABLE CRISIS DETAIL MODAL (PORTALED TO BODY) ── */}
+      {mounted && selectedTrack && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
           aria-labelledby="crisis-detail-title"
           onClick={(e) => e.target === e.currentTarget && handleCloseModal()}
         >
-          <div
-            ref={modalRef}
-            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-background border-2 border-primary p-4 sm:p-8 clip-tactical shadow-[0_0_50px_rgba(224,76,17,0.4)] overscroll-contain"
+          <div 
+            className="h-full w-full overflow-y-auto overscroll-contain -webkit-overflow-scrolling-touch p-2.5 sm:p-6 pb-[env(safe-area-inset-bottom,24px)]"
+            onClick={(e) => e.target === e.currentTarget && handleCloseModal()}
           >
-            {/* Close Button */}
-            <button
-              ref={closeBtnRef}
-              onClick={handleCloseModal}
-              aria-label="Close details modal"
-              className="absolute top-4 right-4 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground border border-border hover:border-primary transition-colors touch-manipulation"
-            >
-              <X className="size-5" />
-            </button>
+            <div className="flex min-h-full items-start sm:items-center justify-center py-2 sm:py-6">
+              <div
+                ref={modalRef}
+                className="relative w-full max-w-3xl my-auto bg-background border-2 border-primary p-4 sm:p-8 clip-tactical shadow-[0_0_50px_rgba(224,76,17,0.4)]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Close Button */}
+                <button
+                  ref={closeBtnRef}
+                  onClick={handleCloseModal}
+                  aria-label="Close details modal"
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border hover:border-primary transition-colors touch-manipulation cursor-pointer z-10 clip-tactical"
+                >
+                  <X className="size-5" />
+                </button>
 
-            {/* Header Badge */}
-            <div className="flex items-center gap-3 mb-2 pr-10">
-              <span className="font-mono-tech text-xs tracking-[0.2em] font-bold text-primary px-2.5 py-0.5 border border-primary/40 bg-primary/10">
-                {selectedTrack.code}
-              </span>
-              <span className="font-mono-tech text-xs text-muted-foreground uppercase font-bold tracking-widest truncate">
-                {selectedTrack.crisisName}
-              </span>
-            </div>
-
-            <h2 id="crisis-detail-title" className="font-display text-2xl sm:text-4xl font-black uppercase text-foreground">
-              {selectedTrack.title}
-            </h2>
-
-            <div className="mt-6 space-y-6">
-              {/* Scenario */}
-              <div className="border-l-2 border-primary/80 pl-4 py-1 bg-primary/5">
-                <h4 className="font-mono-tech text-xs tracking-[0.2em] text-primary uppercase font-bold mb-1 flex items-center gap-2">
-                  <AlertTriangle className="size-4 text-primary" />
-                  SCENARIO BRIEFING
-                </h4>
-                <p className="text-sm sm:text-base text-foreground leading-relaxed italic">
-                  "{selectedTrack.scenario}"
-                </p>
-              </div>
-
-              {/* Engineering Problem */}
-              <div className="border border-border bg-card/40 p-4">
-                <h4 className="font-mono-tech text-xs tracking-[0.2em] text-accent uppercase font-bold mb-2 flex items-center gap-2">
-                  <Cpu className="size-4 text-accent" />
-                  ENGINEERING PROBLEM
-                </h4>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-semibold">
-                  {selectedTrack.engineeringProblem}
-                </p>
-              </div>
-
-              {/* Example Ideas */}
-              <div>
-                <h4 className="font-mono-tech text-xs tracking-[0.2em] text-emerald-400 uppercase font-bold mb-3 flex items-center gap-2">
-                  <Lightbulb className="size-4 text-emerald-400" />
-                  EXAMPLE IMPLEMENTATION CONCEPTS
-                </h4>
-                <ul className="grid gap-2">
-                  {selectedTrack.exampleIdeas.map((idea, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-foreground bg-muted/20 border border-muted/30 p-3">
-                      <span className="font-mono-tech text-xs font-bold text-primary shrink-0 mt-0.5">0{i+1}.</span>
-                      <span>{idea}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Mandatory Constraint (if any) */}
-              {selectedTrack.constraint && (
-                <div className="border border-amber-500/50 bg-amber-950/20 p-4">
-                  <h4 className="font-mono-tech text-xs tracking-[0.2em] text-amber-400 uppercase font-bold mb-1 flex items-center gap-2">
-                    <ShieldCheck className="size-4 text-amber-400" />
-                    HARDWARE CONSTRAINT
-                  </h4>
-                  <p className="text-xs sm:text-sm text-amber-200/90">
-                    {selectedTrack.constraint}
-                  </p>
+                {/* Header Badge */}
+                <div className="flex items-center gap-3 mb-2 pr-12">
+                  <span className="font-mono-tech text-xs tracking-[0.2em] font-bold text-primary px-2.5 py-0.5 border border-primary/40 bg-primary/10">
+                    {selectedTrack.code}
+                  </span>
+                  <span className="font-mono-tech text-xs text-muted-foreground uppercase font-bold tracking-widest truncate">
+                    {selectedTrack.crisisName}
+                  </span>
                 </div>
-              )}
+
+                <h2 id="crisis-detail-title" className="font-display text-2xl sm:text-4xl font-black uppercase text-foreground pr-10">
+                  {selectedTrack.title}
+                </h2>
+
+                <div className="mt-6 space-y-6">
+                  {/* Scenario */}
+                  <div className="border-l-2 border-primary/80 pl-4 py-2 bg-primary/5">
+                    <h4 className="font-mono-tech text-xs tracking-[0.2em] text-primary uppercase font-bold mb-1 flex items-center gap-2">
+                      <AlertTriangle className="size-4 text-primary" />
+                      SCENARIO BRIEFING
+                    </h4>
+                    <p className="text-sm sm:text-base text-foreground leading-relaxed italic">
+                      "{selectedTrack.scenario}"
+                    </p>
+                  </div>
+
+                  {/* Engineering Problem */}
+                  <div className="border border-border bg-card/40 p-4">
+                    <h4 className="font-mono-tech text-xs tracking-[0.2em] text-accent uppercase font-bold mb-2 flex items-center gap-2">
+                      <Cpu className="size-4 text-accent" />
+                      ENGINEERING PROBLEM
+                    </h4>
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-semibold">
+                      {selectedTrack.engineeringProblem}
+                    </p>
+                  </div>
+
+                  {/* Example Ideas */}
+                  <div>
+                    <h4 className="font-mono-tech text-xs tracking-[0.2em] text-emerald-400 uppercase font-bold mb-3 flex items-center gap-2">
+                      <Lightbulb className="size-4 text-emerald-400" />
+                      EXAMPLE IMPLEMENTATION CONCEPTS
+                    </h4>
+                    <ul className="grid gap-2">
+                      {selectedTrack.exampleIdeas.map((idea, i) => (
+                        <li key={i} className="flex items-start gap-2.5 text-sm text-foreground bg-muted/20 border border-muted/30 p-3">
+                          <span className="font-mono-tech text-xs font-bold text-primary shrink-0 mt-0.5">0{i+1}.</span>
+                          <span>{idea}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Mandatory Constraint (if any) */}
+                  {selectedTrack.constraint && (
+                    <div className="border border-amber-500/50 bg-amber-950/20 p-4">
+                      <h4 className="font-mono-tech text-xs tracking-[0.2em] text-amber-400 uppercase font-bold mb-1 flex items-center gap-2">
+                        <ShieldCheck className="size-4 text-amber-400" />
+                        HARDWARE CONSTRAINT
+                      </h4>
+                      <p className="text-xs sm:text-sm text-amber-200/90">
+                        {selectedTrack.constraint}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action buttons inside modal */}
+                <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <Button
+                    variant="tactical"
+                    onClick={handleCloseModal}
+                    className="w-full sm:w-auto min-h-[44px] font-mono-tech text-xs tracking-wider cursor-pointer"
+                  >
+                    ← RETURN TO CRISIS LIST
+                  </Button>
+
+                  <Button
+                    variant="alert"
+                    onClick={() => {
+                      const title = selectedTrack.title;
+                      handleCloseModal();
+                      onRegister(title);
+                    }}
+                    className="w-full sm:w-auto min-h-[44px] font-bold tracking-wider cursor-pointer"
+                  >
+                    REGISTER FOR THIS CRISIS →
+                  </Button>
+                </div>
+              </div>
             </div>
-
-            {/* Action buttons inside modal */}
-            <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-              <Button
-                variant="tactical"
-                onClick={handleCloseModal}
-                className="w-full sm:w-auto min-h-[44px] font-mono-tech text-xs tracking-wider"
-              >
-                ← RETURN TO CRISIS LIST
-              </Button>
-
-              <Button
-                variant="alert"
-                onClick={() => {
-                  const title = selectedTrack.title;
-                  handleCloseModal();
-                  onRegister(title);
-                }}
-                className="w-full sm:w-auto min-h-[44px] font-bold tracking-wider"
-              >
-                REGISTER FOR THIS CRISIS →
-              </Button>
-            </div>
-
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

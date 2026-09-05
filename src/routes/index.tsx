@@ -90,17 +90,21 @@ function Index() {
       }
 
       const nextTab = (hash === "events" || hash === "about") ? hash : "home";
-      setTabRaw(nextTab);
+      // ONLY switch tabs and restore scroll if the tab actually changed
+      if (nextTab !== tab) {
+        saveCurrentScroll(tab);
+        setTabRaw(nextTab);
 
-      setTimeout(() => {
-        const targetScroll = scrollPositionsRef.current[nextTab] || 0;
-        window.scrollTo({ top: targetScroll, behavior: "smooth" });
-      }, 50);
+        setTimeout(() => {
+          const targetScroll = scrollPositionsRef.current[nextTab] || 0;
+          window.scrollTo({ top: targetScroll, behavior: "smooth" });
+        }, 50);
+      }
     };
 
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, []);
+  }, [tab, saveCurrentScroll]);
 
   /** Save scroll positions on beforeunload */
   useEffect(() => {
@@ -115,10 +119,13 @@ function Index() {
   }, []);
 
   const closeRegister = useCallback(() => {
+    setOpen(false);
     if (typeof window !== "undefined" && window.location.hash === "#register") {
-      window.history.back();
-    } else {
-      setOpen(false);
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
     }
   }, []);
 

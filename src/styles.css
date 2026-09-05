@@ -382,19 +382,6 @@
 
 /* ── MOBILE PERFORMANCE OPTIMIZATIONS ── */
 
-/* Lazy-render off-screen sections for faster initial paint */
-@layer base {
-  section {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
-  }
-
-  /* Don't apply to hero — it's always above the fold */
-  section:first-of-type {
-    content-visibility: visible;
-  }
-}
-
 /* Smoother touch scrolling for modals */
 @utility smooth-scroll-touch {
   -webkit-overflow-scrolling: touch;

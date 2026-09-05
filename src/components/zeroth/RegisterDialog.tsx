@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { CheckCircle2, Copy, Flame, ShieldCheck, X, RotateCcw, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TRACKS } from "@/data/zeroth";
@@ -44,6 +45,11 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [draftRestored, setDraftRestored] = useState(false);
   const [showSavedIndicator, setShowSavedIndicator] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Debounced auto-saver for form inputs
   const debouncedSaveRef = useRef(
@@ -133,7 +139,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
     }
   };
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
   const copy = async () => {
     if (!submission?.id) return;
@@ -142,7 +148,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md"
       role="dialog"
@@ -172,147 +178,193 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
               </div>
               <button
                 onClick={onClose}
-                aria-label="Close registration modal"
-                className="grid size-8 sm:size-9 shrink-0 place-items-center border border-border bg-card/80 text-muted-foreground hover:border-primary hover:text-primary transition-colors touch-manipulation"
+                className="grid size-8 place-items-center border border-border text-muted-foreground hover:border-primary hover:text-foreground transition-colors touch-manipulation cursor-pointer"
+                aria-label="Close dialog"
               >
                 <X className="size-4" />
               </button>
             </div>
 
-            {/* Restored Draft Notification Pill */}
+            {/* Restored draft notice */}
             {draftRestored && !submission && (
-              <div className="flex items-center justify-between bg-primary/10 border-b border-primary/30 px-4 py-2 text-xs font-mono-tech text-primary">
-                <span>⚡ Restored previous unsaved registration draft</span>
+              <div className="flex items-center justify-between border-b border-primary/30 bg-primary/10 px-3.5 py-2 sm:px-6 text-[11px] font-mono-tech text-primary">
+                <span>// Draft restored from terminal cache</span>
                 <button
-                  type="button"
                   onClick={handleClearDraft}
-                  className="flex items-center gap-1 hover:text-accent underline font-bold"
+                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground underline touch-manipulation"
                 >
-                  <RotateCcw className="size-3" /> Reset form
+                  <RotateCcw className="size-3" /> Clear
                 </button>
               </div>
             )}
 
+            {/* Content: confirmation or form */}
             {submission ? (
-              <div className="space-y-4 p-5 sm:p-8 text-center">
-                <CheckCircle2 className="mx-auto size-12 text-accent" aria-hidden />
-                <h3 className="font-display text-xl sm:text-2xl font-black uppercase">Clearance granted</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Squad <span className="text-accent font-bold">{form.teamName || "UNNAMED"}</span> is queued for{" "}
-                  <span className="text-primary font-semibold">{form.track}</span>.
-                </p>
-
-                {/* Clearance Pass Card */}
-                <div className="panel-tactical mx-auto max-w-sm p-4 sm:p-5 border border-accent/40 bg-accent/10">
-                  <p className={LABEL}>DEFCON 1 CLEARANCE PASS</p>
-                  <p className="mt-2 font-display text-2xl sm:text-3xl font-black text-alert-gradient">{submission.id}</p>
-                  <Button variant="tactical" size="sm" className="mt-3 w-full min-h-[44px]" onClick={copy}>
-                    <Copy className="size-3.5" aria-hidden />
-                    {copied ? "Copied to clipboard!" : "Copy clearance code"}
-                  </Button>
+              <div className="p-4 sm:p-6 text-center space-y-4">
+                <div className="inline-grid size-12 place-items-center rounded-full border border-primary/60 bg-primary/20 text-primary">
+                  <CheckCircle2 className="size-6" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg sm:text-xl font-bold uppercase text-foreground">
+                    Enrollment Authorized
+                  </h3>
+                  <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                    Squad transmission registered. Keep this clearance code safe:
+                  </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
-                  <Button variant="alert" size="default" className="w-full sm:w-auto min-h-[44px]" onClick={onClose}>
-                    Return to broadcast
-                  </Button>
+                <div className="flex items-center justify-center gap-2 border border-primary/40 bg-background/80 px-3 py-2 font-mono-tech text-sm sm:text-base text-primary">
+                  <span>{submission.id}</span>
+                  <button
+                    onClick={copy}
+                    className="ml-2 text-muted-foreground hover:text-primary transition-colors touch-manipulation"
+                    aria-label="Copy submission ID"
+                  >
+                    <Copy className="size-4" />
+                  </button>
                 </div>
+                {copied && (
+                  <p className="font-mono-tech text-[10px] text-emerald-400">
+                    Copied to tactical clipboard
+                  </p>
+                )}
+
+                <div className="border border-border/80 bg-card/60 p-3 text-left font-mono-tech text-[10px] sm:text-xs text-muted-foreground space-y-1">
+                  <p><span className="text-foreground font-bold">Team:</span> {submission.teamName}</p>
+                  <p><span className="text-foreground font-bold">Leader:</span> {submission.leaderName} ({submission.phone})</p>
+                  <p><span className="text-foreground font-bold">Institution:</span> {submission.institution}</p>
+                  <p><span className="text-foreground font-bold">Front:</span> {submission.track}</p>
+                  <p><span className="text-foreground font-bold">Squad size:</span> {submission.teamSize} operators</p>
+                </div>
+
+                <div className="flex items-center gap-2 border border-accent/40 bg-accent/10 p-2.5 text-left font-mono-tech text-[10px] text-accent">
+                  <ShieldCheck className="size-4 shrink-0" />
+                  <span>Bring physical hardware, college IDs, and components on Sept 23. Reporting time: 08:30 IST.</span>
+                </div>
+
+                <Button
+                  variant="tactical"
+                  className="w-full font-mono-tech text-xs tracking-wider"
+                  onClick={() => {
+                    setSubmission(null);
+                    setForm(DEFAULT_FORM);
+                    onClose();
+                  }}
+                >
+                  Clear Terminal
+                </Button>
               </div>
             ) : (
-              <form onSubmit={submit} className="space-y-3.5 p-3.5 sm:p-6">
-                <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
-                  <label className="space-y-1 block">
-                    <span className={LABEL}>SQUAD NAME *</span>
+              <form onSubmit={submit} className="p-3.5 sm:p-6 space-y-3.5 sm:space-y-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={LABEL}>Squad Designation *</label>
                     <input
                       required
                       className={FIELD}
+                      placeholder="e.g. Apex Protocol"
                       value={form.teamName}
                       onChange={set("teamName")}
-                      placeholder="e.g. Quantum Pioneers"
                     />
-                  </label>
-                  <label className="space-y-1 block">
-                    <span className={LABEL}>SQUAD LEADER *</span>
+                  </div>
+                  <div>
+                    <label className={LABEL}>Squad Leader *</label>
                     <input
                       required
                       className={FIELD}
+                      placeholder="Full name"
                       value={form.leaderName}
                       onChange={set("leaderName")}
-                      placeholder="Full name"
                     />
-                  </label>
-                  <label className="space-y-1 block">
-                    <span className={LABEL}>CONTACT EMAIL *</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={LABEL}>Comms Link (Email) *</label>
                     <input
                       required
                       type="email"
                       className={FIELD}
+                      placeholder="leader@domain.com"
                       value={form.email}
                       onChange={set("email")}
-                      placeholder="operative@domain.org"
                     />
-                  </label>
-                  <label className="space-y-1 block">
-                    <span className={LABEL}>MOBILE NUMBER *</span>
+                  </div>
+                  <div>
+                    <label className={LABEL}>Emergency Comms (Phone) *</label>
                     <input
                       required
                       type="tel"
                       className={FIELD}
+                      placeholder="+91 98765 43210"
                       value={form.phone}
                       onChange={set("phone")}
-                      placeholder="+91 98765 43210"
                     />
-                  </label>
-                  <label className="space-y-1 block sm:col-span-2">
-                    <span className={LABEL}>INSTITUTION / COLLEGE *</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={LABEL}>College / Base Institution *</label>
                     <input
                       required
                       className={FIELD}
+                      placeholder="Institution name"
                       value={form.institution}
                       onChange={set("institution")}
-                      placeholder="College or University name"
                     />
-                  </label>
-                  <label className="space-y-1 block">
-                    <span className={LABEL}>THREAT SECTOR *</span>
-                    <select className={FIELD} value={form.track} onChange={set("track")}>
+                  </div>
+                  <div>
+                    <label className={LABEL}>Target Defence Sector *</label>
+                    <select
+                      className={FIELD}
+                      value={form.track}
+                      onChange={set("track")}
+                    >
                       {TRACKS.map((t) => (
-                        <option key={t.id} value={t.title}>
-                          {t.title}
+                        <option key={t.id} value={t.title} className="bg-background text-foreground">
+                          [{t.code}] {t.title}
                         </option>
                       ))}
                     </select>
-                  </label>
-                  <label className="space-y-1 block">
-                    <span className={LABEL}>SQUAD SIZE *</span>
-                    <select className={FIELD} value={form.teamSize} onChange={set("teamSize")}>
-                      {["1", "2", "3", "4"].map((n) => (
-                        <option key={n} value={n}>
-                          {n} {n === "1" ? "Member (Solo)" : "Members"}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  </div>
                 </div>
 
-                <label className="block space-y-1">
-                  <span className={LABEL}>PROJECT BRIEF / IDEA (OPTIONAL)</span>
+                <div>
+                  <label className={LABEL}>Squad Size *</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {["1", "2", "3", "4"].map((sz) => (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => set("teamSize")({ target: { value: sz } } as any)}
+                        className={`border py-2 text-center font-mono-tech text-xs tracking-wider transition-colors touch-manipulation min-h-[44px] ${
+                          form.teamSize === sz
+                            ? "border-primary bg-primary/20 text-primary font-bold"
+                            : "border-border bg-input/40 text-muted-foreground hover:border-primary/60"
+                        }`}
+                      >
+                        {sz} {sz === "1" ? "Solo" : "Ops"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className={LABEL}>Hardware / Implementation Brief (Optional)</label>
                   <textarea
                     rows={2}
-                    className={FIELD}
+                    className={`${FIELD} resize-none`}
+                    placeholder="Sensors, actuators, or microcontrollers you plan to deploy..."
                     value={form.brief}
                     onChange={set("brief")}
-                    placeholder="Briefly describe your hardware/communication prototype idea..."
                   />
-                </label>
+                </div>
 
-                <div className="flex flex-col gap-1 rounded-sm border border-accent/40 bg-accent/10 p-2.5 sm:p-3">
-                  <p className="flex items-center gap-1.5 font-mono-tech text-[11px] sm:text-xs tracking-wide text-accent font-bold">
-                    <ShieldCheck className="size-3.5 shrink-0" aria-hidden />
-                    REGISTRATION FEE: ₹200 PER SQUAD
-                  </p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground ml-5">
-                    Includes high-speed Wi-Fi, Food & Beverages for the 5-hour makeathon duration.
+                <div className="border-t border-border pt-3 sm:pt-4 text-left">
+                  <p className="font-mono-tech text-[10px] sm:text-[11px] text-muted-foreground">
+                    Fee: <span className="text-accent font-bold">₹200 / squad</span> · Food, high-speed Wi-Fi, mentorship included. Payment collected at check-in counter on Sept 23.
                   </p>
                 </div>
 
@@ -331,6 +383,7 @@ export function RegisterDialog({ open, onClose, initialTrack }: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
