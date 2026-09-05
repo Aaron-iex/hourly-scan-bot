@@ -20,7 +20,7 @@ export function SiteFooter() {
               <a
                 key={i}
                 href="#top"
-                className="grid size-10 place-items-center border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-primary clip-tactical"
+                className="grid size-10 place-items-center border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-primary clip-tactical min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                 aria-label="Communication channel"
               >
                 <Icon className="size-4" aria-hidden />
@@ -29,7 +29,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-      <nav>
+        <nav>
           <h4 className="font-mono-tech text-[11px] tracking-[0.22em] text-accent">NAVIGATION</h4>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             {[
@@ -38,7 +38,7 @@ export function SiteFooter() {
               ["#about", "Mission briefing & FAQ"],
             ].map(([href, label]) => (
               <li key={href}>
-                <a href={href} className="transition-colors hover:text-accent touch-manipulation">
+                <a href={href} className="transition-colors hover:text-accent min-h-[44px] inline-flex items-center touch-manipulation">
                   {label}
                 </a>
               </li>
@@ -53,7 +53,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 font-mono-tech text-xs text-muted-foreground">
             <li>+91-6381198548</li>
             <li>PRESS: mylabathulaaaronnissi@gmail.com</li>
-            <li>STATUS: DEFCON 1 — SEPT 17 · 5-HOUR SPRINT</li>
+            <li>STATUS: DEFCON 1 — SEPT 23 · 5-HOUR SPRINT</li>
           </ul>
         </div>
       </div>

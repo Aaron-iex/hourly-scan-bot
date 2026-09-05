@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ChevronRight, Clock, Flame, MapPin, Radio, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TIMELINE, type Stage } from "@/data/zeroth";
+import { loadState, saveState, STORAGE_KEYS } from "@/lib/state-persistence";
 
 const FILTERS: { id: Stage | "all"; label: string; icon: typeof Clock }[] = [
   { id: "all", label: "All phases", icon: Radio },
@@ -25,7 +26,15 @@ export function Roadmap({
   preview?: boolean;
   onExpand?: () => void;
 }) {
-  const [active, setActive] = useState<Stage | "all">("all");
+  const [active, setActiveRaw] = useState<Stage | "all">(() =>
+    loadState<Stage | "all">(STORAGE_KEYS.ROADMAP_FILTER, "all")
+  );
+
+  const setActive = useCallback((stage: Stage | "all") => {
+    setActiveRaw(stage);
+    saveState(STORAGE_KEYS.ROADMAP_FILTER, stage);
+  }, []);
+
   const events = active === "all" ? TIMELINE : TIMELINE.filter((e) => e.stage === active);
   const previewEvents = TIMELINE.slice(0, 3);
   const displayEvents = preview ? previewEvents : events;
@@ -64,7 +73,7 @@ export function Roadmap({
               <button
                 key={f.id}
                 onClick={() => setActive(f.id)}
-                className={`group flex items-center gap-2 px-4 py-2.5 clip-tactical font-mono-tech text-[10px] sm:text-[11px] uppercase tracking-[0.18em] transition-all duration-300 ${
+                className={`group flex items-center gap-2 px-4 py-2.5 min-h-[44px] clip-tactical font-mono-tech text-[10px] sm:text-[11px] uppercase tracking-[0.18em] transition-all duration-300 touch-manipulation ${
                   active === f.id
                     ? "bg-accent text-accent-foreground shadow-[var(--glow-warn)] scale-105"
                     : "border border-border bg-card text-muted-foreground hover:text-accent hover:border-accent/40"
@@ -143,7 +152,7 @@ export function Roadmap({
         {preview && (
           <div className="mt-8 sm:mt-10 text-center">
             <Button variant="tactical" size="xl" onClick={onExpand}
-              className="group hover:shadow-[0_0_20px_rgba(255,200,0,0.25)] transition-shadow">
+              className="group min-h-[44px] hover:shadow-[0_0_20px_rgba(255,200,0,0.25)] transition-shadow">
               <ChevronRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden />
               View full build schedule
             </Button>
@@ -168,7 +177,7 @@ export function Roadmap({
               badge before squad lockdown.
             </p>
             <Button variant="alert" size="xl" onClick={onRegister}
-              className="group hover:shadow-[0_0_30px_rgba(224,76,17,0.5)] hover:scale-[1.02] transition-all duration-300">
+              className="group min-h-[44px] hover:shadow-[0_0_30px_rgba(224,76,17,0.5)] hover:scale-[1.02] transition-all duration-300">
               <Flame className="size-4 group-hover:rotate-12 transition-transform" aria-hidden />
               Secure squad clearance
             </Button>

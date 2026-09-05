@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Calendar, ChevronRight, Clock, Flame, Crosshair, Radio, Shield, Zap, AlertTriangle } from "lucide-react";
+import { Calendar, ChevronRight, Clock, Flame, Crosshair, Radio, Shield, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-cataclysm.jpg";
+import { browserCompat } from "@/lib/browser-compat";
+import { loadState, saveState, STORAGE_KEYS } from "@/lib/state-persistence";
 
 /* ─── Cinematic Opening Sequence (Mobile & Desktop Responsive) ─── */
 const DISASTER_SEQUENCE = [
@@ -69,18 +71,39 @@ function CinematicIntro({ onComplete }: { onComplete: () => void }) {
 /* ─── Floating Ember Particle Canvas ─── */
 function EmberCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    if (!browserCompat.supportsCanvas() || browserCompat.prefersReducedMotion()) {
+      return;
+    }
+
     let rafId: number;
-    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
     resize();
     window.addEventListener("resize", resize, { passive: true });
-    type Ember = { x: number; y: number; vx: number; vy: number; r: number; alpha: number; hue: number };
+
+    type Particle = {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      r: number;
+      alpha: number;
+      hue: number;
+    };
+
     const isMobile = canvas.width < 640;
-    const embers: Ember[] = Array.from({ length: isMobile ? 18 : 40 }, () => ({
+    const count = isMobile ? 18 : 40;
+
+    const particles: Particle[] = Array.from({ length: count }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.35,
@@ -92,29 +115,43 @@ function EmberCanvas() {
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      embers.forEach((e) => {
-        e.x += e.vx;
-        e.y += e.vy;
-        e.alpha += (Math.random() - 0.5) * 0.015;
-        e.alpha = Math.max(0.03, Math.min(0.6, e.alpha));
-        if (e.y < -6) { e.y = canvas.height + 6; e.x = Math.random() * canvas.width; e.alpha = 0.4; }
+
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha += (Math.random() - 0.5) * 0.015;
+        p.alpha = Math.max(0.03, Math.min(0.6, p.alpha));
+
+        if (p.y < -6) {
+          p.y = canvas.height + 6;
+          p.x = Math.random() * canvas.width;
+          p.alpha = 0.4;
+        }
+
         ctx.save();
-        ctx.globalAlpha = e.alpha;
-        const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r * 3.5);
-        g.addColorStop(0, `hsl(${e.hue}, 100%, 75%)`);
-        g.addColorStop(0.4, `hsla(${e.hue}, 100%, 50%, 0.3)`);
+        ctx.globalAlpha = p.alpha;
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.5);
+        g.addColorStop(0, `hsl(${p.hue}, 100%, 75%)`);
+        g.addColorStop(0.4, `hsla(${p.hue}, 100%, 50%, 0.3)`);
         g.addColorStop(1, "transparent");
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(e.x, e.y, e.r * 3.5, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.r * 3.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       });
+
       rafId = requestAnimationFrame(draw);
     };
+
     draw();
-    return () => { cancelAnimationFrame(rafId); window.removeEventListener("resize", resize); };
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
+
   return <canvas ref={canvasRef} className="absolute inset-0 -z-10 size-full pointer-events-none" aria-hidden />;
 }
 
@@ -163,11 +200,8 @@ function FlipDigit({ value, label }: { value: string; label: string }) {
 }
 
 /* ─── HERO MAIN ─── */
-let hasPlayedIntroThisAppLaunch = false;
-
 export function Hero({ onRegister }: { onRegister: () => void }) {
   const [clock, setClock] = useState<string | null>(null);
-  const [operatives, setOperatives] = useState(0);
   const [cd, setCd] = useState({ d: "00", h: "00", m: "00", s: "00" });
 
   useEffect(() => {
@@ -178,18 +212,8 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
   }, []);
 
   useEffect(() => {
-    let start: number | null = null;
-    const run = (ts: number) => {
-      if (!start) start = ts;
-      const p = Math.min((ts - start) / 2500, 1);
-      setOperatives(Math.floor((p === 1 ? 1 : 1 - Math.pow(2, -10 * p)) * 500));
-      if (p < 1) requestAnimationFrame(run);
-    };
-    requestAnimationFrame(run);
-  }, []);
-
-  useEffect(() => {
-    const target = new Date("2026-09-17T09:30:00").getTime();
+    // Event Date: 23 September 2026
+    const target = new Date("2026-09-23T09:30:00").getTime();
     const update = () => {
       const dist = Math.max(0, target - Date.now());
       setCd({
@@ -204,10 +228,11 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     return () => clearInterval(id);
   }, []);
 
-  const [introDone, setIntroComplete] = useState(() => hasPlayedIntroThisAppLaunch);
+  /* ── Intro sequence played persistence ── */
+  const [introDone, setIntroComplete] = useState(() => loadState<boolean>(STORAGE_KEYS.INTRO_PLAYED, false));
 
   const handleIntroDone = useCallback(() => {
-    hasPlayedIntroThisAppLaunch = true;
+    saveState(STORAGE_KEYS.INTRO_PLAYED, true);
     setIntroComplete(true);
   }, []);
 
@@ -215,19 +240,20 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
     <>
       {!introDone && <CinematicIntro onComplete={handleIntroDone} />}
       <section id="top" className="relative isolate overflow-hidden scanlines">
-        {/* BG Layers */}
+        {/* Crisp Classic Hero Cataclysm Background Layers */}
         <img
           src={heroImage}
-          alt=""
+          alt="Planetary Defence Cataclysm"
           width={1920}
           height={1088}
           className="absolute inset-0 -z-20 size-full object-cover object-[center_30%] opacity-60 brightness-[0.85] contrast-110 saturate-[1.15]"
         />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_40%,transparent_25%,var(--background)_90%)]" />
-        <div className="absolute inset-0 -z-10 grid-tactical opacity-30" />
+        <div className="absolute inset-0 -z-10 grid-tactical opacity-30 pointer-events-none" />
         <EmberCanvas />
         <div className="absolute bottom-0 inset-x-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent pointer-events-none -z-10" />
 
+        {/* Hero Interactive Content Layer */}
         <div className="mx-auto flex max-w-6xl flex-col items-center px-2 py-3 text-center sm:px-6 lg:px-8 sm:py-8">
 
           {/* ── DEFCON Badge ── */}
@@ -305,6 +331,37 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             <Crosshair className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 size-5 sm:size-8 text-primary/40 animate-float" />
           </div>
 
+          {/* ── Motto: CRISIS→SENSE→THINK→ADAPT→SURVIVE ── */}
+          <div className="motto-container animate-rise mt-3 sm:mt-4" aria-label="CRISIS SENSE THINK ADAPT SURVIVE">
+            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '0ms' }}>
+              CRISIS
+            </span>
+            <span className="animate-motto-reveal font-mono-tech text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.08em] sm:tracking-[0.12em] font-semibold text-primary/70" aria-hidden style={{ animationDelay: '120ms' }}>
+              →
+            </span>
+            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '240ms' }}>
+              SENSE
+            </span>
+            <span className="animate-motto-reveal font-mono-tech text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.08em] sm:tracking-[0.12em] font-semibold text-primary/70" aria-hidden style={{ animationDelay: '360ms' }}>
+              →
+            </span>
+            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '480ms' }}>
+              THINK
+            </span>
+            <span className="animate-motto-reveal font-mono-tech text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.08em] sm:tracking-[0.12em] font-semibold text-primary/70" aria-hidden style={{ animationDelay: '600ms' }}>
+              →
+            </span>
+            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '720ms' }}>
+              ADAPT
+            </span>
+            <span className="animate-motto-reveal font-mono-tech text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.08em] sm:tracking-[0.12em] font-semibold text-primary/70" aria-hidden style={{ animationDelay: '840ms' }}>
+              →
+            </span>
+            <span className="animate-motto-reveal font-mono-tech text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.12em] sm:tracking-[0.2em] font-medium text-primary/90" style={{ animationDelay: '960ms' }}>
+              SURVIVE
+            </span>
+          </div>
+
           {/* ── Split-Flap Countdown ── */}
           <div className="animate-rise mt-3 sm:mt-4 px-2 py-1">
             <div className="flex items-center gap-1.5 mb-1.5 justify-center">
@@ -324,12 +381,12 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
             </div>
           </div>
 
-          {/* ── Date & Venue ── */}
+          {/* ── Date & Venue (Updated Date: SEPT 23) ── */}
           <div className="animate-rise mt-3.5 sm:mt-4 flex w-full max-w-md items-center gap-2.5 sm:gap-3 border border-accent/70 bg-black/80 backdrop-blur-md px-3 py-2 sm:px-4 sm:py-2.5 clip-tactical text-left shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
             <Calendar className="size-4 sm:size-5 shrink-0 text-accent" aria-hidden />
             <div>
               <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-[0.12em] text-accent">
-                SEPT 17 // 5-HOUR MAKEATHON
+                SEPT 23 // 5-HOUR MAKEATHON
               </p>
               <p className="font-mono-tech text-[9px] sm:text-[11px] text-white/90 font-medium">
                 Venue: Jaya Auditorium · Registration queue open

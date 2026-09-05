@@ -40,8 +40,11 @@ export function SiteNav({
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = ""; };
+      return () => {
+        document.body.style.overflow = "";
+      };
     }
+    return undefined;
   }, [open]);
 
   const handleTab = (tab: "home" | "events" | "about") => {

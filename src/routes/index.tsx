@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { EmergencyTicker } from "@/components/zeroth/EmergencyTicker";
 import { SiteNav } from "@/components/zeroth/SiteNav";
 import { Hero } from "@/components/zeroth/Hero";
@@ -10,6 +10,7 @@ import { SiteFooter } from "@/components/zeroth/SiteFooter";
 import { Sponsors } from "@/components/zeroth/Sponsors";
 import { RegisterDialog } from "@/components/zeroth/RegisterDialog";
 import { SabotageQuiz } from "@/components/zeroth/SabotageQuiz";
+import { loadState, saveState, STORAGE_KEYS } from "@/lib/state-persistence";
 
 const TITLE = "Zeroth Hour — 5-Hour Planetary Defence Makeathon";
 const DESCRIPTION =
@@ -18,11 +19,14 @@ const DESCRIPTION =
 type Tab = "home" | "events" | "about";
 const VALID_TABS: Tab[] = ["home", "events", "about"];
 
-/** Read tab from URL hash (e.g. #events → "events"). Falls back to "home". */
-function getTabFromHash(): Tab {
+/** Read tab from URL hash or persisted storage. Falls back to "home". */
+function getInitialTab(): Tab {
   if (typeof window === "undefined") return "home";
-  const raw = window.location.hash.replace("#", "").toLowerCase();
-  return VALID_TABS.includes(raw as Tab) ? (raw as Tab) : "home";
+  const rawHash = window.location.hash.replace("#", "").toLowerCase();
+  if (VALID_TABS.includes(rawHash as Tab)) {
+    return rawHash as Tab;
+  }
+  return loadState<Tab>(STORAGE_KEYS.ACTIVE_TAB, "home");
 }
 
 export const Route = createFileRoute("/")({
@@ -43,31 +47,63 @@ function Index() {
   const [open, setOpen] = useState(false);
   const [track, setTrack] = useState("");
 
-  /* ── Hash-synced tab state ──
-   * Tab navigation is reflected in the URL hash so mobile back button
-   * switches tabs dynamically instead of triggering a full page reload. */
-  const [tab, setTabRaw] = useState<Tab>(getTabFromHash);
+  const [tab, setTabRaw] = useState<Tab>(getInitialTab);
+  const scrollPositionsRef = useRef<Record<Tab, number>>(
+    loadState<Record<Tab, number>>(STORAGE_KEYS.TAB_SCROLLS, { home: 0, events: 0, about: 0 })
+  );
 
-  /** Push a new history entry when the user actively navigates to a tab. */
-  const setTab = useCallback((next: Tab) => {
-    setTabRaw(next);
-    const hash = next === "home" ? "" : `#${next}`;
-    // Only push if the hash actually changed to avoid duplicate entries
-    if (window.location.hash !== (hash || "#")) {
-      window.history.pushState(null, "", hash || window.location.pathname);
-    }
+  /** Save current scroll position before switching tabs or unloading */
+  const saveCurrentScroll = useCallback((currentTab: Tab) => {
+    if (typeof window === "undefined") return;
+    scrollPositionsRef.current[currentTab] = window.scrollY;
+    saveState(STORAGE_KEYS.TAB_SCROLLS, scrollPositionsRef.current);
   }, []);
 
-  /** Listen for the browser back/forward button (popstate) to update tab state. */
+  /** Change tab with smooth URL hash, persistent state, and scroll restoration */
+  const setTab = useCallback(
+    (next: Tab) => {
+      saveCurrentScroll(tab);
+      setTabRaw(next);
+      saveState(STORAGE_KEYS.ACTIVE_TAB, next);
+
+      const hash = next === "home" ? "" : `#${next}`;
+      if (window.location.hash !== (hash || "#")) {
+        window.history.pushState(null, "", hash || window.location.pathname);
+      }
+
+      // Restore target tab's scroll position with brief DOM settling delay
+      setTimeout(() => {
+        const targetScroll = scrollPositionsRef.current[next] || 0;
+        window.scrollTo({ top: targetScroll, behavior: "smooth" });
+      }, 80);
+    },
+    [tab, saveCurrentScroll]
+  );
+
+  /** Listen for browser Back/Forward (popstate) to synchronize active tab & scroll position */
   useEffect(() => {
     const onPop = () => {
-      setTabRaw(getTabFromHash());
-      // Scroll to top when navigating back between tabs
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      const hash = window.location.hash.replace("#", "").toLowerCase();
+      const nextTab = VALID_TABS.includes(hash as Tab) ? (hash as Tab) : "home";
+      setTabRaw(nextTab);
+      saveState(STORAGE_KEYS.ACTIVE_TAB, nextTab);
+
+      setTimeout(() => {
+        const targetScroll = scrollPositionsRef.current[nextTab] || 0;
+        window.scrollTo({ top: targetScroll, behavior: "smooth" });
+      }, 80);
     };
+
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
+
+  /** Save scroll positions periodically and on unload */
+  useEffect(() => {
+    const onUnload = () => saveCurrentScroll(tab);
+    window.addEventListener("beforeunload", onUnload);
+    return () => window.removeEventListener("beforeunload", onUnload);
+  }, [tab, saveCurrentScroll]);
 
   const openRegister = useCallback((selected = "") => {
     setTrack(selected);

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Anchor, Flame, Rocket, Waves, Zap, type LucideIcon, ChevronRight, Trophy, Sparkles, X, AlertTriangle, ShieldCheck, Cpu, Activity, Lightbulb } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Anchor, Flame, Rocket, Waves, Zap, type LucideIcon, ChevronRight, Trophy, X, AlertTriangle, ShieldCheck, Cpu, Activity, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TRACKS, type Track } from "@/data/zeroth";
 
@@ -22,12 +22,57 @@ const TRACK_COLORS = [
 
 export function Sectors({ onRegister }: { onRegister: (track: string) => void }) {
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  /* ── Modal Accessibility: Focus Trapping, Body Lock & Escape Key Handler ── */
+  useEffect(() => {
+    if (!selectedTrack) return;
+
+    // Focus close button on open
+    setTimeout(() => {
+      closeBtnRef.current?.focus();
+    }, 50);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedTrack(null);
+        return;
+      }
+
+      if (e.key === "Tab" && modalRef.current) {
+        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (!first || !last) return;
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [selectedTrack]);
 
   return (
     <section id="sectors" className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6 lg:px-8">
 
       {/* ── HIGHLY NOTICEABLE MANDATORY CORE DIRECTIVE BANNER ── */}
-      <div className="relative mb-10 overflow-hidden border-2 border-primary bg-black/90 p-4 sm:p-6 shadow-[0_0_40px_rgba(224,76,17,0.3)] clip-tactical">
+      <div className="relative mb-10 overflow-hidden border-2 border-primary bg-black/90 p-4 sm:p-6 shadow-[0_0_40px_rgba(224,76,17,0.35)] clip-tactical">
         <div className="absolute inset-0 scanlines opacity-40 pointer-events-none" />
         <div className="absolute -right-10 -bottom-10 size-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
         
@@ -84,7 +129,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
 
       {/* Prize Banner */}
       <div className="relative mt-8 overflow-hidden border border-accent/50 bg-gradient-to-r from-accent/20 via-accent/10 to-accent/20 px-5 py-4 clip-tactical">
-        <div className="absolute inset-0 grid-tactical opacity-20" />
+        <div className="absolute inset-0 grid-tactical opacity-20 pointer-events-none" />
         <div className="relative flex flex-wrap items-center justify-center gap-3 sm:gap-8">
           <div className="flex items-center gap-2">
             <Trophy className="size-5 text-accent animate-pulse" aria-hidden />
@@ -109,7 +154,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
       </div>
 
       {/* Track Cards */}
-      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {TRACKS.map((track, idx) => {
           const Icon = ICONS[track.icon];
           const color = TRACK_COLORS[idx % TRACK_COLORS.length]!;
@@ -118,115 +163,125 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
           return (
             <article
               key={track.id}
+              className={`panel-tactical relative flex flex-col justify-between p-5 sm:p-6 transition-all duration-300
+                          hover:-translate-y-1.5 group cursor-pointer bg-black/90 ${
+                            isFeatured
+                              ? "border-2 border-accent/70 shadow-[0_0_25px_rgba(255,200,0,0.25)]"
+                              : "border border-border/90 hover:border-primary/60"
+                          }`}
+              style={
+                {
+                  "--track-accent": color.accent,
+                  "--track-glow": color.glow,
+                } as React.CSSProperties
+              }
               onClick={() => setSelectedTrack(track)}
-              className={`group relative overflow-hidden panel-tactical flex flex-col p-6 transition-all duration-500
-                         hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)]
-                         cursor-pointer ${
-                           isFeatured
-                             ? "md:col-span-2 lg:col-span-1 border-2 border-accent/80 bg-accent/10 shadow-[0_0_30px_rgba(255,200,0,0.15)]"
-                             : "border border-border"
-                         }`}
-              style={{
-                "--track-glow": color.glow,
-                "--track-border": color.border,
-              } as React.CSSProperties}
             >
-              {/* Featured Ribbon Header for Open Innovation */}
-              {isFeatured && (
-                <div className="absolute top-0 right-0 bg-accent text-accent-foreground font-mono-tech text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 flex items-center gap-1 shadow-md z-10">
-                  <Sparkles className="size-3 animate-spin" />
-                  MOST POPULAR // BRING YOUR OWN CRISIS
-                </div>
-              )}
-
-              {/* Animated background glow on hover */}
+              {/* Subtle background glow on hover */}
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: `radial-gradient(ellipse at 30% 0%, ${color.glow} 0%, transparent 65%)` }}
+                style={{
+                  background: `radial-gradient(ellipse at 50% 0%, ${color.glow} 0%, transparent 70%)`,
+                }}
               />
 
-              <div className="relative flex items-center justify-between mt-1">
-                {/* Icon with animated ring */}
-                <div className="relative">
+              {/* Card top row */}
+              <div className="relative flex items-start justify-between gap-3">
+                <div className="flex items-center gap-2.5">
                   <div
-                    className={`grid size-12 place-items-center border-2 transition-all duration-300 group-hover:scale-110 ${
-                      isFeatured ? "bg-accent/20 border-accent text-accent" : ""
-                    }`}
+                    className="grid size-10 place-items-center border clip-tactical transition-transform duration-300 group-hover:scale-110 shrink-0"
                     style={{
                       borderColor: color.border,
-                      background: isFeatured ? "rgba(255,200,0,0.2)" : `color-mix(in oklab, ${color.accent} 12%, transparent)`,
-                      color: color.accent,
-                      boxShadow: isFeatured ? "0 0 15px rgba(255,200,0,0.3)" : `0 0 0 0 ${color.glow}`,
+                      backgroundColor: `color-mix(in oklab, ${color.accent} 15%, transparent)`,
                     }}
                   >
-                    <Icon className="size-5 transition-transform duration-300 group-hover:scale-110" aria-hidden />
+                    <Icon className="size-5" style={{ color: color.accent }} />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="font-mono-tech text-[10px] tracking-[0.2em] font-bold uppercase text-muted-foreground block">
+                      {track.code}
+                    </span>
+                    <h3 className="font-display text-base sm:text-lg font-black uppercase text-foreground group-hover:text-accent transition-colors truncate">
+                      {track.title}
+                    </h3>
                   </div>
                 </div>
 
+                {isFeatured && (
+                  <span className="shrink-0 border border-accent/60 bg-accent/20 px-2 py-0.5 font-mono-tech text-[9px] font-bold tracking-widest text-accent clip-tactical">
+                    FEATURED
+                  </span>
+                )}
+              </div>
+
+              {/* Threat badge */}
+              <div className="relative mt-3">
                 <span
-                  className="font-mono-tech text-[10px] tracking-[0.2em] font-bold px-2 py-0.5 border border-primary/30 bg-primary/10 rounded-none uppercase"
-                  style={{ color: color.accent }}
+                  className="inline-block font-mono-tech text-[9px] tracking-[0.22em] uppercase font-bold px-2 py-0.5 border"
+                  style={{
+                    color: color.accent,
+                    borderColor: `color-mix(in oklab, ${color.accent} 40%, transparent)`,
+                    backgroundColor: `color-mix(in oklab, ${color.accent} 10%, transparent)`,
+                  }}
                 >
-                  {track.code}
+                  // THREAT: {track.threat}
                 </span>
               </div>
 
-              <div className="mt-4">
-                <span className="font-mono-tech text-[10px] text-muted-foreground tracking-widest uppercase font-bold">
-                  {track.crisisName}
-                </span>
-                <h3
-                  className="relative mt-1 font-display text-xl font-bold transition-all duration-300 group-hover:translate-x-1"
-                  style={{ color: isFeatured ? "var(--accent)" : "var(--foreground)" }}
-                >
-                  {track.title}
-                </h3>
-              </div>
-
-              <p className="relative mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+              {/* Brief */}
+              <p className="relative mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed flex-1">
                 {track.brief}
               </p>
 
+              {/* Actions row: Ultra-Clear, High-Visibility Buttons */}
               <div
-                className="relative mt-5 flex items-center justify-between border-t pt-4 transition-colors duration-300"
+                className="relative mt-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 border-t pt-4 transition-colors duration-300"
                 style={{ borderColor: `color-mix(in oklab, ${color.border} 40%, var(--border))` }}
               >
-                <button
-                  type="button"
+                {/* View Details Button (Highly Noticeable Styled Button) */}
+                <Button
+                  variant="tactical"
+                  size="default"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedTrack(track);
                   }}
-                  className="flex items-center gap-1.5 font-mono-tech text-[11px] tracking-[0.15em] uppercase font-bold text-primary hover:text-white transition-colors"
+                  className="w-full sm:w-auto flex-1 min-h-[44px] px-3.5 font-mono-tech text-xs tracking-[0.14em] font-bold text-primary border-2 border-primary/70 bg-primary/15 hover:bg-primary hover:text-white shadow-[0_0_15px_rgba(224,76,17,0.25)] transition-all touch-manipulation group/btn"
+                  aria-label={`View crisis details for ${track.title}`}
                 >
-                  <Activity className="size-3.5" />
-                  View Crisis Details
-                </button>
+                  <Activity className="size-4 shrink-0 text-primary group-hover/btn:text-white transition-colors" />
+                  <span>View Details</span>
+                </Button>
 
-                <button
-                  type="button"
+                {/* Register Button */}
+                <Button
+                  variant="alert"
+                  size="default"
                   onClick={(e) => {
                     e.stopPropagation();
                     onRegister(track.title);
                   }}
-                  className="flex items-center gap-1 font-mono-tech text-[10px] tracking-[0.15em] uppercase font-bold transition-all duration-300 hover:gap-2"
-                  style={{ color: color.accent }}
+                  className="w-full sm:w-auto flex-1 min-h-[44px] px-3.5 font-mono-tech text-xs tracking-[0.14em] font-bold touch-manipulation"
+                  aria-label={`Register for ${track.title}`}
                 >
-                  Register
-                  <ChevronRight className="size-3 transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
+                  <span>Register</span>
+                  <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Button>
               </div>
             </article>
           );
         })}
 
         {/* Quick Enlist card */}
-        <article className="relative overflow-hidden panel-tactical flex flex-col justify-center gap-4 p-6 text-center
-                            group hover:-translate-y-2 transition-all duration-500 cursor-pointer border border-accent/40 bg-accent/5">
+        <article
+          className="relative overflow-hidden panel-tactical flex flex-col justify-center gap-4 p-6 text-center
+                     group hover:-translate-y-1.5 transition-all duration-500 cursor-pointer border-2 border-accent/60 bg-accent/10"
+          onClick={() => onRegister("")}
+        >
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(255,200,0,0.15) 0%, transparent 70%)" }} />
           <div className="relative">
-            <div className="mx-auto mb-2 size-14 grid place-items-center border-2 border-accent/50 bg-accent/15 group-hover:border-accent group-hover:bg-accent/25 transition-all duration-300">
+            <div className="mx-auto mb-2 size-14 grid place-items-center border-2 border-accent/60 bg-accent/20 group-hover:border-accent group-hover:bg-accent/30 transition-all duration-300">
               <Zap className="size-7 text-accent animate-pulse" aria-hidden />
             </div>
             <h3 className="font-display text-xl font-black uppercase text-alert-gradient">
@@ -236,7 +291,11 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
           <p className="relative text-sm text-muted-foreground max-w-xs mx-auto">
             Not sure which crisis to pick? Enlist your squad now and choose your theme on the makeathon day!
           </p>
-          <Button variant="alert" onClick={() => onRegister("")} className="relative w-full group-hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow duration-300 font-bold">
+          <Button
+            variant="alert"
+            onClick={(e) => { e.stopPropagation(); onRegister(""); }}
+            className="relative w-full min-h-[44px] group-hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow duration-300 font-bold"
+          >
             Register Any Idea
           </Button>
         </article>
@@ -244,28 +303,38 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
 
       {/* ── EXPANDABLE CRISIS DETAIL MODAL ── */}
       {selectedTrack && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-background border-2 border-primary p-6 sm:p-8 clip-tactical shadow-[0_0_50px_rgba(224,76,17,0.4)]">
-            
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="crisis-detail-title"
+          onClick={(e) => e.target === e.currentTarget && setSelectedTrack(null)}
+        >
+          <div
+            ref={modalRef}
+            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-background border-2 border-primary p-5 sm:p-8 clip-tactical shadow-[0_0_50px_rgba(224,76,17,0.4)]"
+          >
             {/* Close Button */}
             <button
+              ref={closeBtnRef}
               onClick={() => setSelectedTrack(null)}
-              className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground border border-border hover:border-primary transition-colors"
+              aria-label="Close details modal"
+              className="absolute top-4 right-4 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground border border-border hover:border-primary transition-colors touch-manipulation"
             >
               <X className="size-5" />
             </button>
 
             {/* Header Badge */}
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-2 pr-10">
               <span className="font-mono-tech text-xs tracking-[0.2em] font-bold text-primary px-2.5 py-0.5 border border-primary/40 bg-primary/10">
                 {selectedTrack.code}
               </span>
-              <span className="font-mono-tech text-xs text-muted-foreground uppercase font-bold tracking-widest">
+              <span className="font-mono-tech text-xs text-muted-foreground uppercase font-bold tracking-widest truncate">
                 {selectedTrack.crisisName}
               </span>
             </div>
 
-            <h2 className="font-display text-2xl sm:text-4xl font-black uppercase text-foreground">
+            <h2 id="crisis-detail-title" className="font-display text-2xl sm:text-4xl font-black uppercase text-foreground">
               {selectedTrack.title}
             </h2>
 
@@ -322,12 +391,12 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
               )}
             </div>
 
-            {/* Action buttons inside pop up */}
+            {/* Action buttons inside modal */}
             <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
               <Button
                 variant="tactical"
                 onClick={() => setSelectedTrack(null)}
-                className="w-full sm:w-auto font-mono-tech text-xs tracking-wider"
+                className="w-full sm:w-auto min-h-[44px] font-mono-tech text-xs tracking-wider"
               >
                 ← RETURN TO CRISIS LIST
               </Button>
@@ -339,7 +408,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                   setSelectedTrack(null);
                   onRegister(title);
                 }}
-                className="w-full sm:w-auto font-bold tracking-wider"
+                className="w-full sm:w-auto min-h-[44px] font-bold tracking-wider"
               >
                 REGISTER FOR THIS CRISIS →
               </Button>
@@ -351,4 +420,3 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
     </section>
   );
 }
-

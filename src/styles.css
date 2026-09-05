@@ -357,3 +357,25 @@
 @utility glitch-text {
   animation: var(--animate-glitch);
 }
+
+@keyframes motto-reveal {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to   { opacity: 1; transform: none; }
+}
+@utility animate-motto-reveal { animation: motto-reveal 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+
+.motto-container {
+  --stagger-base: 120ms;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  sm:gap: 0.5rem;
+}
+
+@keyframes atmosphere-pulse {
+  0%, 100% { opacity: 0.35; filter: hue-rotate(0deg); }
+  50%       { opacity: 0.55; filter: hue-rotate(25deg); }
+}
+@utility animate-atmosphere-pulse { animation: atmosphere-pulse 45s ease-in-out infinite; }

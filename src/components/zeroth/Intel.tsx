@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ChevronDown, ChevronRight, Radio, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FAQS, STATS } from "@/data/zeroth";
+import { loadState, saveState, STORAGE_KEYS } from "@/lib/state-persistence";
 
-import { Linkedin, Phone, Mail } from "lucide-react";
+import { Linkedin, Phone } from "lucide-react";
 
-// Hardcoded or filtered mentor profiles for precise structure
 type Member = {
   name: string;
   role: string;
@@ -33,7 +33,6 @@ const FACULTY_COORDINATORS: Member[] = [
     role: "Faculty Coordinator",
     org: "Department of ECE",
     initials: "VJ",
-
   },
 ];
 
@@ -92,7 +91,14 @@ const STUDENT_COORDINATORS: Member[] = [
 ];
 
 export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () => void }) {
-  const [open, setOpen] = useState(0);
+  const [open, setOpenRaw] = useState<number>(() =>
+    loadState<number>(STORAGE_KEYS.INTEL_ACCORDION, 0)
+  );
+
+  const setOpen = useCallback((idx: number) => {
+    setOpenRaw(idx);
+    saveState(STORAGE_KEYS.INTEL_ACCORDION, idx);
+  }, []);
 
   return (
     <section id="intel" className="mx-auto max-w-7xl px-4 py-12 sm:py-20 sm:px-6 lg:px-8">
@@ -141,7 +147,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
 
       {preview ? (
         <div className="mt-10 text-center">
-          <Button variant="tactical" size="xl" onClick={onExpand}>
+          <Button variant="tactical" size="xl" onClick={onExpand} className="min-h-[44px]">
             <ChevronRight className="size-4" aria-hidden />
             View full mission briefing
           </Button>
@@ -176,7 +182,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                       target="_blank"
                       rel="noreferrer"
                       aria-label="LinkedIn profile"
-                      className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                      className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                     >
                       <Linkedin className="size-4" />
                     </a>
@@ -209,7 +215,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                         target="_blank"
                         rel="noreferrer"
                         aria-label="LinkedIn profile"
-                        className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                        className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                       >
                         <Linkedin className="size-4" />
                       </a>
@@ -259,7 +265,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                           target="_blank"
                           rel="noreferrer"
                           aria-label={`${m.name} LinkedIn`}
-                          className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                          className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                         >
                           <Linkedin className="size-4" />
                         </a>
@@ -282,7 +288,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                     <div className="mt-5 border-t border-border/80 pt-4">
                       <a
                         href={`tel:${m.phone.replace(/[^0-9+]/g, "")}`}
-                        className="inline-flex items-center gap-2 font-mono-tech text-sm font-bold text-accent transition-colors hover:text-primary"
+                        className="inline-flex items-center gap-2 font-mono-tech text-sm font-bold text-accent transition-colors hover:text-primary min-h-[44px] touch-manipulation"
                       >
                         <Phone className="size-3.5 text-primary" />
                         {m.phone}
@@ -303,13 +309,12 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                 <div key={f.q}>
                   <button
                     onClick={() => setOpen(open === i ? -1 : i)}
-                    className="flex w-full items-center justify-between gap-4 py-4 text-left"
+                    className="flex w-full items-center justify-between gap-4 py-4 text-left min-h-[44px] touch-manipulation"
                     aria-expanded={open === i}
                   >
                     <span className="font-display text-base font-bold">{f.q}</span>
                     <ChevronDown
-                      className={`size-4 shrink-0 text-primary transition-transform ${open === i ? "rotate-180" : ""
-                        }`}
+                      className={`size-4 shrink-0 text-primary transition-transform ${open === i ? "rotate-180" : ""}`}
                       aria-hidden
                     />
                   </button>

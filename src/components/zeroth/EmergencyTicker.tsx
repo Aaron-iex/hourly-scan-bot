@@ -1,56 +1,30 @@
-import { Zap, AlertTriangle, Radio, Cpu } from "lucide-react";
+import { Radio } from "lucide-react";
 
-const ALERTS = [
-  "JAYA ENGINEERING COLLEGE // DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING",
-  "PRESENTS // MAKEATHON — PROJECT ZEROTH HOUR",
-  "5-HOUR SPRINT — EMBEDDED · DSP · RF · VLSI · OPEN INNOVATION",
-  "EVENT DATE: SEPT 17 // REGISTRATION: ₹200 PER SQUAD — QUEUE IS OPEN",
-  "CLEARANCE PASSES ISSUING — DEFCON 1 PROTOCOL ACTIVE — ENLIST NOW",
-  "OVERALL PRIZE CACHE: ₹22,000 INR UNLOCKED FOR ECE SURVIVAL TECH",
+const TICKER_ITEMS = [
+  "EVENT DATE: SEPT 23 // REGISTRATION: ₹200 PER SQUAD — QUEUE IS OPEN",
+  "DEFCON 1 INITIATED: 5-HOUR PLANETARY DEFENCE SPRINT",
+  "PRIZE CACHE: ₹22,000 OVERALL + MERCH & CERTIFICATES",
+  "VENUE: JAYA AUDITORIUM · JAYA ENGINEERING COLLEGE, CHENNAI",
+  "STUDENT HARDWARE MAKEATHON // OPEN TO ALL DEPARTMENTS & COLLEGES",
+  "FIVE CRISIS THREAT SECTORS LIVE: EARTHQUAKE · SEA LEVEL · MARS · RF BLACKOUT · HEATWAVE",
 ];
 
 export function EmergencyTicker() {
-  const line = [...ALERTS, ...ALERTS];
+  const content = TICKER_ITEMS.join("   ///   ");
 
   return (
-    <div className="relative flex h-10 items-center overflow-hidden border-b border-primary/50 bg-primary/15 backdrop-blur-sm">
-      {/* Glowing left badge */}
+    <aside className="relative flex h-8 w-full items-center overflow-hidden border-b border-primary/40 bg-black/90 font-mono-tech text-[11px] tracking-[0.18em] text-primary select-none">
       <div className="z-10 flex h-full shrink-0 items-center gap-2 bg-primary px-3.5 text-primary-foreground shadow-[4px_0_16px_rgba(224,76,17,0.4)]">
         <Radio className="size-3.5 animate-pulse" aria-hidden />
-        <span className="font-mono-tech text-[10px] font-bold tracking-[0.22em]">LIVE</span>
+        <span className="font-bold uppercase tracking-[0.2em] text-[10px]">LIVE BROADCAST</span>
       </div>
 
-      {/* Scrolling ticker */}
-      <div className="relative flex-1 overflow-hidden">
-        {/* Left + right fade masks */}
-        <div className="pointer-events-none absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-background/30 to-transparent z-10" />
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-background/30 to-transparent z-10" />
-
-        <div className="flex w-max animate-ticker items-center">
-          {line.map((text, i) => (
-            <span
-              key={i}
-              className="flex items-center gap-2.5 whitespace-nowrap px-6 font-mono-tech text-[11px] tracking-[0.18em]"
-            >
-              {i % 3 === 0 ? (
-                <Zap className="size-3 text-accent shrink-0" aria-hidden />
-              ) : i % 3 === 1 ? (
-                <AlertTriangle className="size-3 text-primary shrink-0" aria-hidden />
-              ) : (
-                <Cpu className="size-3 text-primary/70 shrink-0" aria-hidden />
-              )}
-              <span className={i % 2 === 0 ? "text-accent" : "text-foreground/80"}>
-                {text}
-              </span>
-            </span>
-          ))}
+      <div className="relative flex flex-1 items-center overflow-hidden py-1">
+        <div className="flex whitespace-nowrap animate-ticker" aria-hidden>
+          <span className="px-4 font-bold">{content}</span>
+          <span className="px-4 font-bold">{content}</span>
         </div>
       </div>
-
-      {/* Right accent */}
-      <div className="z-10 flex h-full shrink-0 items-center px-2.5 border-l border-primary/40 bg-primary/10">
-        <span className="font-mono-tech text-[9px] tracking-[0.2em] text-primary font-bold">ECE</span>
-      </div>
-    </div>
+    </aside>
   );
 }

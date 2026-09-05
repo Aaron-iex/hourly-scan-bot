@@ -275,11 +275,8 @@ export function AdminDashboard() {
       trackCounts[t.title] = 0;
     });
     registrations.forEach((r) => {
-      if (trackCounts[r.track] !== undefined) {
-        trackCounts[r.track] += 1;
-      } else {
-        trackCounts[r.track] = 1;
-      }
+      const curr = trackCounts[r.track] ?? 0;
+      trackCounts[r.track] = curr + 1;
     });
 
     return { totalSquads, totalOperatives, checkedInCount, trackCounts };

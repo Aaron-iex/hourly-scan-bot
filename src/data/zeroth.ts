@@ -109,7 +109,7 @@ export const TRACKS: Track[] = [
   {
     id: "unknown",
     code: "CRISIS 06 (OPEN)",
-    title: "The Unknown Threat",
+    title: "Open Innovation",
     crisisName: "Open Innovation",
     category: "OPEN INNOVATION",
     icon: "zap",
@@ -203,7 +203,7 @@ export const TIMELINE: TimelineEvent[] = [
 export const FAQS = [
   {
     q: "When is the makeathon?",
-    a: "Confirmed for Sept 17 — a 5-hour makeathon. The detailed timeline will be released to registered squads before lockdown.",
+    a: "Confirmed for Sept 23 — a 5-hour makeathon. The detailed timeline will be released to registered squads before lockdown.",
   },
   {
     q: "Who is allowed to enlist?",
