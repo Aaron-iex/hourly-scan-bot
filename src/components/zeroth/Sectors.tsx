@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Anchor, Flame, Rocket, Waves, Zap, type LucideIcon, ChevronRight, Trophy, X, AlertTriangle, ShieldCheck, Cpu, Activity, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TRACKS, type Track } from "@/data/zeroth";
+import { motion } from "framer-motion";
 
 const ICONS = {
   waves: Waves,
@@ -115,24 +116,24 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
             CORE EVENT LOOP PROTOCOL // MANDATORY RULE
           </div>
           
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 font-display font-black text-xl sm:text-3xl md:text-4xl uppercase text-foreground tracking-wide">
-            <span className="px-2.5 py-1 bg-red-950/80 border border-red-500/60 text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+          <div className="flex overflow-x-auto items-center justify-start sm:justify-center gap-2 sm:gap-4 font-display font-black text-base sm:text-2xl md:text-3xl uppercase text-foreground tracking-wide pb-2 w-full max-w-full scrollbar-none">
+            <span className="shrink-0 px-2.5 py-1 bg-red-950/80 border border-red-500/60 text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
               CRISIS
             </span>
-            <span className="text-primary font-mono-tech text-base sm:text-xl font-bold">→</span>
-            <span className="px-2.5 py-1 bg-amber-950/80 border border-amber-500/60 text-amber-300 drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]">
+            <span className="shrink-0 text-primary font-mono-tech text-base sm:text-xl font-bold">→</span>
+            <span className="shrink-0 px-2.5 py-1 bg-amber-950/80 border border-amber-500/60 text-amber-300 drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]">
               SENSE
             </span>
-            <span className="text-primary font-mono-tech text-base sm:text-xl font-bold">→</span>
-            <span className="px-2.5 py-1 bg-blue-950/80 border border-blue-500/60 text-blue-300 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+            <span className="shrink-0 text-primary font-mono-tech text-base sm:text-xl font-bold">→</span>
+            <span className="shrink-0 px-2.5 py-1 bg-blue-950/80 border border-blue-500/60 text-blue-300 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">
               THINK
             </span>
-            <span className="text-primary font-mono-tech text-base sm:text-xl font-bold">→</span>
-            <span className="px-2.5 py-1 bg-emerald-950/80 border border-emerald-500/60 text-emerald-300 drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]">
+            <span className="shrink-0 text-primary font-mono-tech text-base sm:text-xl font-bold">→</span>
+            <span className="shrink-0 px-2.5 py-1 bg-emerald-950/80 border border-emerald-500/60 text-emerald-300 drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]">
               ADAPT
             </span>
-            <span className="text-primary font-mono-tech text-base sm:text-xl font-bold">→</span>
-            <span className="px-2.5 py-1 bg-accent/20 border border-accent text-accent drop-shadow-[0_0_15px_rgba(255,200,0,0.6)]">
+            <span className="shrink-0 text-primary font-mono-tech text-base sm:text-xl font-bold">→</span>
+            <span className="shrink-0 px-2.5 py-1 bg-accent/20 border border-accent text-accent drop-shadow-[0_0_15px_rgba(255,200,0,0.6)]">
               SURVIVE
             </span>
           </div>
@@ -144,7 +145,13 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
       </div>
 
       {/* Section Header */}
-      <div className="max-w-3xl">
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }} 
+        whileInView={{ opacity: 1, y: 0 }} 
+        transition={{ type: "spring", stiffness: 200, damping: 20 }} 
+        viewport={{ once: true, margin: "-50px" }}
+        className="max-w-3xl"
+      >
         <div className="flex items-center gap-3 mb-3">
           <span className="inline-block h-px w-8 bg-primary" />
           <span className="font-mono-tech text-[11px] tracking-[0.28em] text-primary uppercase font-bold">
@@ -158,7 +165,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
         <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
           Select a high-stakes engineering problem below. Click <strong className="text-primary">"View Crisis Details"</strong> to expand scenario specifications, hardware challenges, and implementation examples!
         </p>
-      </div>
+      </motion.div>
 
       {/* ── OVERALL PRIZE CACHE (MOBILE-OPTIMIZED TACTICAL PODS) ── */}
       <div className="relative mt-8 overflow-hidden border-2 border-accent/60 bg-gradient-to-br from-black/95 via-card/95 to-black/95 p-5 sm:p-7 clip-tactical shadow-[0_0_35px_rgba(255,200,0,0.2)]">
@@ -243,14 +250,21 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
       </div>
 
       {/* Track Cards */}
-      <div className="mt-6 sm:mt-8 grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <motion.div 
+        initial="hidden" 
+        whileInView="visible" 
+        viewport={{ once: true, margin: "-50px" }} 
+        variants={{ visible: { transition: { staggerChildren: 0.15 } } }} 
+        className="mt-6 sm:mt-8 grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3"
+      >
         {TRACKS.map((track, idx) => {
           const Icon = ICONS[track.icon];
           const color = TRACK_COLORS[idx % TRACK_COLORS.length]!;
           const isFeatured = track.featured;
 
           return (
-            <article
+            <motion.article
+              variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 200, damping: 20 } } }}
               key={track.id}
               className={`panel-tactical relative flex flex-col justify-between p-5 sm:p-6 transition-all duration-300
                           hover:-translate-y-1.5 group cursor-pointer bg-black/90 ${
@@ -357,10 +371,10 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                   <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
               </div>
-            </article>
+            </motion.article>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* ── EXPANDABLE CRISIS DETAIL MODAL ── */}
       {selectedTrack && (

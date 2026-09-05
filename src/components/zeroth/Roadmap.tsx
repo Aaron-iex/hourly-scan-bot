@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import { ChevronRight, Clock, Flame, MapPin, Radio, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TIMELINE, type Stage } from "@/data/zeroth";
@@ -94,10 +95,13 @@ export function Roadmap({
           {displayEvents.map((evt, idx) => {
             const colors = STAGE_COLORS[evt.stage] || STAGE_COLORS['hacking']!;
             return (
-              <li
+              <motion.li
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.08 }}
                 key={evt.title}
                 className="group relative pl-8 sm:pl-12"
-                style={{ animationDelay: `${idx * 0.08}s` }}
               >
                 {/* Timeline dot */}
                 <div className={`absolute left-[-5px] sm:left-[-6px] top-5 size-3 sm:size-3.5 rounded-full ${colors.dot} ${colors.glow}
@@ -143,7 +147,7 @@ export function Roadmap({
                     </span>
                   </div>
                 </div>
-              </li>
+              </motion.li>
             );
           })}
         </ol>
@@ -160,7 +164,13 @@ export function Roadmap({
         )}
 
         {/* CTA Panel */}
-        <div className="relative mt-10 sm:mt-14 overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="relative mt-10 sm:mt-14 overflow-hidden"
+        >
           <div className="absolute inset-0 grid-tactical opacity-15 pointer-events-none" />
           <div className="panel-tactical relative space-y-4 p-6 sm:p-8 text-center border border-primary/30">
             {/* Corner brackets */}
@@ -182,7 +192,7 @@ export function Roadmap({
               Secure squad clearance
             </Button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -359,7 +359,7 @@ export function Hero({ onRegister }: { onRegister: () => void }) {
           
 
           {/* ── Split-Flap Countdown ── */}
-          <motion.div variants={fadeUpBlur} className="mt-32 sm:mt-64 px-2 py-1">
+          <motion.div variants={fadeUpBlur} className="mt-12 sm:mt-20 px-2 py-1">
             <div className="flex items-center gap-1.5 mb-1.5 justify-center">
               <Shield className="size-3 sm:size-3.5 text-primary" />
               <span className="font-mono-tech text-[8px] sm:text-[9px] tracking-[0.2em] text-primary font-bold uppercase">

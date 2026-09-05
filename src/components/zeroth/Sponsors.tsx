@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 const SPONSORS = [
   { name: "Cooper Elevators", image: "/images/sponsors/image.png" },
 ];
@@ -15,18 +17,22 @@ export function Sponsors() {
           </h2>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-12 sm:gap-16">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-12">
           {SPONSORS.map((sponsor, index) => (
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               key={`${sponsor.name}-${index}`}
               className="group flex items-center justify-center transition-all duration-300 hover:scale-110"
             >
               <img
                 src={sponsor.image}
                 alt={`${sponsor.name} logo`}
-                loading="lazy" className="h-20 sm:h-24 w-auto object-contain transition-all duration-300"
+                loading="lazy" className="max-w-full h-20 sm:h-24 w-auto object-contain transition-all duration-300"
               />
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

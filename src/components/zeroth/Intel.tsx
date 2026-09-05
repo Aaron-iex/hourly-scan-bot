@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import { ChevronDown, ChevronRight, Radio, ShieldCheck, Zap, AlertTriangle, Target, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FAQS, STATS } from "@/data/zeroth";
@@ -156,7 +157,13 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
         </div>
 
         {/* Stats Grid */}
-        <dl className="grid grid-cols-2 gap-3.5 sm:gap-4">
+        <motion.dl 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="grid grid-cols-2 gap-3.5 sm:gap-4"
+        >
           {STATS.map((s) => (
             <div key={s.label} className="panel-tactical p-4 sm:p-5 border border-primary/40 bg-primary/5 hover:border-primary/80 transition-colors">
               <dt className="font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-bold">
@@ -168,7 +175,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
               {s.desc && <p className="mt-1 font-mono-tech text-[10px] text-accent/90">{s.desc}</p>}
             </div>
           ))}
-        </dl>
+        </motion.dl>
       </div>
 
       {preview ? (
@@ -181,7 +188,12 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
       ) : (
         <>
           {/* ECE HOD Section */}
-          <div className="mt-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16"
+          >
             <h3 className="font-display text-2xl font-black uppercase">
               ECE <span className="text-accent">HOD</span>
             </h3>
@@ -189,7 +201,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
               <article className="panel-tactical p-6 border border-primary/40">
                 <div className="flex items-center justify-between">
                   {HOD.image ? (
-                    <div className="relative size-24 overflow-hidden rounded-md border-2 border-primary/60 bg-black/40 shadow-[0_0_12px_rgba(224,76,17,0.3)]">
+                    <div className="relative size-20 sm:size-24 overflow-hidden rounded-md border-2 border-primary/60 bg-black/40 shadow-[0_0_12px_rgba(224,76,17,0.3)]">
                       <img
                         src={HOD.image}
                         alt={HOD.name}
@@ -208,7 +220,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                       target="_blank"
                       rel="noreferrer"
                       aria-label="LinkedIn profile"
-                      className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+                      className="size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                     >
                       <Linkedin className="size-4" />
                     </a>
@@ -221,10 +233,15 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                 <p className="mt-1.5 text-sm text-muted-foreground font-medium">{HOD.org}</p>
               </article>
             </div>
-          </div>
+          </motion.div>
 
           {/* Faculty Coordinators Section */}
-          <div className="mt-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16"
+          >
             <h3 className="font-display text-2xl font-black uppercase">
               Faculty <span className="text-accent">Co-ordinators</span>
             </h3>
@@ -241,7 +258,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                         target="_blank"
                         rel="noreferrer"
                         aria-label="LinkedIn profile"
-                        className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+                        className="size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                       >
                         <Linkedin className="size-4" />
                       </a>
@@ -255,10 +272,15 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                 </article>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Student Coordinators Section */}
-          <div className="mt-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16"
+          >
             <h3 className="font-display text-2xl font-black uppercase">
               Student <span className="text-accent">Co-ordinators</span>
             </h3>
@@ -271,7 +293,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                   <div>
                     <div className="flex items-start justify-between">
                       {m.image ? (
-                        <div className="relative size-24 overflow-hidden rounded-md border-2 border-primary/60 bg-black/40 shadow-[0_0_12px_rgba(224,76,17,0.3)]">
+                        <div className="relative size-20 sm:size-24 overflow-hidden rounded-md border-2 border-primary/60 bg-black/40 shadow-[0_0_12px_rgba(224,76,17,0.3)]">
                           <img
                             src={m.image}
                             alt={m.name}
@@ -291,7 +313,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                           target="_blank"
                           rel="noreferrer"
                           aria-label={`${m.name} LinkedIn`}
-                          className="grid size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+                          className="size-9 place-items-center border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                         >
                           <Linkedin className="size-4" />
                         </a>
@@ -324,9 +346,14 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                 </article>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="mt-16 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]"
+          >
             <h3 className="font-display text-2xl font-black uppercase">
               Frequently intercepted <span className="text-accent">questions</span>
             </h3>
@@ -350,7 +377,7 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </>
       )}
     </section>
