@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { ChevronDown, ChevronRight, Radio, ShieldCheck } from "lucide-react";
+import { ChevronDown, ChevronRight, Radio, ShieldCheck, Zap, AlertTriangle, Target, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FAQS, STATS } from "@/data/zeroth";
 import { loadState, saveState, STORAGE_KEYS } from "@/lib/state-persistence";
@@ -102,37 +102,63 @@ export function Intel({ preview, onExpand }: { preview?: boolean; onExpand?: () 
 
   return (
     <section id="intel" className="mx-auto max-w-7xl px-4 py-12 sm:py-20 sm:px-6 lg:px-8">
+      {/* ── MISSION BRIEFING: ENGINEERING THE LAST HOUR ── */}
       <div id="briefing" className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
-          <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary">
-            // MISSION BRIEFING
-          </span>
-          <h2 className="mt-3 font-display text-3xl font-black uppercase sm:text-5xl">
-            Engineering the <span className="text-accent">last hour</span>
+          <div className="inline-flex items-center gap-2 mb-2">
+            <span className="h-px w-6 bg-primary" />
+            <span className="font-mono-tech text-[11px] tracking-[0.25em] text-primary uppercase font-bold">
+              // CLASSIFIED MISSION BRIEFING
+            </span>
+            <span className="h-px w-6 bg-primary" />
+          </div>
+          
+          <h2 className="font-display text-3xl font-black uppercase sm:text-5xl leading-tight">
+            Engineering the <span className="text-alert-gradient">last hour</span>
           </h2>
-          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-            Zeroth Hour is a 5-hour crisis engineering hackathon built around one premise: the
-            warning already fired. Operatives prototype systems that predict, contain, and survive
-            planetary-scale disaster — judged by researchers who fight these events for a living.
-          </p>
-          <p className="mt-4 leading-relaxed text-muted-foreground">
-            Every submission is stress-tested by a live disaster injection at the sprint midpoint.
-            Systems that hold get deployment funding; systems that fail get a debrief.
+
+          <p className="mt-4 text-base sm:text-lg leading-relaxed text-foreground font-medium">
+            <strong className="text-primary">Project Zeroth Hour</strong> is a high-stakes 5-hour crisis response makeathon engineered around one urgent premise: <span className="text-accent font-semibold">the cataclysm warning has already fired</span>.
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <span className="flex items-center gap-2 border border-primary/40 bg-primary/10 px-3 py-1.5 font-mono-tech text-[11px] tracking-[0.18em] text-primary clip-tactical">
-              <ShieldCheck className="size-3.5" aria-hidden /> 200 INR/TEAM
+          <p className="mt-3 text-sm sm:text-base leading-relaxed text-muted-foreground">
+            Student squads rapidly prototype tangible hardware & embedded systems designed to <strong className="text-foreground">sense real-time threats</strong>, <strong className="text-foreground">execute rapid decision logic</strong>, and <strong className="text-foreground">trigger physical mechanical adaptations</strong> across 5 fronts of planetary survival.
+          </p>
+
+          {/* Key Mission Directives Grid */}
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono-tech text-xs">
+            <div className="flex items-center gap-2.5 p-3 border border-primary/40 bg-primary/10 clip-tactical">
+              <Zap className="size-4 text-primary shrink-0" />
+              <span className="text-foreground font-bold">Physical Sensor + Actuation Mandatory</span>
+            </div>
+            <div className="flex items-center gap-2.5 p-3 border border-accent/40 bg-accent/10 clip-tactical">
+              <AlertTriangle className="size-4 text-accent shrink-0" />
+              <span className="text-foreground font-bold">Live Disaster Injection at Midpoint</span>
+            </div>
+            <div className="flex items-center gap-2.5 p-3 border border-primary/40 bg-primary/10 clip-tactical">
+              <Target className="size-4 text-primary shrink-0" />
+              <span className="text-foreground font-bold">5-Hour High-Intensity Rapid Build</span>
+            </div>
+            <div className="flex items-center gap-2.5 p-3 border border-accent/40 bg-accent/10 clip-tactical">
+              <Flame className="size-4 text-accent shrink-0" />
+              <span className="text-foreground font-bold">₹22,000 Prize Cache + Merch</span>
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-2.5 sm:gap-3">
+            <span className="flex items-center gap-2 border border-primary/60 bg-primary/15 px-3.5 py-2 font-mono-tech text-[11px] tracking-[0.18em] text-primary font-bold clip-tactical">
+              <ShieldCheck className="size-3.5 text-primary" aria-hidden /> ₹200 / SQUAD
             </span>
-            <span className="flex items-center gap-2 border border-accent/40 bg-accent/10 px-3 py-1.5 font-mono-tech text-[11px] tracking-[0.18em] text-accent clip-tactical">
-              <Radio className="size-3.5" aria-hidden /> HYBRID · GLOBAL STREAM
+            <span className="flex items-center gap-2 border border-accent/60 bg-accent/15 px-3.5 py-2 font-mono-tech text-[11px] tracking-[0.18em] text-accent font-bold clip-tactical">
+              <Radio className="size-3.5 text-accent animate-pulse" aria-hidden /> JAYA AUDITORIUM · CHENNAI
             </span>
           </div>
         </div>
 
-        <dl className="grid grid-cols-2 gap-4">
+        {/* Stats Grid */}
+        <dl className="grid grid-cols-2 gap-3.5 sm:gap-4">
           {STATS.map((s) => (
-            <div key={s.label} className="panel-tactical p-4 sm:p-5 border border-primary/30 bg-primary/5">
+            <div key={s.label} className="panel-tactical p-4 sm:p-5 border border-primary/40 bg-primary/5 hover:border-primary/80 transition-colors">
               <dt className="font-mono-tech text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-bold">
                 {s.label}
               </dt>

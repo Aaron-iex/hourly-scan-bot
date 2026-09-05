@@ -17,16 +17,15 @@ const DESCRIPTION =
   "Jaya Engineering College Department of ECE presents Makeathon: Project Zeroth Hour. Join 500+ engineers for a 5-hour makeathon across five fronts of planetary defence. 22,000 INR overall prize cache.";
 
 type Tab = "home" | "events" | "about";
-const VALID_TABS: Tab[] = ["home", "events", "about"];
 
-/** Read tab from URL hash or persisted storage. Falls back to "home". */
-function getInitialTab(): Tab {
+/** Read active tab strictly from URL hash. Defaults to "home". */
+function getTabFromHash(): Tab {
   if (typeof window === "undefined") return "home";
-  const rawHash = window.location.hash.replace("#", "").toLowerCase();
-  if (VALID_TABS.includes(rawHash as Tab)) {
-    return rawHash as Tab;
+  const raw = window.location.hash.replace("#", "").toLowerCase();
+  if (raw === "events" || raw === "about") {
+    return raw;
   }
-  return loadState<Tab>(STORAGE_KEYS.ACTIVE_TAB, "home");
+  return "home";
 }
 
 export const Route = createFileRoute("/")({
@@ -47,58 +46,63 @@ function Index() {
   const [open, setOpen] = useState(false);
   const [track, setTrack] = useState("");
 
-  const [tab, setTabRaw] = useState<Tab>(getInitialTab);
+  const [tab, setTabRaw] = useState<Tab>(getTabFromHash);
   const scrollPositionsRef = useRef<Record<Tab, number>>(
     loadState<Record<Tab, number>>(STORAGE_KEYS.TAB_SCROLLS, { home: 0, events: 0, about: 0 })
   );
 
-  /** Save current scroll position before switching tabs or unloading */
+  /** Save current scroll position before switching tabs */
   const saveCurrentScroll = useCallback((currentTab: Tab) => {
     if (typeof window === "undefined") return;
     scrollPositionsRef.current[currentTab] = window.scrollY;
     saveState(STORAGE_KEYS.TAB_SCROLLS, scrollPositionsRef.current);
   }, []);
 
-  /** Change tab with smooth URL hash, persistent state, and scroll restoration */
+  /** Change tab with hash synchronization and smooth scroll restoration */
   const setTab = useCallback(
     (next: Tab) => {
       saveCurrentScroll(tab);
       setTabRaw(next);
-      saveState(STORAGE_KEYS.ACTIVE_TAB, next);
 
-      const hash = next === "home" ? "" : `#${next}`;
-      if (window.location.hash !== (hash || "#")) {
-        window.history.pushState(null, "", hash || window.location.pathname);
+      const targetHash = next === "home" ? "" : `#${next}`;
+      if (window.location.hash !== (targetHash || "#")) {
+        const url = targetHash || window.location.pathname;
+        window.history.pushState({ tab: next }, "", url);
       }
 
-      // Restore target tab's scroll position with brief DOM settling delay
+      // Restore target tab's scroll position
       setTimeout(() => {
         const targetScroll = scrollPositionsRef.current[next] || 0;
         window.scrollTo({ top: targetScroll, behavior: "smooth" });
-      }, 80);
+      }, 50);
     },
     [tab, saveCurrentScroll]
   );
 
-  /** Listen for browser Back/Forward (popstate) to synchronize active tab & scroll position */
+  /** Listen for browser Back/Forward (popstate) to synchronize active tab */
   useEffect(() => {
     const onPop = () => {
       const hash = window.location.hash.replace("#", "").toLowerCase();
-      const nextTab = VALID_TABS.includes(hash as Tab) ? (hash as Tab) : "home";
+
+      // Don't switch tabs if popstate was for a modal close (#register or #crisis-...)
+      if (hash === "register" || hash.startsWith("crisis-")) {
+        return;
+      }
+
+      const nextTab = (hash === "events" || hash === "about") ? hash : "home";
       setTabRaw(nextTab);
-      saveState(STORAGE_KEYS.ACTIVE_TAB, nextTab);
 
       setTimeout(() => {
         const targetScroll = scrollPositionsRef.current[nextTab] || 0;
         window.scrollTo({ top: targetScroll, behavior: "smooth" });
-      }, 80);
+      }, 50);
     };
 
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  /** Save scroll positions periodically and on unload */
+  /** Save scroll positions on beforeunload */
   useEffect(() => {
     const onUnload = () => saveCurrentScroll(tab);
     window.addEventListener("beforeunload", onUnload);
@@ -110,7 +114,24 @@ function Index() {
     setOpen(true);
   }, []);
 
-  const closeRegister = useCallback(() => setOpen(false), []);
+  const closeRegister = useCallback(() => {
+    if (typeof window !== "undefined" && window.location.hash === "#register") {
+      window.history.back();
+    } else {
+      setOpen(false);
+    }
+  }, []);
+
+  // Popstate listener for register dialog close
+  useEffect(() => {
+    const onPop = () => {
+      if (window.location.hash !== "#register") {
+        setOpen(false);
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">

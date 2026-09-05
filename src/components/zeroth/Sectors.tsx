@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Anchor, Flame, Rocket, Waves, Zap, type LucideIcon, ChevronRight, Trophy, X, AlertTriangle, ShieldCheck, Cpu, Activity, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TRACKS, type Track } from "@/data/zeroth";
@@ -25,18 +25,51 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
   const modalRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
+  /* ── Open Track with URL Hash for Mobile Back Button Safety ── */
+  const handleSelectTrack = useCallback((track: Track) => {
+    setSelectedTrack(track);
+    if (typeof window !== "undefined" && !window.location.hash.startsWith("#crisis-")) {
+      window.history.pushState({ modal: `crisis-${track.id}` }, "", `#crisis-${track.id}`);
+    }
+  }, []);
+
+  /* ── Close Track Modal (Syncs with Browser History) ── */
+  const handleCloseModal = useCallback(() => {
+    if (typeof window !== "undefined" && window.location.hash.startsWith("#crisis-")) {
+      window.history.back();
+    } else {
+      setSelectedTrack(null);
+    }
+  }, []);
+
+  /* ── Popstate Listener: Close modal on mobile back button without reloading ── */
+  useEffect(() => {
+    const onPopState = () => {
+      if (!window.location.hash.startsWith("#crisis-")) {
+        setSelectedTrack(null);
+      } else {
+        // If navigated forward to a crisis hash
+        const crisisId = window.location.hash.replace("#crisis-", "");
+        const matched = TRACKS.find((t) => t.id === crisisId);
+        if (matched) setSelectedTrack(matched);
+      }
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   /* ── Modal Accessibility: Focus Trapping, Body Lock & Escape Key Handler ── */
   useEffect(() => {
     if (!selectedTrack) return;
 
-    // Focus close button on open
     setTimeout(() => {
       closeBtnRef.current?.focus();
     }, 50);
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setSelectedTrack(null);
+        handleCloseModal();
         return;
       }
 
@@ -66,7 +99,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = "";
     };
-  }, [selectedTrack]);
+  }, [selectedTrack, handleCloseModal]);
 
   return (
     <section id="sectors" className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6 lg:px-8">
@@ -127,29 +160,85 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
         </p>
       </div>
 
-      {/* Prize Banner */}
-      <div className="relative mt-8 overflow-hidden border border-accent/50 bg-gradient-to-r from-accent/20 via-accent/10 to-accent/20 px-5 py-4 clip-tactical">
+      {/* ── OVERALL PRIZE CACHE (MOBILE-OPTIMIZED TACTICAL PODS) ── */}
+      <div className="relative mt-8 overflow-hidden border-2 border-accent/60 bg-gradient-to-br from-black/95 via-card/95 to-black/95 p-5 sm:p-7 clip-tactical shadow-[0_0_35px_rgba(255,200,0,0.2)]">
         <div className="absolute inset-0 grid-tactical opacity-20 pointer-events-none" />
-        <div className="relative flex flex-wrap items-center justify-center gap-3 sm:gap-8">
-          <div className="flex items-center gap-2">
-            <Trophy className="size-5 text-accent animate-pulse" aria-hidden />
-            <span className="font-mono-tech text-[11px] sm:text-xs tracking-[0.2em] text-accent font-bold uppercase">
-              Overall Prize Cache
-            </span>
-          </div>
-          {[
-            { pos: "1ST PRIZE", amt: "₹10,000" },
-            { pos: "2ND PRIZE", amt: "₹7,000" },
-            { pos: "3RD PRIZE", amt: "₹5,000" },
-          ].map(({ pos, amt }) => (
-            <div key={pos} className="flex items-baseline gap-1.5">
-              <span className="font-mono-tech text-[9px] text-muted-foreground">{pos}</span>
-              <span className="font-display text-lg sm:text-xl font-black text-alert-gradient">{amt}</span>
+        
+        {/* Banner Header */}
+        <div className="relative flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-accent/30 pb-4 text-center sm:text-left">
+          <div className="flex items-center gap-2.5">
+            <div className="grid size-10 place-items-center border border-accent bg-accent/20 text-accent clip-tactical shrink-0 shadow-[0_0_15px_rgba(255,200,0,0.4)]">
+              <Trophy className="size-5 animate-pulse" aria-hidden />
             </div>
-          ))}
-          <span className="font-mono-tech text-[9px] text-muted-foreground text-center">
-            OPEN TO ALL DEPARTMENTS & COLLEGES
+            <div>
+              <span className="font-mono-tech text-[10px] sm:text-xs tracking-[0.25em] text-accent font-bold uppercase block">
+                Planetary Defense Bounty
+              </span>
+              <h3 className="font-display text-xl sm:text-2xl font-black uppercase text-foreground">
+                Overall Prize Cache: <span className="text-alert-gradient">₹22,000 INR</span>
+              </h3>
+            </div>
+          </div>
+          <span className="font-mono-tech text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest px-3 py-1 border border-border/80 bg-black/60">
+            Open To All Departments & Colleges
           </span>
+        </div>
+
+        {/* 3 Prize Pods: 1st, 2nd, 3rd */}
+        <div className="relative mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          {/* 1st Prize */}
+          <div className="panel-tactical p-4 sm:p-5 border-2 border-amber-400/80 bg-amber-950/25 shadow-[0_0_20px_rgba(245,158,11,0.25)] flex flex-col justify-between text-center relative overflow-hidden group hover:scale-[1.02] transition-transform">
+            <div className="absolute top-0 right-0 bg-amber-400 text-black font-mono-tech font-black text-[9px] px-2.5 py-0.5 tracking-wider uppercase">
+              Champion
+            </div>
+            <div>
+              <span className="font-mono-tech text-[10px] tracking-[0.2em] font-bold text-amber-400 uppercase">
+                1ST PRIZE
+              </span>
+              <p className="mt-1.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-amber-300 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+                ₹10,000
+              </p>
+            </div>
+            <p className="mt-2 text-[10px] sm:text-xs font-mono-tech text-amber-200/80 font-medium">
+              + Winner Trophy, Merch & Certificates
+            </p>
+          </div>
+
+          {/* 2nd Prize */}
+          <div className="panel-tactical p-4 sm:p-5 border border-sky-400/70 bg-sky-950/20 shadow-[0_0_15px_rgba(56,182,255,0.2)] flex flex-col justify-between text-center relative overflow-hidden group hover:scale-[1.02] transition-transform">
+            <div className="absolute top-0 right-0 bg-sky-400 text-black font-mono-tech font-black text-[9px] px-2.5 py-0.5 tracking-wider uppercase">
+              Runner-up
+            </div>
+            <div>
+              <span className="font-mono-tech text-[10px] tracking-[0.2em] font-bold text-sky-400 uppercase">
+                2ND PRIZE
+              </span>
+              <p className="mt-1.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-sky-300 drop-shadow-[0_0_15px_rgba(56,182,255,0.4)]">
+                ₹7,000
+              </p>
+            </div>
+            <p className="mt-2 text-[10px] sm:text-xs font-mono-tech text-sky-200/80 font-medium">
+              + Excellence Shield & Certificates
+            </p>
+          </div>
+
+          {/* 3rd Prize */}
+          <div className="panel-tactical p-4 sm:p-5 border border-orange-400/70 bg-orange-950/20 shadow-[0_0_15px_rgba(249,115,22,0.2)] flex flex-col justify-between text-center relative overflow-hidden group hover:scale-[1.02] transition-transform">
+            <div className="absolute top-0 right-0 bg-orange-400 text-black font-mono-tech font-black text-[9px] px-2.5 py-0.5 tracking-wider uppercase">
+              2nd Runner-up
+            </div>
+            <div>
+              <span className="font-mono-tech text-[10px] tracking-[0.2em] font-bold text-orange-400 uppercase">
+                3RD PRIZE
+              </span>
+              <p className="mt-1.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-orange-300 drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+                ₹5,000
+              </p>
+            </div>
+            <p className="mt-2 text-[10px] sm:text-xs font-mono-tech text-orange-200/80 font-medium">
+              + Merit Shield & Certificates
+            </p>
+          </div>
         </div>
       </div>
 
@@ -175,7 +264,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                   "--track-glow": color.glow,
                 } as React.CSSProperties
               }
-              onClick={() => setSelectedTrack(track)}
+              onClick={() => handleSelectTrack(track)}
             >
               {/* Subtle background glow on hover */}
               <div
@@ -244,7 +333,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                   size="default"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedTrack(track);
+                    handleSelectTrack(track);
                   }}
                   className="w-full sm:w-auto flex-1 min-h-[44px] px-3.5 font-mono-tech text-xs tracking-[0.14em] font-bold text-primary border-2 border-primary/70 bg-primary/15 hover:bg-primary hover:text-white shadow-[0_0_15px_rgba(224,76,17,0.25)] transition-all touch-manipulation group/btn"
                   aria-label={`View crisis details for ${track.title}`}
@@ -271,34 +360,6 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
             </article>
           );
         })}
-
-        {/* Quick Enlist card */}
-        <article
-          className="relative overflow-hidden panel-tactical flex flex-col justify-center gap-4 p-6 text-center
-                     group hover:-translate-y-1.5 transition-all duration-500 cursor-pointer border-2 border-accent/60 bg-accent/10"
-          onClick={() => onRegister("")}
-        >
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-               style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(255,200,0,0.15) 0%, transparent 70%)" }} />
-          <div className="relative">
-            <div className="mx-auto mb-2 size-14 grid place-items-center border-2 border-accent/60 bg-accent/20 group-hover:border-accent group-hover:bg-accent/30 transition-all duration-300">
-              <Zap className="size-7 text-accent animate-pulse" aria-hidden />
-            </div>
-            <h3 className="font-display text-xl font-black uppercase text-alert-gradient">
-              Open Registration
-            </h3>
-          </div>
-          <p className="relative text-sm text-muted-foreground max-w-xs mx-auto">
-            Not sure which crisis to pick? Enlist your squad now and choose your theme on the makeathon day!
-          </p>
-          <Button
-            variant="alert"
-            onClick={(e) => { e.stopPropagation(); onRegister(""); }}
-            className="relative w-full min-h-[44px] group-hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow duration-300 font-bold"
-          >
-            Register Any Idea
-          </Button>
-        </article>
       </div>
 
       {/* ── EXPANDABLE CRISIS DETAIL MODAL ── */}
@@ -308,7 +369,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
           role="dialog"
           aria-modal="true"
           aria-labelledby="crisis-detail-title"
-          onClick={(e) => e.target === e.currentTarget && setSelectedTrack(null)}
+          onClick={(e) => e.target === e.currentTarget && handleCloseModal()}
         >
           <div
             ref={modalRef}
@@ -317,7 +378,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
             {/* Close Button */}
             <button
               ref={closeBtnRef}
-              onClick={() => setSelectedTrack(null)}
+              onClick={handleCloseModal}
               aria-label="Close details modal"
               className="absolute top-4 right-4 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground border border-border hover:border-primary transition-colors touch-manipulation"
             >
@@ -395,7 +456,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
             <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
               <Button
                 variant="tactical"
-                onClick={() => setSelectedTrack(null)}
+                onClick={handleCloseModal}
                 className="w-full sm:w-auto min-h-[44px] font-mono-tech text-xs tracking-wider"
               >
                 ← RETURN TO CRISIS LIST
@@ -405,7 +466,7 @@ export function Sectors({ onRegister }: { onRegister: (track: string) => void })
                 variant="alert"
                 onClick={() => {
                   const title = selectedTrack.title;
-                  setSelectedTrack(null);
+                  handleCloseModal();
                   onRegister(title);
                 }}
                 className="w-full sm:w-auto min-h-[44px] font-bold tracking-wider"
